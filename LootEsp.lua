@@ -4,7 +4,6 @@ local RunService = game:GetService("RunService")
 
 local settings = {
     players = false,
-    monsters = false,
     gens = false,
     items = false,
     loot = false, 
@@ -35,44 +34,21 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- 2. МОНСТРИ (B) - Пошук по звуку та всьому Workspace
-    if settings.monsters then
-        local searchFolders = {workspace:FindFirstChild("Entities"), workspace:FindFirstChild("Monsters"), workspace}
-        for _, folder in pairs(searchFolders) do
-            if folder then
-                for _, obj in pairs(folder:GetChildren()) do
-                    if obj:IsA("Model") and not Players:GetPlayerFromCharacter(obj) then
-                        local name = obj.Name:lower()
-                        local hasSound = obj:FindFirstChildOfClass("Sound", true) 
-                        local isNotLight = not name:find("light") and not name:find("lamp")
-                        
-                        if isNotLight and (hasSound or obj:FindFirstChild("HumanoidRootPart") or #name > 10) then
-                            applyESP(obj, Color3.fromRGB(255, 0, 0), "ESP_M")
-                        end
-                    end
-                end
-            end
-        end
-    end
-
-    -- 3. АВТО-СКАНЕР (Лут H та Пастки J)
+    -- 2. АВТО-СКАНЕР (Лут H та Пастки J)
     if (settings.loot or settings.traps) and tick() - lastAutoScan > 1.2 then
         lastAutoScan = tick()
         
         for _, v in pairs(workspace:GetDescendants()) do
             local name = v.Name:lower()
 
-            -- ПАСТКИ (J) - ВИПРАВЛЕНО (Більше не засліплює)
+            -- ПАСТКИ (J)
             if settings.traps then
-                -- Пошук за назвою
                 local isTrapName = name:find("landmine") or name:find("mine") or name:find("doorstopper") or name:find("apd") or name:find("trap")
                 
-                -- Пошук за фізикою лазера (Червоний Неон)
                 local isLaser = false
                 if v:IsA("BasePart") and v.Material == Enum.Material.Neon then
                     local c = v.Color
                     local s = v.Size
-                    -- ПЕРЕВІРКА: Тільки тонкі об'єкти (лазери), а не стелі!
                     local isThin = (s.X < 0.6 or s.Y < 0.6 or s.Z < 0.6)
                     if c.r > 0.7 and c.g < 0.3 and c.b < 0.3 and isThin then
                         isLaser = true
@@ -84,7 +60,6 @@ RunService.RenderStepped:Connect(function()
                     if v.Parent and v.Parent:IsA("Model") then target = v.Parent
                     elseif v.Parent and v.Parent.Parent and v.Parent.Parent:IsA("Model") then target = v.Parent.Parent end
                     
-                    -- Додаткова перевірка розміру моделі (щоб не підсвітити цілу кімнату)
                     local tSize = target:IsA("Model") and target:GetExtentsSize() or (target:IsA("BasePart") and target.Size or Vector3.new(0,0,0))
                     if tSize.X < 12 and tSize.Y < 12 and not Players:GetPlayerFromCharacter(target) then
                         applyESP(target, Color3.fromRGB(255, 0, 255), "ESP_T")
@@ -137,9 +112,6 @@ UserInputService.InputBegan:Connect(function(input, proc)
     elseif input.KeyCode == Enum.KeyCode.V then 
         settings.players = not settings.players
         if not settings.players then for _,v in pairs(workspace:GetDescendants()) do if v.Name == "ESP_P" then v:Destroy() end end end
-    elseif input.KeyCode == Enum.KeyCode.B then 
-        settings.monsters = not settings.monsters
-        if not settings.monsters then for _,v in pairs(workspace:GetDescendants()) do if v.Name == "ESP_M" then v:Destroy() end end end
     elseif input.KeyCode == Enum.KeyCode.N then
         settings.gens = not settings.gens
         if not settings.gens then for _,v in pairs(workspace:GetDescendants()) do if v.Name == "ESP_G" then v:Destroy() end end else
