@@ -3,49 +3,56 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
 local player = Players.LocalPlayer
-local mouse = player:GetMouse()
-
+local camera = workspace.CurrentCamera
 local isLocked = false
 local connection = nil
 
--- Функція для сповіщення (опціонально)
+-- Функція для сповіщення
 local function notify(text)
     local sg = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
     local label = Instance.new("TextLabel", sg)
-    label.Size = UDim2.new(0, 200, 0, 50)
-    label.Position = UDim2.new(0.5, -100, 0.8, 0)
+    label.Size = UDim2.new(0, 250, 0, 50)
+    label.Position = UDim2.new(0.5, -125, 0.2, 0) -- Зверху екрана
     label.Text = text
     label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     label.TextColor3 = Color3.fromRGB(255, 255, 0)
-    label.TextSize = 20
+    label.TextSize = 22
     label.Font = Enum.Font.SourceSansBold
     Instance.new("UICorner", label)
-    task.delay(1.5, function() sg:Destroy() end)
+    task.delay(2, function() sg:Destroy() end)
 end
 
 local function toggleMouseLock()
     isLocked = not isLocked
     
     if isLocked then
-        notify("Mouse Locked (Center)")
-        -- Прив'язуємо курсор до центру кожний кадр
+        notify("PANDEMONIUM MODE: ON")
+        
         connection = RunService.RenderStepped:Connect(function()
-            -- Встановлюємо курсор у центр екрана
-            -- 0.5, 0.5 — це рівно середина монітора
+            -- 1. Вираховуємо центр екрана прямо зараз
+            local screenSize = camera.ViewportSize
+            local centerX = screenSize.X / 2
+            local centerY = screenSize.Y / 2
+            
+            -- 2. Силоміць ставимо мишку в центр (через Virtual Input або Behavior)
             UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+            
+            -- Додаткова перевірка: якщо гра намагається звільнити мишку, ми її повертаємо
+            if UserInputService.MouseBehavior ~= Enum.MouseBehavior.LockCenter then
+                UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+            end
         end)
     else
-        notify("Mouse Unlocked")
+        notify("PANDEMONIUM MODE: OFF")
         if connection then
             connection:Disconnect()
             connection = nil
         end
-        -- Повертаємо звичайну поведінку мишки
         UserInputService.MouseBehavior = Enum.MouseBehavior.Default
     end
 end
 
--- Обробка кнопки T
+-- Кнопка T
 UserInputService.InputBegan:Connect(function(input, proc)
     if proc then return end
     if input.KeyCode == Enum.KeyCode.T then
