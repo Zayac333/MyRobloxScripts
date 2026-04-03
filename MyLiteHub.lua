@@ -1,8 +1,8 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Zayac Lite Hub v2",
-   LoadingTitle = "Завантаження систем...",
+   Name = "Zayac Lite Hub v2.1",
+   LoadingTitle = "Завантаження конфігурації...",
    LoadingSubtitle = "by Zayac333",
    ConfigurationSaving = { Enabled = true, FolderName = "ZayacHub" }
 })
@@ -18,9 +18,10 @@ local Settings = {
 -- ВКЛАДКА MOVEMENT
 local MainTab = Window:CreateTab("Movement", 4483362458)
 
-MainTab:CreateToggle({
-   Name = "Speed Hack & Anti-Stun",
+local SpeedToggle = MainTab:CreateToggle({
+   Name = "Speed Hack & Anti-Stun (V Key)",
    CurrentValue = false,
+   Flag = "SpeedToggle", 
    Callback = function(Value)
       Settings.SpeedEnabled = Value
    end,
@@ -35,6 +36,21 @@ MainTab:CreateSlider({
       Settings.SpeedValue = Value
    end,
 })
+
+-- ОБРОБНИК КЛАВІШІ V
+game:GetService("UserInputService").InputBegan:Connect(function(input, proc)
+    if proc then return end
+    if input.KeyCode == Enum.KeyCode.V then
+        Settings.SpeedEnabled = not Settings.SpeedEnabled
+        SpeedToggle:Set(Settings.SpeedEnabled) -- Оновлюємо кнопку в меню
+        
+        Rayfield:Notify({
+            Title = "Movement",
+            Content = Settings.SpeedEnabled and "Speed & Anti-Stun: ON" or "Speed & Anti-Stun: OFF",
+            Duration = 2
+        })
+    end
+end)
 
 -- ВКЛАДКА COMBAT & ESP
 local CombatTab = Window:CreateTab("Combat & ESP", 4483362458)
@@ -63,19 +79,18 @@ CombatTab:CreateToggle({
    end,
 })
 
--- ФУНКЦІЯ ФЛІНГУ (БЕЗ ВИЛЬОТУ)
+-- ФУНКЦІЯ ФЛІНГУ
 local function doFling(targetPart)
-    local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local char = game.Players.LocalPlayer.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
     if root and targetPart then
         local oldCF = root.CFrame
-        -- Переміщення до цілі з величезною швидкістю
         root.CFrame = targetPart.CFrame
         root.Velocity = Vector3.new(999999, 999999, 999999)
         root.RotVelocity = Vector3.new(999999, 999999, 999999)
         
-        task.wait(0.1) -- Час на удар
+        task.wait(0.1)
         
-        -- Повернення та "заморозка" швидкості
         root.CFrame = oldCF
         root.Velocity = Vector3.new(0, 0, 0)
         root.RotVelocity = Vector3.new(0, 0, 0)
@@ -93,7 +108,7 @@ mouse.Button1Down:Connect(function()
     end
 end)
 
--- ГОЛОВНИЙ ЦИКЛ
+-- ГОЛОВНИЙ ЦИКЛ (Heartbeat)
 game:GetService("RunService").Heartbeat:Connect(function()
     local char = game.Players.LocalPlayer.Character
     if not char then return end
@@ -102,10 +117,13 @@ game:GetService("RunService").Heartbeat:Connect(function()
     -- Speed + Anti-Stun
     if Settings.SpeedEnabled and hum then
         hum.WalkSpeed = Settings.SpeedValue
-        -- Вимикаємо стан падіння та стану "приголомшення"
+        -- Жорстке вимкнення станів приголомшення
         hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
         hum:SetStateEnabled(Enum.HumanoidStateType.Stunned, false)
         hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+        if hum:GetState() == Enum.HumanoidStateType.Stunned then
+            hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end
     end
 
     -- Anti-Fling
@@ -119,11 +137,10 @@ game:GetService("RunService").Heartbeat:Connect(function()
         end
     end
 
-    -- Death Counter ESP
+    -- Death Counter ESP (Череп 💀)
     if Settings.DeathCounterESP then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= game.Players.LocalPlayer and p.Character then
-                -- Перевіряємо наявність об'єкта DeathCounter (за назвою або анімацією)
                 local dc = p.Character:FindFirstChild("DeathCounter") or p.Character:FindFirstChild("Counter")
                 local head = p.Character:FindFirstChild("Head")
                 
@@ -138,17 +155,12 @@ game:GetService("RunService").Heartbeat:Connect(function()
                     label.Text = "💀"
                     label.Size = UDim2.new(1, 0, 1, 0)
                     label.BackgroundTransparency = 1
-                    label.TextSize = 30
+                    label.TextColor3 = Color3.new(1, 0, 0)
+                    label.TextSize = 35
                     
-                    task.delay(5, function() bb:Destroy() end) -- Видаляємо через 5 сек
+                    task.delay(4, function() if bb then bb:Destroy() end end)
                 end
             end
         end
     end
 end)
-
-Rayfield:Notify({
-   Title = "Zayac Hub v2",
-   Content = "Системи готові. Тепер тебе повертає на місце після флінгу!",
-   Duration = 5
-})
