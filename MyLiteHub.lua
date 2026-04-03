@@ -1,8 +1,8 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLTD/Rayfield/main/source.lua'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Zayac Ultimate v5.3",
-   LoadingTitle = "Запуск систем ESP & Combat...",
+   Name = "Zayac Ultimate v5.4",
+   LoadingTitle = "Виправлення систем...",
    LoadingSubtitle = "by Zayac333",
    ConfigurationSaving = { Enabled = false }
 })
@@ -10,11 +10,10 @@ local Window = Rayfield:CreateWindow({
 -- Глобальні змінні
 getgenv().SpeedEnabled = false
 getgenv().SpeedValue = 80
-getgenv().AntiFling = false
-getgenv().ClickFlingEnabled = false
 getgenv().SelectedPlayer = nil
 getgenv().LoopTP = false
 getgenv().DeathCounterESP = false
+getgenv().ClickFlingEnabled = false
 
 local function getPlayer(name)
     name = name:lower()
@@ -31,7 +30,7 @@ local PlayerTab = Window:CreateTab("Players", 4483362458)
 local CombatTab = Window:CreateTab("Combat & ESP", 4483362458)
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
--- Movement
+-- --- MOVEMENT ---
 local SpeedToggle = MainTab:CreateToggle({
    Name = "Speed Hack (V)",
    CurrentValue = false,
@@ -52,12 +51,12 @@ MainTab:CreateButton({
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then 
          root.Velocity = Vector3.new(0,0,0)
-         root.CFrame = CFrame.new(-480, 50, 520) 
+         root.CFrame = CFrame.new(-481, 53, 510) -- Точні координати всередині
       end
    end,
 })
 
--- Players
+-- --- PLAYERS ---
 PlayerTab:CreateInput({
    Name = "Find Player",
    PlaceholderText = "Нік...",
@@ -81,14 +80,25 @@ PlayerTab:CreateButton({
       local lpRoot = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and lpRoot then
           local targetRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
-          if targetRoot then
-              lpRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 3)
-          end
+          if targetRoot then lpRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 3) end
       end
    end,
 })
 
--- Ультимативний Флінг
+-- --- COMBAT & ESP ---
+CombatTab:CreateToggle({
+   Name = "ESP Death Counter",
+   CurrentValue = false,
+   Callback = function(Value) getgenv().DeathCounterESP = Value end,
+})
+
+CombatTab:CreateToggle({
+   Name = "Click Fling (LKM)",
+   CurrentValue = false,
+   Callback = function(Value) getgenv().ClickFlingEnabled = Value end,
+})
+
+-- --- FLING FUNCTION ---
 function PowerFling(targetPart)
     local lp = game.Players.LocalPlayer
     local char = lp.Character
@@ -96,33 +106,29 @@ function PowerFling(targetPart)
     if not root or not targetPart then return end
     
     local oldCF = root.CFrame
-    
-    -- Вимикаємо колізію
-    for _, v in pairs(char:GetDescendants()) do
-        if v:IsA("BasePart") then v.CanCollide = false end
-    end
+    root.Anchored = false -- Перестраховка
 
-    root.CFrame = targetPart.CFrame
-    task.wait(0.1)
-
+    -- Потужний імпульс
     local bV = Instance.new("BodyVelocity", root)
-    bV.MaxForce = Vector3.new(1, 1, 1) * 9e9
-    bV.Velocity = Vector3.new(70000, 70000, 70000) 
+    bV.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    bV.Velocity = Vector3.new(85000, 85000, 85000) 
     
     local bA = Instance.new("BodyAngularVelocity", root)
-    bA.MaxTorque = Vector3.new(1, 1, 1) * 9e9
-    bA.AngularVelocity = Vector3.new(70000, 70000, 70000)
+    bA.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    bA.AngularVelocity = Vector3.new(85000, 85000, 85000)
 
-    task.wait(0.8)
+    root.CFrame = targetPart.CFrame
+    task.wait(0.5) -- Швидкий контакт
 
     bV:Destroy()
     bA:Destroy()
+    
+    -- МИТТЄВА ЗУПИНКА ТА ПОВЕРНЕННЯ
     root.Velocity = Vector3.new(0, 0, 0)
     root.RotVelocity = Vector3.new(0, 0, 0)
-    
-    root.Anchored = true 
+    root.Anchored = true
     root.CFrame = oldCF
-    task.wait(0.15)
+    task.wait(0.2)
     root.Anchored = false
 end
 
@@ -135,33 +141,25 @@ PlayerTab:CreateButton({
    end,
 })
 
--- Combat & ESP
-CombatTab:CreateToggle({
-   Name = "Click Fling (LKM)",
-   CurrentValue = false,
-   Callback = function(Value) getgenv().ClickFlingEnabled = Value end,
-})
-
-CombatTab:CreateToggle({
-   Name = "Anti-Fling",
-   CurrentValue = false,
-   Callback = function(Value) getgenv().AntiFling = Value end,
-})
-
-CombatTab:CreateToggle({
-   Name = "ESP Death Counter",
-   CurrentValue = false,
-   Callback = function(Value) getgenv().DeathCounterESP = Value end,
-})
-
--- Settings
+-- --- SETTINGS ---
 SettingsTab:CreateKeybind({
-   Name = "Menu Key (R)",
+   Name = "Toggle Menu",
    CurrentKeybind = "R",
+   HoldToInteract = false,
    Callback = function() Window:Toggle() end,
 })
 
--- ЦИКЛИ
+SettingsTab:CreateKeybind({
+   Name = "Toggle Speed (V)",
+   CurrentKeybind = "V",
+   HoldToInteract = false,
+   Callback = function()
+      getgenv().SpeedEnabled = not getgenv().SpeedEnabled
+      SpeedToggle:Set(getgenv().SpeedEnabled)
+   end,
+})
+
+-- --- MAIN CYCLES ---
 game:GetService("RunService").Stepped:Connect(function()
     local lp = game.Players.LocalPlayer
     local char = lp.Character
@@ -169,7 +167,7 @@ game:GetService("RunService").Stepped:Connect(function()
     local hum = char:FindFirstChild("Humanoid")
     local root = char:FindFirstChild("HumanoidRootPart")
 
-    -- Speed Hack
+    -- Speed
     if getgenv().SpeedEnabled and hum and root then
         hum.WalkSpeed = getgenv().SpeedValue
         if hum.MoveDirection.Magnitude > 0 then
@@ -183,39 +181,32 @@ game:GetService("RunService").Stepped:Connect(function()
         if tRoot then root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3) end
     end
     
-    -- ESP Death Counter (ПОКРАЩЕНИЙ)
+    -- ESP Death Counter Fix
     if getgenv().DeathCounterESP then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
-                local character = p.Character
-                local isCountering = false
+                local head = p.Character.Head
+                -- Тільки якщо є специфічний ефект каунтера
+                local counter = p.Character:FindFirstChild("CounterEffect") or p.Character:FindFirstChild("Counter")
                 
-                -- Пошук за об'єктами або папками ефектів
-                if character:FindFirstChild("Counter") or 
-                   character:FindFirstChild("CounterEffect") or 
-                   character:FindFirstChild("Stance") or
-                   character:FindFirstChild("Highlight") or
-                   (character:FindFirstChild("Effects") and character.Effects:FindFirstChild("Counter")) then
-                    isCountering = true
-                end
-                
-                -- Відображення черепа
-                local head = character.Head
-                if isCountering and not head:FindFirstChild("SkullESP") then
-                    local bb = Instance.new("BillboardGui", head)
-                    bb.Name = "SkullESP"
-                    bb.Size = UDim2.new(4, 0, 4, 0)
-                    bb.AlwaysOnTop = true
-                    
-                    local label = Instance.new("TextLabel", bb)
-                    label.Text = "💀"
-                    label.Size = UDim2.new(1, 0, 1, 0)
-                    label.BackgroundTransparency = 1
-                    label.TextSize = 55
-                    label.TextColor3 = Color3.new(1, 0, 0)
-                    
-                    -- Видалення після завершення
-                    task.delay(1.5, function() if bb then bb:Destroy() end end)
+                if counter then
+                    if not head:FindFirstChild("SkullESP") then
+                        local bb = Instance.new("BillboardGui", head)
+                        bb.Name = "SkullESP"
+                        bb.Size = UDim2.new(4, 0, 4, 0)
+                        bb.AlwaysOnTop = true
+                        local label = Instance.new("TextLabel", bb)
+                        label.Text = "💀"
+                        label.BackgroundTransparency = 1
+                        label.Size = UDim2.new(1, 0, 1, 0)
+                        label.TextSize = 60
+                        label.TextColor3 = Color3.new(1, 0, 0)
+                    end
+                else
+                    -- Видаляємо череп, якщо ефект зник
+                    if head:FindFirstChild("SkullESP") then
+                        head.SkullESP:Destroy()
+                    end
                 end
             end
         end
