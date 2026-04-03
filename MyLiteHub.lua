@@ -1,8 +1,8 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLTD/Rayfield/main/source.lua'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Zayac Ultimate v5.1",
-   LoadingTitle = "Запуск систем...",
+   Name = "Zayac Ultimate v5.3",
+   LoadingTitle = "Запуск систем ESP & Combat...",
    LoadingSubtitle = "by Zayac333",
    ConfigurationSaving = { Enabled = false }
 })
@@ -16,7 +16,6 @@ getgenv().SelectedPlayer = nil
 getgenv().LoopTP = false
 getgenv().DeathCounterESP = false
 
--- Функція пошуку гравця
 local function getPlayer(name)
     name = name:lower()
     for _, p in pairs(game.Players:GetPlayers()) do
@@ -48,12 +47,12 @@ MainTab:CreateSlider({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport Center (Y=120)",
+   Name = "Teleport to Prison (Safe Zone)",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then 
          root.Velocity = Vector3.new(0,0,0)
-         root.CFrame = CFrame.new(0, 120, 0) 
+         root.CFrame = CFrame.new(-480, 50, 520) 
       end
    end,
 })
@@ -61,37 +60,71 @@ MainTab:CreateButton({
 -- Players
 PlayerTab:CreateInput({
    Name = "Find Player",
-   PlaceholderText = "Частина ніку...",
+   PlaceholderText = "Нік...",
    Callback = function(Text)
       getgenv().SelectedPlayer = getPlayer(Text)
       if getgenv().SelectedPlayer then
-          Rayfield:Notify({Title = "Ціль обрана", Content = "Гравець: " .. getgenv().SelectedPlayer.DisplayName})
+          Rayfield:Notify({Title = "Ціль обрана", Content = getgenv().SelectedPlayer.DisplayName})
       end
    end,
 })
 
 PlayerTab:CreateToggle({
-   Name = "Loop Teleport (Sticky)",
+   Name = "Loop Teleport",
    CurrentValue = false,
    Callback = function(Value) getgenv().LoopTP = Value end,
 })
 
--- НОВА ФУНКЦІЯ: ПРОСТИЙ ТЕЛЕПОРТ
 PlayerTab:CreateButton({
-   Name = "One-Time Teleport to Player",
+   Name = "Teleport to Player (One-Time)",
    Callback = function()
       local lpRoot = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and lpRoot then
           local targetRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
           if targetRoot then
               lpRoot.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 3)
-              Rayfield:Notify({Title = "Успіх", Content = "Ви телепортувались до " .. getgenv().SelectedPlayer.DisplayName, Duration = 2})
           end
-      else
-          Rayfield:Notify({Title = "Помилка", Content = "Спочатку виберіть гравця!", Duration = 3})
       end
    end,
 })
+
+-- Ультимативний Флінг
+function PowerFling(targetPart)
+    local lp = game.Players.LocalPlayer
+    local char = lp.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root or not targetPart then return end
+    
+    local oldCF = root.CFrame
+    
+    -- Вимикаємо колізію
+    for _, v in pairs(char:GetDescendants()) do
+        if v:IsA("BasePart") then v.CanCollide = false end
+    end
+
+    root.CFrame = targetPart.CFrame
+    task.wait(0.1)
+
+    local bV = Instance.new("BodyVelocity", root)
+    bV.MaxForce = Vector3.new(1, 1, 1) * 9e9
+    bV.Velocity = Vector3.new(70000, 70000, 70000) 
+    
+    local bA = Instance.new("BodyAngularVelocity", root)
+    bA.MaxTorque = Vector3.new(1, 1, 1) * 9e9
+    bA.AngularVelocity = Vector3.new(70000, 70000, 70000)
+
+    task.wait(0.8)
+
+    bV:Destroy()
+    bA:Destroy()
+    root.Velocity = Vector3.new(0, 0, 0)
+    root.RotVelocity = Vector3.new(0, 0, 0)
+    
+    root.Anchored = true 
+    root.CFrame = oldCF
+    task.wait(0.15)
+    root.Anchored = false
+end
 
 PlayerTab:CreateButton({
    Name = "Fling Selected Player",
@@ -121,45 +154,6 @@ CombatTab:CreateToggle({
    Callback = function(Value) getgenv().DeathCounterESP = Value end,
 })
 
--- ФУНКЦІЯ FLING (З ФІКСОМ ПОВЕРНЕННЯ)
-function PowerFling(targetPart)
-    local lp = game.Players.LocalPlayer
-    local char = lp.Character
-    local root = char and char:FindFirstChild("HumanoidRootPart")
-    if not root or not targetPart then return end
-    
-    local oldCF = root.CFrame
-    
-    -- Вимикаємо колізію
-    for _, v in pairs(char:GetDescendants()) do
-        if v:IsA("BasePart") then v.CanCollide = false end
-    end
-
-    root.CFrame = targetPart.CFrame * CFrame.new(0, 0, 1)
-    task.wait(0.1)
-
-    local bV = Instance.new("BodyVelocity", root)
-    bV.MaxForce = Vector3.new(1, 1, 1) * 9e9
-    bV.Velocity = Vector3.new(45000, 45000, 45000)
-    
-    local bA = Instance.new("BodyAngularVelocity", root)
-    bA.MaxTorque = Vector3.new(1, 1, 1) * 9e9
-    bA.AngularVelocity = Vector3.new(45000, 45000, 45000)
-
-    task.wait(1.0) -- Трохи зменшив час, щоб античіт не встиг зреагувати
-
-    bV:Destroy()
-    bA:Destroy()
-    root.Velocity = Vector3.new(0, 0, 0)
-    root.RotVelocity = Vector3.new(0, 0, 0)
-    
-    -- Фікс повернення (Anchored на мить)
-    root.Anchored = true 
-    root.CFrame = oldCF
-    task.wait(0.15)
-    root.Anchored = false
-end
-
 -- Settings
 SettingsTab:CreateKeybind({
    Name = "Menu Key (R)",
@@ -167,21 +161,7 @@ SettingsTab:CreateKeybind({
    Callback = function() Window:Toggle() end,
 })
 
-SettingsTab:CreateKeybind({
-   Name = "Toggle Speed (V)",
-   CurrentKeybind = "V",
-   Callback = function()
-      getgenv().SpeedEnabled = not getgenv().SpeedEnabled
-      SpeedToggle:Set(getgenv().SpeedEnabled)
-   end,
-})
-
-SettingsTab:CreateButton({
-   Name = "Destroy Script",
-   Callback = function() Rayfield:Destroy() end,
-})
-
--- ГОЛОВНИЙ ЦИКЛ
+-- ЦИКЛИ
 game:GetService("RunService").Stepped:Connect(function()
     local lp = game.Players.LocalPlayer
     local char = lp.Character
@@ -189,14 +169,12 @@ game:GetService("RunService").Stepped:Connect(function()
     local hum = char:FindFirstChild("Humanoid")
     local root = char:FindFirstChild("HumanoidRootPart")
 
-    -- Fixed Speed
+    -- Speed Hack
     if getgenv().SpeedEnabled and hum and root then
         hum.WalkSpeed = getgenv().SpeedValue
         if hum.MoveDirection.Magnitude > 0 then
             root.CFrame = root.CFrame + (hum.MoveDirection * (getgenv().SpeedValue / 115))
         end
-        hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
-        hum:SetStateEnabled(Enum.HumanoidStateType.Stunned, false)
     end
     
     -- Loop TP
@@ -205,28 +183,38 @@ game:GetService("RunService").Stepped:Connect(function()
         if tRoot then root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3) end
     end
     
-    -- Improved ESP Death Counter
+    -- ESP Death Counter (ПОКРАЩЕНИЙ)
     if getgenv().DeathCounterESP then
         for _, p in pairs(game.Players:GetPlayers()) do
-            if p ~= lp and p.Character then
-                -- Розширений пошук каунтера
-                local isCountering = p.Character:FindFirstChild("DeathCounter") or 
-                                    p.Character:FindFirstChild("Counter") or 
-                                    p.Character:FindFirstChild("CounterEffect") or
-                                    p.Character:FindFirstChild("Stance") -- Іноді гра називає це Stance
+            if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
+                local character = p.Character
+                local isCountering = false
                 
-                local head = p.Character:FindFirstChild("Head")
-                if isCountering and head and not head:FindFirstChild("SkullESP") then
+                -- Пошук за об'єктами або папками ефектів
+                if character:FindFirstChild("Counter") or 
+                   character:FindFirstChild("CounterEffect") or 
+                   character:FindFirstChild("Stance") or
+                   character:FindFirstChild("Highlight") or
+                   (character:FindFirstChild("Effects") and character.Effects:FindFirstChild("Counter")) then
+                    isCountering = true
+                end
+                
+                -- Відображення черепа
+                local head = character.Head
+                if isCountering and not head:FindFirstChild("SkullESP") then
                     local bb = Instance.new("BillboardGui", head)
                     bb.Name = "SkullESP"
-                    bb.Size = UDim2.new(3, 0, 3, 0)
+                    bb.Size = UDim2.new(4, 0, 4, 0)
                     bb.AlwaysOnTop = true
+                    
                     local label = Instance.new("TextLabel", bb)
                     label.Text = "💀"
                     label.Size = UDim2.new(1, 0, 1, 0)
                     label.BackgroundTransparency = 1
                     label.TextSize = 55
                     label.TextColor3 = Color3.new(1, 0, 0)
+                    
+                    -- Видалення після завершення
                     task.delay(1.5, function() if bb then bb:Destroy() end end)
                 end
             end
