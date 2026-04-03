@@ -1,15 +1,15 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLTD/Rayfield/main/source.lua'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Zayac Ultimate v5.8",
-   LoadingTitle = "Final Tuning...",
-   LoadingSubtitle = "by Zayac333",
+   Name = "Zayac Hub v1.0",
+   LoadingTitle = "Final version",
+   LoadingSubtitle = "by Zayac",
    ConfigurationSaving = { Enabled = false }
 })
 
--- Змінні
+-- --- ЗМІННІ ---
 getgenv().SpeedEnabled = false
-getgenv().SpeedValue = 80
+getgenv().SpeedValue = 63 
 getgenv().SelectedPlayer = nil
 getgenv().LoopTP = false
 getgenv().DeathCounterESP = false
@@ -17,7 +17,6 @@ getgenv().ClickFlingEnabled = false
 getgenv().AntiFlingEnabled = false
 getgenv().IsFlinging = false
 
--- Функція розумного пошуку гравця
 local function getPlayer(name)
     name = name:lower()
     for _, p in pairs(game.Players:GetPlayers()) do
@@ -44,38 +43,40 @@ MainTab:CreateSlider({
    Name = "Speed Value",
    Range = {16, 300},
    Increment = 1,
-   CurrentValue = 80,
+   CurrentValue = 16,
    Callback = function(Value) getgenv().SpeedValue = Value end,
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Center (0, 120, 0)",
+   Name = "Teleport to Center",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-      if root then root.CFrame = CFrame.new(0, 120, 0) end
+      if root then root.CFrame = CFrame.new(180, 450, 180) end
+   end,
+})
+
+-- НОВА ФУНКЦІЯ: Телепорт на гору
+MainTab:CreateButton({
+   Name = "Teleport to Top (High)",
+   Callback = function()
+      local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+      if root then 
+          -- Телепортує на поточні X та Z, але піднімає на висоту 1000
+          root.CFrame = CFrame.new(root.Position.X, 1000, root.Position.Z) 
+      end
    end,
 })
 
 -- --- PLAYERS ---
 PlayerTab:CreateInput({
-   Name = "Find Player (Partial Name)",
-   PlaceholderText = "Введіть хоча б 1 літеру...",
-   RemoveTextAfterFocusLost = false,
+   Name = "Find Player",
+   PlaceholderText = "Нік...",
    Callback = function(Text)
-      local found = getPlayer(Text)
-      if found then
-          getgenv().SelectedPlayer = found
-          Rayfield:Notify({Title = "Гравця знайдено!", Content = "Обрано: " .. found.DisplayName .. " (@" .. found.Name .. ")", Duration = 3})
-      else
-          getgenv().SelectedPlayer = nil
+      getgenv().SelectedPlayer = getPlayer(Text)
+      if getgenv().SelectedPlayer then
+          Rayfield:Notify({Title = "Обрано", Content = getgenv().SelectedPlayer.DisplayName})
       end
    end,
-})
-
-PlayerTab:CreateToggle({
-   Name = "Loop Teleport",
-   CurrentValue = false,
-   Callback = function(Value) getgenv().LoopTP = Value end,
 })
 
 PlayerTab:CreateButton({
@@ -86,6 +87,12 @@ PlayerTab:CreateButton({
           lpRoot.CFrame = getgenv().SelectedPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
       end
    end,
+})
+
+PlayerTab:CreateToggle({
+   Name = "Loop Teleport",
+   CurrentValue = false,
+   Callback = function(Value) getgenv().LoopTP = Value end,
 })
 
 -- --- COMBAT & ESP ---
@@ -107,39 +114,29 @@ CombatTab:CreateToggle({
    Callback = function(Value) getgenv().ClickFlingEnabled = Value end,
 })
 
--- --- ФЛІНГ БЕЗ БЛОКІВ (CLEAN METHOD) ---
+-- --- ФЛІНГ ВЕРСІЇ 5.9 ---
 function PowerFling(targetPart)
-    if getgenv().IsFlinging then return end
+    if getgenv().IsFlinging or not targetPart then return end
     getgenv().IsFlinging = true
-    
     local lp = game.Players.LocalPlayer
     local char = lp.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
-    if not root or not targetPart then getgenv().IsFlinging = false return end
+    if not root then getgenv().IsFlinging = false return end
+    local returnCF = root.CFrame
     
-    local oldCF = root.CFrame
-    
-    -- Створюємо обертання для флінгу (без зміни прозорості)
-    local bA = Instance.new("BodyAngularVelocity", root)
-    bA.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-    bA.AngularVelocity = Vector3.new(180000, 180000, 180000)
+    local function applyForce()
+        root.Velocity = Vector3.new(500000, 500000, 500000)
+        root.RotVelocity = Vector3.new(500000, 500000, 500000)
+    end
 
     local start = tick()
-    while tick() - start < 0.6 do
-        root.CFrame = targetPart.CFrame
+    while tick() - start < 0.5 do
+        applyForce()
+        root.CFrame = targetPart.CFrame * CFrame.Angles(math.random(), math.random(), math.random())
         task.wait()
     end
-
-    bA:Destroy()
-    root.Velocity = Vector3.new(0,0,0)
-    root.RotVelocity = Vector3.new(0,0,0)
-    
-    -- Повернення
-    for i = 1, 5 do
-        root.CFrame = oldCF
-        task.wait(0.01)
-    end
-    
+    root.Velocity = Vector3.new(0,0,0); root.RotVelocity = Vector3.new(0,0,0)
+    for i = 1, 10 do root.CFrame = returnCF task.wait(0.01) end
     getgenv().IsFlinging = false
 end
 
@@ -154,7 +151,7 @@ PlayerTab:CreateButton({
 
 -- --- SETTINGS ---
 SettingsTab:CreateKeybind({
-   Name = "Menu Toggle",
+   Name = "Rayfield Keybind",
    CurrentKeybind = "R",
    HoldToInteract = false,
    Callback = function() Window:Toggle() end,
@@ -183,23 +180,19 @@ game:GetService("RunService").Stepped:Connect(function()
     local root = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChild("Humanoid")
 
-    -- Speed & NoStun
     if getgenv().SpeedEnabled and hum and root then
         hum.WalkSpeed = getgenv().SpeedValue
         if hum.MoveDirection.Magnitude > 0 then
             root.CFrame = root.CFrame + (hum.MoveDirection * (getgenv().SpeedValue / 110))
         end
         hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
-        hum:SetStateEnabled(Enum.HumanoidStateType.Stunned, false)
     end
     
-    -- Loop TP
     if getgenv().LoopTP and getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and root then
         local tRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
         if tRoot then root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3) end
     end
     
-    -- Smart Anti-Fling
     if getgenv().AntiFlingEnabled and not getgenv().IsFlinging then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= lp and p.Character then
@@ -210,7 +203,6 @@ game:GetService("RunService").Stepped:Connect(function()
         end
     end
 
-    -- ESP Death Counter
     if getgenv().DeathCounterESP then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
@@ -219,8 +211,7 @@ game:GetService("RunService").Stepped:Connect(function()
                 if counter then
                     if not head:FindFirstChild("SkullESP") then
                         local bb = Instance.new("BillboardGui", head)
-                        bb.Name = "SkullESP"
-                        bb.Size = UDim2.new(4, 0, 4, 0); bb.AlwaysOnTop = true
+                        bb.Name = "SkullESP"; bb.Size = UDim2.new(4,0,4,0); bb.AlwaysOnTop = true
                         local lbl = Instance.new("TextLabel", bb)
                         lbl.Text = "💀"; lbl.BackgroundTransparency = 1; lbl.Size = UDim2.new(1,0,1,0); lbl.TextSize = 60; lbl.TextColor3 = Color3.new(1,0,0)
                     end
@@ -232,7 +223,7 @@ end)
 
 local mouse = game.Players.LocalPlayer:GetMouse()
 mouse.Button1Down:Connect(function()
-    if getgenv().ClickFlingEnabled and mouse.Target and mouse.Target.Parent:FindFirstChild("Humanoid") then
-        PowerFling(mouse.Target.Parent:FindFirstChild("HumanoidRootPart"))
-    end
+   if getgenv().ClickFlingEnabled and mouse.Target and mouse.Target.Parent:FindFirstChild("Humanoid") then
+       PowerFling(mouse.Target.Parent:FindFirstChild("HumanoidRootPart"))
+   end
 end)
