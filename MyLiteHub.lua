@@ -1,13 +1,21 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- Завантаження бібліотеки з перевіркою
+local Success, Rayfield = pcall(function()
+    return loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+end)
+
+if not Success or not Rayfield then
+    warn("Rayfield Library failed to load. Check your internet connection.")
+    return
+end
 
 local Window = Rayfield:CreateWindow({
-   Name = "Zayac Ultimate Hub v4.6",
+   Name = "Zayac Ultimate Hub v4.7",
    LoadingTitle = "Ініціалізація систем...",
    LoadingSubtitle = "by Zayac333",
    ConfigurationSaving = { Enabled = false }
 })
 
--- Глобальні змінні (Налаштування)
+-- Налаштування
 getgenv().SpeedEnabled = false
 getgenv().SpeedValue = 80
 getgenv().AntiFling = false
@@ -16,7 +24,6 @@ getgenv().SelectedPlayer = nil
 getgenv().LoopTP = false
 getgenv().DeathCounterESP = false
 
--- Функція пошуку гравця
 local function getPlayer(name)
     name = name:lower()
     for _, p in pairs(game.Players:GetPlayers()) do
@@ -45,7 +52,7 @@ MainTab:CreateSlider({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Map Center (H=120)",
+   Name = "Teleport to Map Center",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then 
@@ -55,25 +62,23 @@ MainTab:CreateButton({
    end,
 })
 
--- ВКЛАДКА PLAYERS (Пошук та Loop TP)
+-- ВКЛАДКА PLAYERS
 local PlayerTab = Window:CreateTab("Players", 4483362458)
 
 PlayerTab:CreateInput({
-   Name = "Search Player Name",
-   PlaceholderText = "Введіть нік...",
+   Name = "Search Player",
+   PlaceholderText = "Нік...",
    Callback = function(Text)
       local p = getPlayer(Text)
       if p then
           getgenv().SelectedPlayer = p
-          Rayfield:Notify({Title = "Ціль вибрана", Content = "Вибрано: " .. p.DisplayName, Duration = 3})
-      else
-          Rayfield:Notify({Title = "Помилка", Content = "Гравця не знайдено", Duration = 3})
+          Rayfield:Notify({Title = "Ціль вибрана", Content = p.DisplayName, Duration = 3})
       end
    end,
 })
 
 PlayerTab:CreateToggle({
-   Name = "Loop Teleport to Selected",
+   Name = "Loop Teleport",
    CurrentValue = false,
    Callback = function(Value) getgenv().LoopTP = Value end,
 })
@@ -87,7 +92,7 @@ PlayerTab:CreateButton({
    end,
 })
 
--- ВКЛАДКА COMBAT & ESP
+-- ВКЛАДКА COMBAT
 local CombatTab = Window:CreateTab("Combat & ESP", 4483362458)
 
 CombatTab:CreateToggle({
@@ -108,26 +113,26 @@ CombatTab:CreateToggle({
    Callback = function(Value) getgenv().DeathCounterESP = Value end,
 })
 
--- ФУНКЦІЯ FLING (Потужна версія)
+-- ФУНКЦІЯ FLING
 function PowerFling(targetPart)
     local char = game.Players.LocalPlayer.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
     if not root or not targetPart then return end
     
     local oldCF = root.CFrame
-    root.CFrame = targetPart.CFrame * CFrame.new(0, 0, 1)
-    task.wait(0.2) -- Затримка для стабілізації перед ударом
+    root.CFrame = targetPart.CFrame * CFrame.new(0, 0, 1.5)
+    task.wait(0.2)
     
     local bV = Instance.new("BodyVelocity", root)
     bV.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-    bV.Velocity = Vector3.new(20000, 20000, 20000)
+    bV.Velocity = Vector3.new(25000, 25000, 25000)
     
     local bA = Instance.new("BodyAngularVelocity", root)
     bA.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-    bA.AngularVelocity = Vector3.new(20000, 20000, 20000)
+    bA.AngularVelocity = Vector3.new(25000, 25000, 25000)
 
     local start = tick()
-    while tick() - start < 1.2 do
+    while tick() - start < 1.3 do
         root.CFrame = targetPart.CFrame
         task.wait()
     end
@@ -143,14 +148,13 @@ end
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
 SettingsTab:CreateKeybind({
-   Name = "Menu Open/Close",
+   Name = "Menu Toggle (R)",
    CurrentKeybind = "R",
-   HoldToInteract = false,
    Callback = function() Window:Toggle() end,
 })
 
 SettingsTab:CreateKeybind({
-   Name = "Toggle Speed (V)",
+   Name = "Speed Toggle (V)",
    CurrentKeybind = "V",
    Callback = function()
       getgenv().SpeedEnabled = not getgenv().SpeedEnabled
@@ -159,33 +163,38 @@ SettingsTab:CreateKeybind({
 })
 
 SettingsTab:CreateButton({
-   Name = "Destroy Script (Full Stop)",
-   Callback = function() Rayfield:Destroy() end,
+   Name = "Destroy Script",
+   Callback = function() 
+       getgenv().SpeedEnabled = false
+       getgenv().LoopTP = false
+       Rayfield:Destroy() 
+   end,
 })
 
--- ГОЛОВНИЙ ЦИКЛ ОБРОБКИ
-game:GetService("RunService").Heartbeat:Connect(function()
+-- ЦИКЛИ
+game:GetService("RunService").Stepped:Connect(function()
     local char = game.Players.LocalPlayer.Character
     local hum = char and char:FindFirstChild("Humanoid")
     local root = char and char:FindFirstChild("HumanoidRootPart")
 
-    -- Швидкість та Анти-Стан
-    if getgenv().SpeedEnabled and hum then
+    -- FIX: Швидкість тепер не скидається при поворотах
+    if getgenv().SpeedEnabled and hum and root then
         hum.WalkSpeed = getgenv().SpeedValue
+        -- Додатковий форс-мув, щоб обійти внутрішні скрипти гри
+        if hum.MoveDirection.Magnitude > 0 then
+            root.CFrame = root.CFrame + (hum.MoveDirection * (getgenv().SpeedValue / 100))
+        end
         hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
         hum:SetStateEnabled(Enum.HumanoidStateType.Stunned, false)
-        hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-    end
-    
-    -- Loop TP (Кріплення до гравця)
-    if getgenv().LoopTP and getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and root then
-        local tRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if tRoot then
-            root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3)
-        end
     end
 
-    -- Anti-Fling (Вимкнення колізії)
+    -- Loop TP
+    if getgenv().LoopTP and getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and root then
+        local tRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if tRoot then root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3) end
+    end
+
+    -- Anti-Fling
     if getgenv().AntiFling then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= game.Players.LocalPlayer and p.Character then
@@ -196,7 +205,7 @@ game:GetService("RunService").Heartbeat:Connect(function()
         end
     end
 
-    -- ESP Death Counter (Череп над головою)
+    -- Death Counter ESP
     if getgenv().DeathCounterESP then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= game.Players.LocalPlayer and p.Character then
@@ -205,13 +214,12 @@ game:GetService("RunService").Heartbeat:Connect(function()
                 if dc and head and not head:FindFirstChild("SkullESP") then
                     local bb = Instance.new("BillboardGui", head)
                     bb.Name = "SkullESP"
-                    bb.Size = UDim2.new(2, 0, 2, 0)
+                    bb.Size = UDim2.new(2.5, 0, 2.5, 0)
                     bb.AlwaysOnTop = true
                     local label = Instance.new("TextLabel", bb)
                     label.Text = "💀"
                     label.Size = UDim2.new(1, 0, 1, 0)
                     label.BackgroundTransparency = 1
-                    label.TextColor3 = Color3.new(1, 0, 0)
                     label.TextSize = 45
                     task.delay(2.5, function() if bb then bb:Destroy() end end)
                 end
@@ -220,7 +228,6 @@ game:GetService("RunService").Heartbeat:Connect(function()
     end
 end)
 
--- Click Fling за ЛКМ
 local mouse = game.Players.LocalPlayer:GetMouse()
 mouse.Button1Down:Connect(function()
     if getgenv().ClickFlingEnabled and mouse.Target and mouse.Target.Parent:FindFirstChild("Humanoid") then
@@ -228,8 +235,4 @@ mouse.Button1Down:Connect(function()
     end
 end)
 
-Rayfield:Notify({
-    Title = "Zayac Ultimate v4.6",
-    Content = "Скрипт успішно завантажено! Стандартна швидкість: 80.",
-    Duration = 5
-})
+Rayfield:Notify({Title = "Zayac Ultimate v4.7", Content = "Готово! Швидкість зафіксовано.", Duration = 5})
