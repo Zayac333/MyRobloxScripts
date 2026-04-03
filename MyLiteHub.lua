@@ -201,4 +201,35 @@ game:GetService("RunService").Heartbeat:Connect(function()
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= game.Players.LocalPlayer and p.Character then
                 local dc = p.Character:FindFirstChild("DeathCounter") or p.Character:FindFirstChild("Counter")
-                local head = p.Character:FindFirstChild("Head
+                local head = p.Character:FindFirstChild("Head")
+                if dc and head and not head:FindFirstChild("SkullESP") then
+                    local bb = Instance.new("BillboardGui", head)
+                    bb.Name = "SkullESP"
+                    bb.Size = UDim2.new(2, 0, 2, 0)
+                    bb.AlwaysOnTop = true
+                    local label = Instance.new("TextLabel", bb)
+                    label.Text = "💀"
+                    label.Size = UDim2.new(1, 0, 1, 0)
+                    label.BackgroundTransparency = 1
+                    label.TextColor3 = Color3.new(1, 0, 0)
+                    label.TextSize = 45
+                    task.delay(2.5, function() if bb then bb:Destroy() end end)
+                end
+            end
+        end
+    end
+end)
+
+-- Click Fling за ЛКМ
+local mouse = game.Players.LocalPlayer:GetMouse()
+mouse.Button1Down:Connect(function()
+    if getgenv().ClickFlingEnabled and mouse.Target and mouse.Target.Parent:FindFirstChild("Humanoid") then
+        PowerFling(mouse.Target.Parent:FindFirstChild("HumanoidRootPart"))
+    end
+end)
+
+Rayfield:Notify({
+    Title = "Zayac Ultimate v4.6",
+    Content = "Скрипт успішно завантажено! Стандартна швидкість: 80.",
+    Duration = 5
+})
