@@ -1,21 +1,22 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Zayac Ultimate Hub v4.0",
-   LoadingTitle = "Завантаження...",
+   Name = "Zayac Ultimate Hub v4.6",
+   LoadingTitle = "Ініціалізація систем...",
    LoadingSubtitle = "by Zayac333",
-   ConfigurationSaving = { Enabled = false },
-   KeySystem = false
+   ConfigurationSaving = { Enabled = false }
 })
 
--- Глобальні змінні
+-- Глобальні змінні (Налаштування)
 getgenv().SpeedEnabled = false
 getgenv().SpeedValue = 80
 getgenv().AntiFling = false
 getgenv().ClickFlingEnabled = false
 getgenv().SelectedPlayer = nil
+getgenv().LoopTP = false
+getgenv().DeathCounterESP = false
 
--- Функція пошуку гравця по частині імені
+-- Функція пошуку гравця
 local function getPlayer(name)
     name = name:lower()
     for _, p in pairs(game.Players:GetPlayers()) do
@@ -30,7 +31,7 @@ end
 local MainTab = Window:CreateTab("Movement", 4483362458)
 
 local SpeedToggle = MainTab:CreateToggle({
-   Name = "Speed Hack (V)",
+   Name = "Speed Hack & Anti-Stun (V)",
    CurrentValue = false,
    Callback = function(Value) getgenv().SpeedEnabled = Value end,
 })
@@ -44,41 +45,50 @@ MainTab:CreateSlider({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Map Center",
+   Name = "Teleport to Map Center (H=120)",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-      if root then root.CFrame = CFrame.new(0, 50, 0) end
+      if root then 
+          root.Velocity = Vector3.new(0,0,0)
+          root.CFrame = CFrame.new(0, 120, 0) 
+      end
    end,
 })
 
--- ВКЛАДКА PLAYERS (Пошук та Дії)
+-- ВКЛАДКА PLAYERS (Пошук та Loop TP)
 local PlayerTab = Window:CreateTab("Players", 4483362458)
 
 PlayerTab:CreateInput({
-   Name = "Player Name (Short)",
+   Name = "Search Player Name",
    PlaceholderText = "Введіть нік...",
-   RemoveTextAfterFocusLost = false,
    Callback = function(Text)
       local p = getPlayer(Text)
       if p then
           getgenv().SelectedPlayer = p
-          Rayfield:Notify({Title = "Знайдено!", Content = "Вибрано: " .. p.DisplayName, Duration = 3})
+          Rayfield:Notify({Title = "Ціль вибрана", Content = "Вибрано: " .. p.DisplayName, Duration = 3})
+      else
+          Rayfield:Notify({Title = "Помилка", Content = "Гравця не знайдено", Duration = 3})
       end
    end,
+})
+
+PlayerTab:CreateToggle({
+   Name = "Loop Teleport to Selected",
+   CurrentValue = false,
+   Callback = function(Value) getgenv().LoopTP = Value end,
 })
 
 PlayerTab:CreateButton({
-   Name = "Teleport to Player",
+   Name = "Fling Selected Player",
    Callback = function()
-      local p = getgenv().SelectedPlayer
-      if p and p.Character then
-          game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame
+      if getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character then
+          PowerFling(getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart"))
       end
    end,
 })
 
--- ВКЛАДКА COMBAT
-local CombatTab = Window:CreateTab("Combat", 4483362458)
+-- ВКЛАДКА COMBAT & ESP
+local CombatTab = Window:CreateTab("Combat & ESP", 4483362458)
 
 CombatTab:CreateToggle({
    Name = "Click Fling (LKM)",
@@ -92,29 +102,32 @@ CombatTab:CreateToggle({
    Callback = function(Value) getgenv().AntiFling = Value end,
 })
 
--- ФУНКЦІЯ FLING (Invisible Method)
-local function PowerFling(targetPart)
+CombatTab:CreateToggle({
+   Name = "ESP Death Counter",
+   CurrentValue = false,
+   Callback = function(Value) getgenv().DeathCounterESP = Value end,
+})
+
+-- ФУНКЦІЯ FLING (Потужна версія)
+function PowerFling(targetPart)
     local char = game.Players.LocalPlayer.Character
-    local root = char:FindFirstChild("HumanoidRootPart")
+    local root = char and char:FindFirstChild("HumanoidRootPart")
     if not root or not targetPart then return end
     
     local oldCF = root.CFrame
-    local startTime = tick()
-    
-    -- Створюємо невидимість для фізики
-    for _, v in pairs(char:GetChildren()) do
-        if v:IsA("BasePart") then v.CanCollide = false end
-    end
+    root.CFrame = targetPart.CFrame * CFrame.new(0, 0, 1)
+    task.wait(0.2) -- Затримка для стабілізації перед ударом
     
     local bV = Instance.new("BodyVelocity", root)
     bV.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-    bV.Velocity = Vector3.new(10000, 10000, 10000)
+    bV.Velocity = Vector3.new(20000, 20000, 20000)
     
     local bA = Instance.new("BodyAngularVelocity", root)
     bA.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-    bA.AngularVelocity = Vector3.new(10000, 10000, 10000)
+    bA.AngularVelocity = Vector3.new(20000, 20000, 20000)
 
-    while tick() - startTime < 1.5 do
+    local start = tick()
+    while tick() - start < 1.2 do
         root.CFrame = targetPart.CFrame
         task.wait()
     end
@@ -126,25 +139,14 @@ local function PowerFling(targetPart)
     root.CFrame = oldCF
 end
 
-PlayerTab:CreateButton({
-   Name = "Fling Selected Player",
-   Callback = function()
-      if getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character then
-          PowerFling(getgenv().SelectedPlayer.Character.HumanoidRootPart)
-      end
-   end,
-})
-
 -- ВКЛАДКА SETTINGS
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
 SettingsTab:CreateKeybind({
-   Name = "Open/Close Menu",
+   Name = "Menu Open/Close",
    CurrentKeybind = "R",
    HoldToInteract = false,
-   Callback = function(Key)
-      Window:Toggle()
-   end,
+   Callback = function() Window:Toggle() end,
 })
 
 SettingsTab:CreateKeybind({
@@ -157,21 +159,33 @@ SettingsTab:CreateKeybind({
 })
 
 SettingsTab:CreateButton({
-   Name = "Destroy Script (X)",
-   Callback = function()
-      Rayfield:Destroy()
-   end,
+   Name = "Destroy Script (Full Stop)",
+   Callback = function() Rayfield:Destroy() end,
 })
 
--- ЦИКЛИ
+-- ГОЛОВНИЙ ЦИКЛ ОБРОБКИ
 game:GetService("RunService").Heartbeat:Connect(function()
-    local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+    local char = game.Players.LocalPlayer.Character
+    local hum = char and char:FindFirstChild("Humanoid")
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+
+    -- Швидкість та Анти-Стан
     if getgenv().SpeedEnabled and hum then
         hum.WalkSpeed = getgenv().SpeedValue
         hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
         hum:SetStateEnabled(Enum.HumanoidStateType.Stunned, false)
+        hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
     end
     
+    -- Loop TP (Кріплення до гравця)
+    if getgenv().LoopTP and getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and root then
+        local tRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if tRoot then
+            root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3)
+        end
+    end
+
+    -- Anti-Fling (Вимкнення колізії)
     if getgenv().AntiFling then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= game.Players.LocalPlayer and p.Character then
@@ -181,11 +195,10 @@ game:GetService("RunService").Heartbeat:Connect(function()
             end
         end
     end
-end)
 
-local mouse = game.Players.LocalPlayer:GetMouse()
-mouse.Button1Down:Connect(function()
-    if getgenv().ClickFlingEnabled and mouse.Target and mouse.Target.Parent:FindFirstChild("Humanoid") then
-        PowerFling(mouse.Target.Parent:FindFirstChild("HumanoidRootPart"))
-    end
-end)
+    -- ESP Death Counter (Череп над головою)
+    if getgenv().DeathCounterESP then
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p ~= game.Players.LocalPlayer and p.Character then
+                local dc = p.Character:FindFirstChild("DeathCounter") or p.Character:FindFirstChild("Counter")
+                local head = p.Character:FindFirstChild("Head
