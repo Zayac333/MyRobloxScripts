@@ -1,14 +1,15 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLTD/Rayfield/main/source.lua'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Zayac Hub v1.0",
-   LoadingTitle = "Final version",
+   Name = "Zayac Hub v1.32",
+   LoadingTitle = "Updated Version",
    LoadingSubtitle = "by Zayac",
    ConfigurationSaving = { Enabled = false }
 })
 
 -- --- ЗМІННІ ---
 getgenv().SpeedEnabled = false
+getgenv().NoclipEnabled = false -- Нова змінна
 getgenv().SpeedValue = 63 
 getgenv().SelectedPlayer = nil
 getgenv().LoopTP = false
@@ -39,11 +40,18 @@ local SpeedTgl = MainTab:CreateToggle({
    Callback = function(Value) getgenv().SpeedEnabled = Value end,
 })
 
+-- Нова кнопка NOCLIP
+local NoclipTgl = MainTab:CreateToggle({
+    Name = "Noclip (N)",
+    CurrentValue = false,
+    Callback = function(Value) getgenv().NoclipEnabled = Value end,
+})
+
 MainTab:CreateSlider({
    Name = "Speed Value",
    Range = {16, 300},
    Increment = 1,
-   CurrentValue = 16,
+   CurrentValue = 63,
    Callback = function(Value) getgenv().SpeedValue = Value end,
 })
 
@@ -55,13 +63,11 @@ MainTab:CreateButton({
    end,
 })
 
--- НОВА ФУНКЦІЯ: Телепорт на гору
 MainTab:CreateButton({
    Name = "Teleport to Top (High)",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then 
-          -- Телепортує на поточні X та Z, але піднімає на висоту 1000
           root.CFrame = CFrame.new(root.Position.X, 1000, root.Position.Z) 
       end
    end,
@@ -114,7 +120,7 @@ CombatTab:CreateToggle({
    Callback = function(Value) getgenv().ClickFlingEnabled = Value end,
 })
 
--- --- ФЛІНГ ВЕРСІЇ 5.9 ---
+-- --- ФЛІНГ ---
 function PowerFling(targetPart)
     if getgenv().IsFlinging or not targetPart then return end
     getgenv().IsFlinging = true
@@ -167,12 +173,23 @@ SettingsTab:CreateKeybind({
    end,
 })
 
+-- Бінд для Нокліпу на N
+SettingsTab:CreateKeybind({
+    Name = "Noclip Toggle",
+    CurrentKeybind = "U",
+    HoldToInteract = false,
+    Callback = function()
+       getgenv().NoclipEnabled = not getgenv().NoclipEnabled
+       NoclipTgl:Set(getgenv().NoclipEnabled)
+    end,
+ })
+
 SettingsTab:CreateButton({
    Name = "Destroy Script",
    Callback = function() Rayfield:Destroy() end,
 })
 
--- --- ЦИКЛИ ---
+-- --- ЦИКЛИ (RunService) ---
 game:GetService("RunService").Stepped:Connect(function()
     local lp = game.Players.LocalPlayer
     local char = lp.Character
@@ -180,6 +197,7 @@ game:GetService("RunService").Stepped:Connect(function()
     local root = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChild("Humanoid")
 
+    -- Логіка Speed Hack
     if getgenv().SpeedEnabled and hum and root then
         hum.WalkSpeed = getgenv().SpeedValue
         if hum.MoveDirection.Magnitude > 0 then
@@ -188,11 +206,22 @@ game:GetService("RunService").Stepped:Connect(function()
         hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
     end
     
+    -- Логіка NOCLIP
+    if getgenv().NoclipEnabled then
+        for _, part in pairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+    end
+    
+    -- Loop Teleport
     if getgenv().LoopTP and getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and root then
         local tRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
         if tRoot then root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3) end
     end
     
+    -- Anti-Fling
     if getgenv().AntiFlingEnabled and not getgenv().IsFlinging then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= lp and p.Character then
@@ -203,6 +232,7 @@ game:GetService("RunService").Stepped:Connect(function()
         end
     end
 
+    -- Death Counter ESP
     if getgenv().DeathCounterESP then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
@@ -224,6 +254,6 @@ end)
 local mouse = game.Players.LocalPlayer:GetMouse()
 mouse.Button1Down:Connect(function()
    if getgenv().ClickFlingEnabled and mouse.Target and mouse.Target.Parent:FindFirstChild("Humanoid") then
-       PowerFling(mouse.Target.Parent:FindFirstChild("HumanoidRootPart"))
+        PowerFling(mouse.Target.Parent:FindFirstChild("HumanoidRootPart"))
    end
 end)
