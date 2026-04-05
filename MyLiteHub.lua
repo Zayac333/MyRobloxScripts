@@ -63,6 +63,16 @@ MainTab:CreateButton({
    end,
 })
 
+MainTab:CreateButton({
+   Name = "Teleport to Top (High)",
+   Callback = function()
+      local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+      if root then 
+          root.CFrame = CFrame.new(root.Position.X, 1000, root.Position.Z) 
+      end
+   end,
+})
+
 -- --- PLAYERS ---
 PlayerTab:CreateInput({
    Name = "Find Player",
@@ -91,6 +101,15 @@ PlayerTab:CreateToggle({
    Callback = function(Value) getgenv().LoopTP = Value end,
 })
 
+PlayerTab:CreateButton({
+   Name = "Fling Selected Player",
+   Callback = function()
+      if getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character then
+          PowerFling(getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart"))
+      end
+   end,
+})
+
 -- --- COMBAT & ESP ---
 CombatTab:CreateToggle({
    Name = "Player ESP (Blue)",
@@ -116,7 +135,7 @@ CombatTab:CreateToggle({
    Callback = function(Value) getgenv().ClickFlingEnabled = Value end,
 })
 
--- --- ФЛІНГ ---
+-- --- ФЛІНГ ЛОГІКА ---
 function PowerFling(targetPart)
     if getgenv().IsFlinging or not targetPart then return end
     getgenv().IsFlinging = true
@@ -142,16 +161,7 @@ function PowerFling(targetPart)
     getgenv().IsFlinging = false
 end
 
-PlayerTab:CreateButton({
-   Name = "Fling Selected Player",
-   Callback = function()
-      if getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character then
-          PowerFling(getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart"))
-      end
-   end,
-})
-
--- --- ФУНКЦІЯ ESP (Highlight + Blue Name) ---
+-- --- ESP ЛОГІКА ---
 local function ManageESP(p)
     if p == game.Players.LocalPlayer then return end
     local char = p.Character
@@ -203,6 +213,14 @@ SettingsTab:CreateKeybind({
        NoclipTgl:Set(getgenv().NoclipEnabled)
     end,
  })
+
+-- НОВА КНОПКА: Завантаження ZayacTech
+SettingsTab:CreateButton({
+   Name = "Load ZayacTech",
+   Callback = function()
+      loadstring(game:HttpGet('https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacTech.lua'))()
+   end,
+})
 
 SettingsTab:CreateButton({
    Name = "Destroy Script",
