@@ -1,8 +1,8 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLTD/Rayfield/main/source.lua'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "Zayac Hub v1.32",
-   LoadingTitle = "Updated Version",
+   Name = "Zayac Hub v1.0",
+   LoadingTitle = "Final Version",
    LoadingSubtitle = "by Zayac",
    ConfigurationSaving = { Enabled = false }
 })
