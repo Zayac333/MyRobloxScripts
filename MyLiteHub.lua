@@ -9,11 +9,12 @@ local Window = Rayfield:CreateWindow({
 
 -- --- ЗМІННІ ---
 getgenv().SpeedEnabled = false
-getgenv().NoclipEnabled = false -- Нова змінна
+getgenv().NoclipEnabled = false
 getgenv().SpeedValue = 63 
 getgenv().SelectedPlayer = nil
 getgenv().LoopTP = false
 getgenv().DeathCounterESP = false
+getgenv().PlayerESP = false
 getgenv().ClickFlingEnabled = false
 getgenv().AntiFlingEnabled = false
 getgenv().IsFlinging = false
@@ -40,7 +41,6 @@ local SpeedTgl = MainTab:CreateToggle({
    Callback = function(Value) getgenv().SpeedEnabled = Value end,
 })
 
--- Нова кнопка NOCLIP
 local NoclipTgl = MainTab:CreateToggle({
     Name = "Noclip (N)",
     CurrentValue = false,
@@ -60,16 +60,6 @@ MainTab:CreateButton({
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then root.CFrame = CFrame.new(180, 450, 180) end
-   end,
-})
-
-MainTab:CreateButton({
-   Name = "Teleport to Top (High)",
-   Callback = function()
-      local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-      if root then 
-          root.CFrame = CFrame.new(root.Position.X, 1000, root.Position.Z) 
-      end
    end,
 })
 
@@ -102,6 +92,12 @@ PlayerTab:CreateToggle({
 })
 
 -- --- COMBAT & ESP ---
+CombatTab:CreateToggle({
+   Name = "Player ESP (Blue)",
+   CurrentValue = false,
+   Callback = function(Value) getgenv().PlayerESP = Value end,
+})
+
 CombatTab:CreateToggle({
    Name = "ESP Death Counter",
    CurrentValue = false,
@@ -155,6 +151,31 @@ PlayerTab:CreateButton({
    end,
 })
 
+-- --- ФУНКЦІЯ ESP (Highlight + Blue Name) ---
+local function ManageESP(p)
+    if p == game.Players.LocalPlayer then return end
+    local char = p.Character
+    if not char then return end
+
+    if getgenv().PlayerESP then
+        if not char:FindFirstChild("ZayacHighlight") then
+            local hl = Instance.new("Highlight", char)
+            hl.Name = "ZayacHighlight"; hl.FillColor = Color3.fromRGB(0, 170, 255); hl.FillTransparency = 0.5; hl.OutlineColor = Color3.new(1,1,1)
+        end
+        local head = char:FindFirstChild("Head")
+        if head and not head:FindFirstChild("ZayacNameTag") then
+            local bb = Instance.new("BillboardGui", head)
+            bb.Name = "ZayacNameTag"; bb.Size = UDim2.new(0, 200, 0, 50); bb.StudsOffset = Vector3.new(0, 3, 0); bb.AlwaysOnTop = true
+            local lbl = Instance.new("TextLabel", bb)
+            lbl.Size = UDim2.new(1, 0, 1, 0); lbl.BackgroundTransparency = 1; lbl.Text = p.Name
+            lbl.TextColor3 = Color3.fromRGB(0, 190, 255); lbl.Font = Enum.Font.GothamBold; lbl.TextSize = 14; lbl.TextStrokeTransparency = 0
+        end
+    else
+        if char:FindFirstChild("ZayacHighlight") then char.ZayacHighlight:Destroy() end
+        if char:FindFirstChild("Head") and char.Head:FindFirstChild("ZayacNameTag") then char.Head.ZayacNameTag:Destroy() end
+    end
+end
+
 -- --- SETTINGS ---
 SettingsTab:CreateKeybind({
    Name = "Rayfield Keybind",
@@ -173,9 +194,8 @@ SettingsTab:CreateKeybind({
    end,
 })
 
--- Бінд для Нокліпу на N
 SettingsTab:CreateKeybind({
-    Name = "Noclip Toggle",
+    Name = "Noclip Toggle (U)",
     CurrentKeybind = "U",
     HoldToInteract = false,
     Callback = function()
@@ -189,7 +209,7 @@ SettingsTab:CreateButton({
    Callback = function() Rayfield:Destroy() end,
 })
 
--- --- ЦИКЛИ (RunService) ---
+-- --- ЦИКЛИ ---
 game:GetService("RunService").Stepped:Connect(function()
     local lp = game.Players.LocalPlayer
     local char = lp.Character
@@ -197,7 +217,8 @@ game:GetService("RunService").Stepped:Connect(function()
     local root = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChild("Humanoid")
 
-    -- Логіка Speed Hack
+    for _, p in pairs(game.Players:GetPlayers()) do ManageESP(p) end
+
     if getgenv().SpeedEnabled and hum and root then
         hum.WalkSpeed = getgenv().SpeedValue
         if hum.MoveDirection.Magnitude > 0 then
@@ -206,46 +227,23 @@ game:GetService("RunService").Stepped:Connect(function()
         hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
     end
     
-    -- Логіка NOCLIP
     if getgenv().NoclipEnabled then
         for _, part in pairs(char:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
+            if part:IsA("BasePart") then part.CanCollide = false end
         end
     end
     
-    -- Loop Teleport
     if getgenv().LoopTP and getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and root then
         local tRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
         if tRoot then root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3) end
     end
     
-    -- Anti-Fling
     if getgenv().AntiFlingEnabled and not getgenv().IsFlinging then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= lp and p.Character then
                 for _, part in pairs(p.Character:GetDescendants()) do
                     if part:IsA("BasePart") then part.CanCollide = false end
                 end
-            end
-        end
-    end
-
-    -- Death Counter ESP
-    if getgenv().DeathCounterESP then
-        for _, p in pairs(game.Players:GetPlayers()) do
-            if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
-                local head = p.Character.Head
-                local counter = p.Character:FindFirstChild("CounterEffect") or p.Character:FindFirstChild("Counter")
-                if counter then
-                    if not head:FindFirstChild("SkullESP") then
-                        local bb = Instance.new("BillboardGui", head)
-                        bb.Name = "SkullESP"; bb.Size = UDim2.new(4,0,4,0); bb.AlwaysOnTop = true
-                        local lbl = Instance.new("TextLabel", bb)
-                        lbl.Text = "💀"; lbl.BackgroundTransparency = 1; lbl.Size = UDim2.new(1,0,1,0); lbl.TextSize = 60; lbl.TextColor3 = Color3.new(1,0,0)
-                    end
-                elseif head:FindFirstChild("SkullESP") then head.SkullESP:Destroy() end
             end
         end
     end
