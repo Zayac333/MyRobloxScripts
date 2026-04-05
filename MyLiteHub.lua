@@ -275,17 +275,36 @@ game:GetService("RunService").Stepped:Connect(function()
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
                 local head = p.Character.Head
+                -- Перевірка наявності об'єкта каунтера (як в оригіналі)
                 local counter = p.Character:FindFirstChild("CounterEffect") or p.Character:FindFirstChild("Counter")
+                
                 if counter then
                     if not head:FindFirstChild("SkullESP") then
                         local bb = Instance.new("BillboardGui", head)
-                        bb.Name = "SkullESP"; bb.Size = UDim2.new(4,0,4,0); bb.AlwaysOnTop = true
+                        bb.Name = "SkullESP"
+                        bb.Size = UDim2.new(4, 0, 4, 0)
+                        bb.AlwaysOnTop = true
+                        
                         local lbl = Instance.new("TextLabel", bb)
-                        lbl.Text = "💀"; lbl.BackgroundTransparency = 1; lbl.Size = UDim2.new(1,0,1,0); lbl.TextSize = 60; lbl.TextColor3 = Color3.new(1,0,0)
+                        lbl.Text = "💀"
+                        lbl.BackgroundTransparency = 1
+                        lbl.Size = UDim2.new(1, 0, 1, 0)
+                        lbl.TextSize = 60
+                        lbl.TextColor3 = Color3.new(1, 0, 0)
                     end
-                elseif head:FindFirstChild("SkullESP") then 
-                    head.SkullESP:Destroy() 
+                else
+                    -- Видалення, якщо ефект зник
+                    if head:FindFirstChild("SkullESP") then
+                        head.SkullESP:Destroy()
+                    end
                 end
+            end
+        end
+    else
+        -- Очищення всіх ESP, якщо функцію вимкнено
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p.Character and p.Character:FindFirstChild("Head") and p.Character.Head:FindFirstChild("SkullESP") then
+                p.Character.Head.SkullESP:Destroy()
             end
         end
     end
