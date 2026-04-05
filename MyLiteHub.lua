@@ -161,7 +161,7 @@ function PowerFling(targetPart)
     getgenv().IsFlinging = false
 end
 
--- --- ESP ЛОГІКА ---
+-- --- ESP ЛОГІКА (ГРАВЦІ) ---
 local function ManageESP(p)
     if p == game.Players.LocalPlayer then return end
     local char = p.Character
@@ -214,7 +214,6 @@ SettingsTab:CreateKeybind({
     end,
  })
 
--- НОВА КНОПКА: Завантаження ZayacTech
 SettingsTab:CreateButton({
    Name = "Load ZayacTech",
    Callback = function()
@@ -235,8 +234,10 @@ game:GetService("RunService").Stepped:Connect(function()
     local root = char:FindFirstChild("HumanoidRootPart")
     local hum = char:FindFirstChild("Humanoid")
 
+    -- Оновлення звичайного ESP
     for _, p in pairs(game.Players:GetPlayers()) do ManageESP(p) end
 
+    -- Speed Hack
     if getgenv().SpeedEnabled and hum and root then
         hum.WalkSpeed = getgenv().SpeedValue
         if hum.MoveDirection.Magnitude > 0 then
@@ -245,22 +246,45 @@ game:GetService("RunService").Stepped:Connect(function()
         hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
     end
     
+    -- Noclip
     if getgenv().NoclipEnabled then
         for _, part in pairs(char:GetDescendants()) do
             if part:IsA("BasePart") then part.CanCollide = false end
         end
     end
     
+    -- Loop Teleport
     if getgenv().LoopTP and getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and root then
         local tRoot = getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
         if tRoot then root.CFrame = tRoot.CFrame * CFrame.new(0, 2, 3) end
     end
     
+    -- Anti-Fling
     if getgenv().AntiFlingEnabled and not getgenv().IsFlinging then
         for _, p in pairs(game.Players:GetPlayers()) do
             if p ~= lp and p.Character then
                 for _, part in pairs(p.Character:GetDescendants()) do
                     if part:IsA("BasePart") then part.CanCollide = false end
+                end
+            end
+        end
+    end
+
+    -- --- ОРИГІНАЛЬНА ЛОГІКА DEATH COUNTER ESP ---
+    if getgenv().DeathCounterESP then
+        for _, p in pairs(game.Players:GetPlayers()) do
+            if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
+                local head = p.Character.Head
+                local counter = p.Character:FindFirstChild("CounterEffect") or p.Character:FindFirstChild("Counter")
+                if counter then
+                    if not head:FindFirstChild("SkullESP") then
+                        local bb = Instance.new("BillboardGui", head)
+                        bb.Name = "SkullESP"; bb.Size = UDim2.new(4,0,4,0); bb.AlwaysOnTop = true
+                        local lbl = Instance.new("TextLabel", bb)
+                        lbl.Text = "💀"; lbl.BackgroundTransparency = 1; lbl.Size = UDim2.new(1,0,1,0); lbl.TextSize = 60; lbl.TextColor3 = Color3.new(1,0,0)
+                    end
+                elseif head:FindFirstChild("SkullESP") then 
+                    head.SkullESP:Destroy() 
                 end
             end
         end
