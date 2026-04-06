@@ -11,7 +11,7 @@ local activeWalls = {}
 
 -- 1. ІНТЕРФЕЙС
 local wallGui = Instance.new("ScreenGui")
-wallGui.Name = "WallDwellerSystem"
+wallGui.Name = "WallDwellerSystem_Opt"
 wallGui.IgnoreGuiInset = true
 wallGui.ResetOnSpawn = false
 wallGui.Parent = playerGui
@@ -20,10 +20,10 @@ local wallAlertLabel = Instance.new("TextLabel")
 wallAlertLabel.Size = UDim2.new(1, 0, 0.2, 0)
 wallAlertLabel.Position = UDim2.new(0, 0, 0.45, 0)
 wallAlertLabel.BackgroundTransparency = 1
-wallAlertLabel.Text = ""
 wallAlertLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
 wallAlertLabel.TextSize = 45
 wallAlertLabel.Font = Enum.Font.LuckiestGuy
+wallAlertLabel.Text = ""
 wallAlertLabel.Parent = wallGui
 
 local function notifyWall(text, color)
@@ -37,22 +37,14 @@ local function notifyWall(text, color)
     note.Font = Enum.Font.SourceSansBold
     note.Parent = wallGui
     Instance.new("UICorner", note)
-    task.delay(2, function()
-        TweenService:Create(note, TweenInfo.new(0.5), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
-        task.wait(0.5)
-        note:Destroy()
-    end)
+    
+    local tween = TweenService:Create(note, TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 2), {TextTransparency = 1, BackgroundTransparency = 1})
+    tween:Play()
+    tween.Completed:Connect(function() note:Destroy() end)
 end
 
--- 2. ВІЗУАЛІЗАЦІЯ (З ФІКСОМ ПІДСВІТКИ)
-local function applyWallVisuals(obj)
-    -- Перевіряємо, чи це справді монстр, а не частина кімнати
-    local isMonster = obj:FindFirstChildOfClass("Humanoid") or obj:FindFirstChildOfClass("AnimationController")
-    if not isMonster then return end
-
-    local root = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
-    if not root then return end
-
+-- 2. ВІЗУАЛІЗАЦІЯ
+local function applyWallVisuals(obj, root)
     if not obj:FindFirstChild("WallHighlight") then
         local hl = Instance.new("Highlight", obj)
         hl.Name = "WallHighlight"
@@ -63,10 +55,11 @@ local function applyWallVisuals(obj)
 
     if not obj:FindFirstChild("WallTracer") then
         local att0 = Instance.new("Attachment", root)
+        att0.Name = "WallAtt"
         local beam = Instance.new("Beam", obj)
         beam.Name = "WallTracer"
         beam.Color = ColorSequence.new(Color3.fromRGB(255, 165, 0))
-        beam.Width0, beam.Width1 = 1, 1
+        beam.Width0, beam.Width1 = 0.5, 0.5
         beam.Attachment0 = att0
         
         local pRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
@@ -78,64 +71,79 @@ local function applyWallVisuals(obj)
     end
 end
 
--- 3. МОНІТОРИНГ (180 СЕКУНД ТА ФІКС КІМНАТИ)
-RunService.RenderStepped:Connect(function()
-    local text = ""
-    local currentTime = tick()
+-- 3. ОПТИМІЗОВАНА ДЕТЕКЦІЯ
+local function checkObject(obj)
+    if not obj:IsA("Model") then return end
     
-    if wallScriptEnabled then
-        for _, obj in pairs(workspace:GetDescendants()) do
-            if obj:IsA("Model") then
-                local name = obj.Name:lower()
-                -- Тільки якщо в назві є wall/dwell ТА це живий об'єкт
-                if (name:find("wall") or name:find("dwell")) and (obj:FindFirstChildOfClass("Humanoid") or obj:FindFirstChildOfClass("AnimationController")) then
-                    
-                    local id = obj:GetDebugId()
-                    if not activeWalls[id] then
-                        activeWalls[id] = {instance = obj, startTime = currentTime}
-                    end
-
-                    local data = activeWalls[id]
-                    local duration = currentTime - data.startTime
-
-                    -- ТЕПЕР 180 СЕКУНД
-                    if duration > 180 or not obj.Parent then
-                        activeWalls[id] = nil
-                    else
-                        local root = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
-                        if root and player.Character and player.Character.PrimaryPart then
-                            local dist = math.floor((root.Position - player.Character.PrimaryPart.Position).Magnitude)
-                            if dist < 1500 then
-                                text = text .. "⚠️ WALL DWELLER [" .. dist .. "m] - " .. math.floor(duration) .. "s\n"
-                                applyWallVisuals(obj)
-                            end
-                        end
-                    end
+    local name = obj.Name:lower()
+    if (name:find("wall") or name:find("dwell")) then
+        -- Швидка перевірка на "живість" монстра
+        task.wait(0.1) -- Даємо час підвантажитись гуманоїду
+        if obj:FindFirstChildOfClass("Humanoid") or obj:FindFirstChildOfClass("AnimationController") then
+            local root = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+            if root then
+                local id = obj:GetDebugId()
+                if not activeWalls[id] then
+                    activeWalls[id] = {instance = obj, root = root, startTime = tick()}
                 end
             end
         end
-        wallAlertLabel.Text = text
-    else
-        wallAlertLabel.Text = ""
     end
+end
+
+-- Початкове сканування та підписка на нові об'єкти
+workspace.DescendantAdded:Connect(checkObject)
+for _, v in pairs(workspace:GetDescendants()) do task.spawn(checkObject, v) end
+
+-- 4. ОНОВЛЕННЯ ТЕКСТУ (RenderStepped тепер легкий)
+RunService.RenderStepped:Connect(function()
+    if not wallScriptEnabled then 
+        wallAlertLabel.Text = ""
+        return 
+    end
+
+    local text = ""
+    local now = tick()
+    local charRoot = player.Character and player.Character.PrimaryPart
+
+    for id, data in pairs(activeWalls) do
+        local obj = data.instance
+        local duration = now - data.startTime
+
+        -- Перевірка на 180 секунд та існування
+        if duration > 180 or not obj or not obj.Parent then
+            activeWalls[id] = nil
+            continue
+        end
+
+        if charRoot and data.root then
+            local dist = math.floor((data.root.Position - charRoot.Position).Magnitude)
+            if dist < 1000 then
+                text = text .. "⚠️ WALL DWELLER [" .. dist .. "m] - " .. math.floor(duration) .. "s\n"
+                applyWallVisuals(obj, data.root)
+            end
+        end
+    end
+    wallAlertLabel.Text = text
 end)
 
--- 4. КЕРУВАННЯ [K]
+-- 5. КЕРУВАННЯ
 UserInputService.InputBegan:Connect(function(input, proc)
-    if proc then return end
-    if input.KeyCode == Enum.KeyCode.K then
-        wallScriptEnabled = not wallScriptEnabled
-        if wallScriptEnabled then
-            notifyWall("Wall Detector: ON", Color3.fromRGB(0, 255, 0))
-        else
-            notifyWall("Wall Detector: OFF", Color3.fromRGB(255, 0, 0))
-            wallAlertLabel.Text = ""
-            for _, v in pairs(workspace:GetDescendants()) do
-                if v.Name == "WallHighlight" or v.Name == "WallTracer" or v.Name == "MT_Att_Wall" then 
-                    v:Destroy() 
-                end
+    if proc or input.KeyCode ~= Enum.KeyCode.K then return end
+    
+    wallScriptEnabled = not wallScriptEnabled
+    if wallScriptEnabled then
+        notifyWall("Wall Detector: ON", Color3.fromRGB(0, 255, 0))
+    else
+        notifyWall("Wall Detector: OFF", Color3.fromRGB(255, 0, 0))
+        for id, data in pairs(activeWalls) do
+            if data.instance then
+                local h = data.instance:FindFirstChild("WallHighlight")
+                local t = data.instance:FindFirstChild("WallTracer")
+                if h then h:Destroy() end
+                if t then t:Destroy() end
             end
-            activeWalls = {}
         end
+        activeWalls = {}
     end
 end)
