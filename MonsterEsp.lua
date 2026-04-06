@@ -44,12 +44,11 @@ local function notify(text, color)
     end)
 end
 
--- 2. ВІЗУАЛЬНІ ЕФЕКТИ (ВИПРАВЛЕНО)
+-- 2. ВІЗУАЛЬНІ ЕФЕКТИ
 local function applyVisuals(monster)
     local root = monster:IsA("Model") and (monster.PrimaryPart or monster:FindFirstChildWhichIsA("BasePart")) or monster
     if not root then return end
 
-    -- Highlight (Заливка)
     if not monster:FindFirstChild("MonsterHighlight") then
         local hl = Instance.new("Highlight", monster)
         hl.Name = "MonsterHighlight"
@@ -57,13 +56,12 @@ local function applyVisuals(monster)
         hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     end
     
-    -- Трейсер (Лінія)
     if not monster:FindFirstChild("MonsterTracer") then
         local att0 = Instance.new("Attachment", root)
         local beam = Instance.new("Beam", monster)
         beam.Name = "MonsterTracer"
         beam.Color = ColorSequence.new(Color3.fromRGB(255, 0, 0))
-        beam.Width0, beam.Width1 = 1, 1 -- Зробив лінію ще товстішою
+        beam.Width0, beam.Width1 = 1, 1
         beam.Attachment0 = att0
         
         local pRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
@@ -74,27 +72,32 @@ local function applyVisuals(monster)
         end
     end
 
-    -- ВЕЛИЧЕЗНА СФЕРА (Замість SelectionBox)
     if not monster:FindFirstChild("MonsterSphere") then
         local sphere = Instance.new("SelectionSphere")
         sphere.Name = "MonsterSphere"
-        sphere.Adornee = root -- Чіпляємо саме до центральної частини
+        sphere.Adornee = root
         sphere.Color3 = Color3.fromRGB(255, 0, 0)
         sphere.Transparency = 0.6
         sphere.Parent = monster
     end
 end
 
--- 3. ДЕТЕКЦІЯ
+-- 3. ДЕТЕКЦІЯ (ДОДАНО БЛЕКЛІСТ)
 local function checkMonster(child)
     task.wait(0.2)
     if not scriptEnabled or not child or not child.Parent then return end
+    
+    local name = child.Name:lower()
+    -- Твій новий блекліст тут:
+    if name:find("orb") or name:find("ambience") or name:find("light") or name:find("proxy") then 
+        return 
+    end
     
     if (child:IsA("Model") or child:IsA("BasePart")) and not Players:GetPlayerFromCharacter(child) then
         local inEntities = child.Parent.Name == "Entities" or child.Parent.Name == "Monsters"
         local hasSound = child:FindFirstChildOfClass("Sound", true)
         
-        if (inEntities or hasSound) and not child.Name:lower():find("light") then
+        if (inEntities or hasSound) then
             local id = child:GetDebugId()
             if not activeMonsters[id] then
                 activeMonsters[id] = {instance = child, name = child.Name, startTime = tick()}
