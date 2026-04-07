@@ -18,13 +18,12 @@ if not t.EAGLE then
     t.EAGLE = true
     local mw = lib.MakeWindow
 --    local fhop = loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Libraries/Fire-Lib/Null-Fire%20Only%20page.lua"))()--
-    lib.MakeWindow = function(self, options, fireHubWindow)
-        local window = mw(self, options)
-      --  if fireHubWindow then--
-         --   coroutine.wrap(fhop)(window)--
-      --  end --
-        return window
-    end
+-- (рядок 21 у Menu.lua)
+lib.MakeWindow = function(self, options, fireHubWindow)
+    local window = mw(self, options) -- Створюємо вікно через оригінальну функцію
+    
+    return window -- < -- ЦЕ ОБОВ'ЯЗКОВО МАЄ БУТИ ТУТ!
+end
 end
 t._FIRELIB = t._FIRELIB or lib
 
