@@ -5247,6 +5247,7 @@ local lib; lib = {
             return i .. "%"
         end})
    -- [[ ОСТАННІЙ СЛАЙДЕР ]] --
+-- [[ ВИПРАВЛЕНИЙ ОСТАННІЙ СЛАЙДЕР ТА КІНЕЦЬ ]] --
         page:AddSlider({
             Text = "Background image opacity", 
             Default = (1 - window.HolderFrame.Stripes.ImageTransparency) * 100, 
@@ -5258,16 +5259,16 @@ local lib; lib = {
                 keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
                 script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
                 script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-            end, 
+            end, -- ОЦЕЙ END ЗАКРИВАЄ CALLBACK
             CustomTextDisplay = function(i)
                 return i .. "%"
             end
         })
         
         return windowFuncs
-    end, -- Закриває MakeWindow
+    end, -- ЗАКРИВАЄ MakeWindow
     IsMobile = isMobile
-} -- Закриває таблицю lib
+} -- ЗАКРИВАЄ ТАБЛИЦЮ lib
 
 -- [[ РЕЄСТРАЦІЯ БІБЛІОТЕКИ ]] --
 lib.CreateWindow = lib.MakeWindow
