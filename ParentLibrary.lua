@@ -5278,13 +5278,14 @@ if isMobile then
     script.Parent.Notification.NotificationHolder.Size = script.Parent.Notification.ChooseNotificationHolder.Size
     script.Parent.Notification.Size = UDim2.new(0, 300, 1, 0)
 end
+end
 
 getGlobalTable()._FIRELIB = lib
 
 -- YOUR CODE DOWN HERE --
 
 local obj = objects["Instance0"];
-return require(objects["Instance218"])-- Set modules
+local success, result = pcall(function() return require(objects["Instance218"]) end)
 local o_require = require; local require;
 local modules do
     modules = {};
