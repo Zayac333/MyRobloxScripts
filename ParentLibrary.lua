@@ -5258,17 +5258,16 @@ local lib; lib = {
                 keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
                 script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
                 script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-            end, 
+end, 
             CustomTextDisplay = function(i)
                 return i .. "%"
             end
--- (Це кінець останнього слайдера)
         })
         
         return windowFuncs
-    end; -- ЦЕЙ end ЗАКРИВАЄ MakeWindow (рядок 464)
+    end,
     IsMobile = isMobile
-} -- ЦЯ ДУЖКА ЗАКРИВАЄ ТАБЛИЦЮ lib
+}
 
 -- [[ РЕЄСТРАЦІЯ ]] --
 lib.CreateWindow = lib.MakeWindow
