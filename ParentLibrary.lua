@@ -7893,11 +7893,10 @@ end
     -- Це закриває внутрішні процеси (ті самі end;, що ми бачили на скріншотах)
     getGlobalTable()._FIRELIB = lib
     
-     end;
+    end;
 end;
-end; -- ДОДАЙ ЦЕЙ ТРЕТІЙ "end" (якого немає на скріншоті)
--- Налаштування появи меню на екрані
 
+-- Налаштування появи меню на екрані
 local parent = (getfenv().gethui and getfenv().gethui()) or 
                 (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
                 (game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
