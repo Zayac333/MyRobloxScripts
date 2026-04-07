@@ -5283,4 +5283,4 @@ end;
 
 if typeof(getgenv) == "function" then getgenv()._FIRELIB = lib else _G._FIRELIB = lib end
 
-return FireLib or lib
+return lib
