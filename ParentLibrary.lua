@@ -1674,7 +1674,7 @@ do -- Set properties
     objects["Instance139"]["Visible"] = false;
     objects["Instance139"]["BorderColor3"] = Color3.new(0, 0, 0);
     objects["Instance139"]["Name"] = "StarterFade";
-    objects["Instance139"]["Size"] = UDim2.new(1, 0, 1, 0);
+    objects["Instance139"]["Size"] = UDim2.new(0, 0, 0, 0);
     objects["Instance139"]["Parent"] = objects["Instance4"];
     objects["Instance139"]["ZIndex"] = 99999;
     objects["Instance139"]["BorderSizePixel"] = 0;
@@ -1685,8 +1685,8 @@ do -- Set properties
     objects["Instance140"]["BackgroundTransparency"] = 1;
     objects["Instance140"]["BorderColor3"] = Color3.new(0, 0, 0);
     objects["Instance140"]["Name"] = "KeySystem";
-    objects["Instance140"]["Position"] = UDim2.new(0, 0, 0.0780000016, 0);
-    objects["Instance140"]["Size"] = UDim2.new(1, 0, 0.921999991, 0);
+    objects["Instance140"]["Position"] = UDim2.new(0, 0, 0, 0);
+    objects["Instance140"]["Size"] = UDim2.new(0, 0, 0, 0);
     objects["Instance140"]["ZIndex"] = 80000;
     objects["Instance140"]["BorderSizePixel"] = 0;
     objects["Instance140"]["BackgroundColor3"] = Color3.new(0.137255, 0.137255, 0.137255);
@@ -1880,7 +1880,7 @@ do -- Set properties
     objects["Instance158"]["Parent"] = objects["Instance151"];
     objects["Instance158"]["BackgroundTransparency"] = 1;
     objects["Instance158"]["FontFace"] = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-    objects["Instance158"]["Size"] = UDim2.new(1, 0, 1, 0);
+    objects["Instance158"]["Size"] = UDim2.new(0, 0, 0, 0);
     objects["Instance158"]["ZIndex"] = 80002;
     objects["Instance158"]["BorderSizePixel"] = 0;
     objects["Instance158"]["BackgroundColor3"] = Color3.new(1, 1, 1);
@@ -2672,11 +2672,5229 @@ end;
 
 local FireLib = {
     MakeWindow = function(self, options)
-        -- Логіка створення вікна
-        -- Прибрано: CheckVersion(), identifyexecutor() перевірки тощо.
-        
+    
+    _G.FireHubLoaded = true
+    local keySystem = false
         local windowFuncs = {}
-        -- (Тут весь той код AddPage, AddToggle, який ти вже маєш)
+ -- Set modules
+local o_require = require; local require;
+local modules do
+    modules = {};
+    require = function(object)
+        if modules[object] then
+            return modules[object]();
+        end
+        return o_require(object);
+    end;
+
+    getfenv().require = require;
+
+    modules[objects["Instance218"]] = function()
+        local script = objects["Instance218"];
+local function getGlobalTable()
+    return typeof(getfenv().getgenv) == "function" and typeof(getfenv().getgenv()) == "table" and getfenv().getgenv() or _G
+end
+if getGlobalTable()._FIRELIB then
+    task.spawn(function()
+        task.wait()
+        script.Parent:Destroy()
+    end)
+    return getGlobalTable()._FIRELIB
+end
+
+script.Parent.Holder.Window.Visible = false
+script.Parent.Holder.Window.HolderFrame.PageDisplay.Page.Visible = false
+script.Parent.Holder.Window.HolderFrame.PageButtons.PageButton.Visible = false
+
+script.Parent.LeftHolder.Keybinds.Visible = false
+script.Parent.LeftHolder.Keybinds.Size = UDim2.fromOffset(200, 45)
+script.Parent.LeftHolder.Keybinds.HolderFrame.List.TextLabel.Visible = false
+
+for i,v in script.Parent.Holder.Window.HolderFrame.PageDisplay.Page:GetChildren() do
+    if v and v:IsA("GuiObject") then
+        v.Visible = false
+    end
+end
+
+local writefile, readfile, makefolder, isfolder, isfile, listfiles = getfenv().writefile, getfenv().readfile, getfenv().makefolder or getfenv().createfolder, getfenv().isfolder, getfenv().isfile or getfenv().readfile and function(path)
+    return typeof(select(2, pcall(getfenv().readfile, path))) == "string"
+end, getfenv().listfiles
+local configsEnabled = typeof(writefile) == "function" and typeof(readfile) == "function"
+
+local themes
+local versions
+if not pcall(function()
+        local str = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Data/Versions.json"))
+        versions = {
+            ["FireLibraryVersion"] = str[2],
+            ["FireHubVersion"] = str[1]
+        }
+        themes = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/refs/heads/main/Core/Data/Theme.json"))
+    end) then
+    versions = {
+        ["FireLibraryVersion"] = "5.4.2",
+        ["FireHubVersion"] = "4.0.2"
+    }
+    themes = {
+        Patterns = {
+            ["Stripes"] = "rbxassetid://87577631610763",
+            ["Rounded corner pattern"] = "rbxassetid://846693570",
+            ["Checkers pattern"] = "rbxassetid://15562720000",
+            ["Custom"] = ""
+        },
+        Themes = {
+            Default = {
+                Main = {170, 0, 255},
+                Back = {35, 35, 35},
+                Text = {255, 255, 255}
+            },
+            Acid = {
+                Main = {0, 255, 0},
+                Back = {35, 35, 35},
+                Text = {255, 255, 255}
+            },
+            Light = {
+                Main = {100, 100, 100},
+                Back = {255, 255, 255},
+                Text = {0, 0, 0}
+            }
+        }
+    }
+end
+
+for i,v in themes.Themes do
+    for idx, val in themes.Themes[i] do
+        themes.Themes[i][idx] = Color3.fromRGB(themes.Themes[i][idx][1], themes.Themes[i][idx][2], themes.Themes[i][idx][3])
+    end
+end
+
+script.Parent.Name = "Fire-Lib [ID:"..game:GetService("HttpService"):GenerateGUID(false).."]"
+getGlobalTable()._FLVersions = versions
+local isMobile = game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").KeyboardEnabled
+local uiHolder = pcall(game.GetFullName, game.CoreGui) and game.CoreGui:FindFirstChild("DevConsoleMaster") and getfenv().gethui and getfenv().gethui() or pcall(game.GetFullName, game.CoreGui) and game.CoreGui:FindFirstChild("RobloxGui") or game:GetService("Players").LocalPlayer.PlayerGui
+script.Parent.Parent = uiHolder
+if not pcall(function() script.Parent.OnTopOfCoreBlur = true end) and pcall(game.GetFullName, game.CoreGui) then
+    local devCon; devCon = game.CoreGui.ChildAdded:Connect(function(c)
+        if c and c.Name == "DevConsoleMaster" then
+            devCon:Disconnect()
+            uiHolder = c
+            script.Parent.Parent = c
+        end
+    end)
+end
+
+local function playSound(soundName)
+    task.spawn(function()
+        local sCopy = script.Parent.Sounds.SoundsFolder:FindFirstChild(soundName)
+        if not sCopy then return end
+        sCopy = sCopy:Clone()
+        sCopy.Parent = script.Parent.Sounds
+        sCopy.Volume = 0.5
+        sCopy.Looped = false
+        sCopy.TimePosition = 0
+        sCopy:Play()
+        task.wait(sCopy.TimeLength)
+        sCopy:Destroy()
+    end)
+end
+
+local function coroutineCall(f)
+    return coroutine.wrap(function(...)
+        pcall(f, ...)
+    end)
+end
+
+local function setupSlider(slider, holder, options)
+    local val = options.Default
+    local prevVal = val
+    local customTextDisplay = function(val, max)
+        if typeof(options.CustomTextDisplay) == "function" then
+            local res = options.CustomTextDisplay(val, max)
+            if typeof(res) == "string" or typeof(res) == "number" then
+                return tostring(res)
+            end
+        end
+        return val .. " / " .. max
+    end
+    holder = holder or slider.Parent:IsA("Button") and slider.Parent or slider:FindFirstChildOfClass("TextButton") or slider
+    local sliderDrag = holder
+    local sliderBar = slider.SliderOuter.Bar.Fill
+    local dragging = false
+
+    sliderDrag.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+            dragging = true 
+        end 
+    end)
+    sliderDrag.InputEnded:Connect(function(input) 
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+            dragging = false 
+        end 
+    end)
+
+    local function round(Number, Factor)
+        local Result = math.floor(Number/Factor + (math.sign(Number) * 0.5)) * Factor
+        if Result < 0 then Result = Result + Factor end
+        return Result
+    end
+
+    local newVal
+    local function set(num)
+        newVal = math.round((math.clamp(round(num, options.Step), options.Min, options.Max))*1000)/1000
+        if newVal then
+            sliderBar:TweenSize(UDim2.fromScale((newVal - options.Min) / (options.Max - options.Min), 1), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
+            val = newVal
+            sliderBar.Parent.Progress.Text = customTextDisplay(val, options.Max)
+            if newVal ~= prevVal then
+                coroutineCall(options.Callback)(newVal)
+                prevVal = newVal
+                --newVal = nil
+            end
+        end
+    end
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or Enum.UserInputType.Touch) then 
+            local sizeScale = math.clamp((input.Position.X - sliderBar.Parent.AbsolutePosition.X) / sliderBar.Parent.AbsoluteSize.X, 0, 1)
+            local pval = prevVal
+            set(options.Min + ((options.Max - options.Min) * sizeScale))
+            if pval ~= prevVal then
+                coroutineCall(playSound)("MouseHover")
+            end
+        end
+    end)
+
+    set(val)
+
+    return set
+end
+
+local delta, dragInput
+local function update(input, gui, dragStart, startPos)
+    delta = input.Position - dragStart
+    gui:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), nil, nil, 0.3, true)
+    delta = nil
+end
+
+local function getOptions(options) -- cuz i was lazy to always insert the same line of code
+    -- also idk how properly call that function
+    return typeof(options) == "table" and options or {}
+end
+local function getCallback(options)
+    return typeof(options.Function) == "function" and options.Function or typeof(options.Callback) == "function" and options.Callback or function() end
+end
+local function getText(options)
+    return typeof(options.Title) == "string" and options.Title or typeof(options.Caption) == "string" and options.Caption or typeof(options.Name) == "string" and options.Name or typeof(options.Text) == "string" and options.Text or typeof(options.Description) == "string" and options.Description or typeof(options.Content) == "string" and options.Content
+end
+
+local blockedCodes = {
+    Enum.KeyCode.Unknown,
+    Enum.KeyCode.Power,
+    Enum.KeyCode.Left,
+    Enum.KeyCode.Right,
+    Enum.KeyCode.Up,
+    Enum.KeyCode.Down,
+    Enum.KeyCode.F11,
+    Enum.KeyCode.F9,
+    Enum.KeyCode.CapsLock,
+    Enum.KeyCode.ScrollLock,
+    Enum.KeyCode.NumLock
+}
+
+local bestDeviceSize = isMobile and UDim2.fromScale(0.775, 0.75) or UDim2.fromScale(0.625, 0.475)
+local function updateFloatingKeybinds(binds, list, colors)
+    if isMobile then
+        binds.Visible = false
+        return
+    end
+
+    local prevChildren = binds.HolderFrame.List:GetChildren()
+    local prevLen = #prevChildren
+    
+    for i,v in prevChildren do
+        if v and v:IsA("TextLabel") and v.Visible then
+            v:Destroy()
+        end
+    end
+    
+    for i,v in list do
+        if v[2] then
+            local label = binds.HolderFrame.List.TextLabel:Clone()
+            label.Parent = binds.HolderFrame.List
+            label.Visible = true
+            label.Text = "[ " .. v[2].Name .. " ] " .. v[1]
+            label.TextColor3 = v[3] and colors.Main.Color or colors.Text.Color
+            label.Name = ""
+        end
+    end
+    
+    local children = binds.HolderFrame.List:GetChildren()
+    if #children == 2 then
+        binds:TweenSize(UDim2.fromOffset(binds.Size.X.Offset, 30), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 0.25, true)
+        task.wait(0.25)
+        binds.Visible = false
+        return
+    end
+    
+    local maxX = 0
+    
+    for i,v in children do
+        if v and v:IsA("TextLabel") then
+            maxX = math.max(maxX, (#v.Text * 7) + 20)
+        end
+    end
+    
+    maxX = math.max(maxX, 200)
+    local y = ((#children - 2) * 15) + (2 * math.max((#children - 2) - 1, 0)) + 30
+
+    binds.Visible = true
+    
+    if prevLen == 2 then
+        binds.Size = UDim2.fromOffset(maxX, 30)
+    end
+    
+    binds:TweenSize(UDim2.fromOffset(maxX, y), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 0.25, true)
+end
+
+local lib; lib = {
+    Notifications = {
+        _AnimateNotification = {
+            In = function(notification)
+                if not notification or not notification.Parent then return end
+                playSound("Notification")
+                local size = notification.Size
+                notification.Size = UDim2.fromScale()
+                notification.Visible = true
+                notification:TweenSize(size, nil, nil, 0.3, true)
+                notification.NotificationColored.Position = UDim2.new(-1, -1, 0, 0)
+                notification.NotificationColored.NotificationMain.Position = UDim2.new(-1, 0, 0, 2)
+                task.wait(0.32)
+                if not notification or not notification.Parent then return end
+                notification.NotificationColored:TweenPosition(UDim2.fromScale(0,0), nil, nil, 0.3, true)
+                notification.NotificationColored.NotificationMain:TweenPosition(UDim2.fromOffset(0, 2), nil, nil, 0.45, true)
+            end,
+            Out = function(notification)
+                if not notification or not notification.Parent then return end
+                notification.NotificationColored.NotificationMain:TweenPosition(UDim2.new(-1, 0, 0, 2), nil, nil, 0.45, true)
+                notification.NotificationColored:TweenPosition(UDim2.new(-1, -1, 0, 0), nil, nil, 0.3, true)
+                task.wait(0.32)
+                if not notification or not notification.Parent then return end
+                notification:TweenSize(UDim2.fromScale(0, 0), nil, nil, 0.3, true)
+                task.wait(0.31)
+                if not notification or not notification.Parent then return end
+                notification:Destroy()
+            end
+        },
+        Notification = function(self, options)
+            task.spawn(function()
+                local notification = script.Parent.Notification.NotificationHolder:Clone()
+                notification.Parent = script.Parent.Notification
+                notification.Name = ""
+                notification.NotificationColored.NotificationMain.Bar.Fill.Size = UDim2.fromScale(1,1)
+                notification.NotificationColored.NotificationMain.Bar.Fill.Position = UDim2.fromScale(0,0)
+                notification.NotificationColored.NotificationMain.Title.Text = typeof(options.Title) == "string" and options.Title or typeof(options.Name) == "string" and options.Name or "Notification"
+                local text = typeof(options.Text) == "string" and options.Text or typeof(options.Description) == "string" and options.Description or typeof(options.Content) == "string" and options.Content or ""
+                notification.NotificationColored.NotificationMain.Lines["1"].Text = text
+                coroutineCall(self._AnimateNotification.In)(notification)
+                local time = tonumber(options.Time) or tonumber(options.Delay) or tonumber(options.Length) or 5
+                notification.NotificationColored.NotificationMain.Bar.Fill:TweenSizeAndPosition(UDim2.fromScale(0, 1), UDim2.fromScale(1, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, time, true)
+                task.wait(time)
+                coroutineCall(self._AnimateNotification.Out)(notification)
+            end)
+        end,
+        ChooseNotification = function(self, options)
+            task.spawn(function()
+                local notification = script.Parent.Notification.ChooseNotificationHolder:Clone()
+                notification.Parent = script.Parent.Notification
+                notification.Name = ""
+                notification.NotificationColored.NotificationMain.Bar.Fill.Size = UDim2.fromScale(1,1)
+                notification.NotificationColored.NotificationMain.Bar.Fill.Position = UDim2.fromScale(0,0)
+                notification.NotificationColored.NotificationMain.Title.Text = typeof(options.Title) == "string" and options.Title or typeof(options.Name) == "string" and options.Name or "Notification"
+                local text = typeof(options.Text) == "string" and options.Text or typeof(options.Description) == "string" and options.Description or typeof(options.Content) == "string" and options.Content or ""
+                notification.NotificationColored.NotificationMain.Lines["1"].Text = text
+                local done = false
+                notification.NotificationColored.NotificationMain.Yes.MouseButton1Click:Connect(function()
+                    if done then return end
+                    coroutineCall(self._AnimateNotification.Out)(notification)
+                    done = true
+                    getCallback(options)(true)
+                end)
+                notification.NotificationColored.NotificationMain.No.MouseButton1Click:Connect(function()
+                    if done then return end
+                    coroutineCall(self._AnimateNotification.Out)(notification)
+                    done = true
+                    getCallback(options)(false)
+                end)
+                coroutineCall(self._AnimateNotification.In)(notification)
+                local time = tonumber(options.Time) or tonumber(options.Delay) or tonumber(options.Length) or 5
+                notification.NotificationColored.NotificationMain.Bar.Fill:TweenSizeAndPosition(UDim2.fromScale(0, 1), UDim2.fromScale(1, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, time, true)
+                task.wait(time)
+                coroutineCall(self._AnimateNotification.Out)(notification)
+            end)
+        end
+    },
+    Versions = versions,
+    MakeWindow = function(self, options)
+        local configStructure = {}
+
+        getGlobalTable().Struct = configStructure
+
+        local configEvent = Instance.new("BindableEvent")
+        local counter = {}
+        local function count(name, layer)
+            counter[layer] = counter[layer] or {}
+            counter[layer][name] = (tonumber(counter[layer][name]) or 0) + 1
+            return name..counter[layer][name]
+        end
+        options = getOptions(options)
+        local session = {}
+        local cons = {}
+        local window = script.Parent.Holder.Window:Clone()
+        window.Parent = script.Parent.Holder
+        local fadeTime = 1
+        local size = typeof(options.WindowSize) == "UDim2" and options.WindowSize or typeof(options.CustomWindowSize) == "UDim2" and options.CustomWindowSize or typeof(options.Size) == "UDim2" and options.Size or bestDeviceSize
+        window.Name = ""
+        window.HolderFrame.Title.Text = getText(options) or "Fire Library | "..versions.FireLibraryVersion
+        window.Visible = true
+        window.Position = UDim2.fromScale(0.5, 0.5)
+        window.HolderFrame.StarterFade.Visible = true
+        window.Size = UDim2.fromScale(0,0)
+        local maximize = script.Parent.Holder.MobileMaximize:Clone()
+        maximize.Parent = script.Parent.Holder
+        maximize.Name = ""
+        maximize.Visible = isMobile
+        
+        local objs = Instance.new("Folder", window)
+        for i,v in window.HolderFrame.PageDisplay.Page:GetChildren() do
+            if v and (v:IsA("TextButton") or v:IsA("Frame")) and v.Name ~= "Frame" then
+                v.Parent = objs
+            end
+        end
+        
+        objs.Name = "UIElements"
+        
+        local keybinds = script.Parent.LeftHolder.Keybinds:Clone()
+        keybinds.Parent = script.Parent.LeftHolder
+        keybinds.Visible = false
+        keybinds.Name = ""
+
+        local function makeDraggable(gui)
+            local dragging, dragStart, startPos, delta
+
+            cons[#cons+1] = gui.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    dragging = true
+                    dragStart = input.Position
+                    startPos = gui.Position
+
+                    cons[#cons+1] = input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            dragging = false
+                        end
+                    end)
+                end
+            end)
+
+            cons[#cons+1] = gui.InputChanged:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                    dragInput = input
+                end
+            end)
+
+            cons[#cons+1] = game:GetService("UserInputService").InputChanged:Connect(function(input)
+                if input == dragInput and dragging then
+                    update(input, gui, dragStart, startPos)
+                end
+            end)
+        end
+
+        makeDraggable(maximize.DragButton)
+        makeDraggable(window)
+        makeDraggable(keybinds)
+        
+        local binds = {}
+
+        local themeColorPickers = {}
+        local function getColorOffset(a,b)
+            return Color3.new(math.clamp(a.R - b.R, 0, 1),math.clamp(a.G - b.G, 0, 1),math.clamp(a.B - b.B, 0, 1))
+        end
+        local function setColorOffset(a,b)
+            return Color3.new(math.clamp(a.R + b.R, 0, 1),math.clamp(a.G + b.G, 0, 1),math.clamp(a.B + b.B, 0, 1))
+        end
+
+        local colors = {
+            ["Main"] = {
+                Color = window.BackgroundColor3,
+                Default = window.BackgroundColor3,
+
+                Instances = {}
+            },
+            ["Back"] = {
+                Color = window.HolderFrame.BackgroundColor3,
+                Default = window.HolderFrame.BackgroundColor3,
+
+                Instances = {}
+            },
+            ["Text"] = {
+                Color = objs.Label.Text.TextColor3,
+                Default = objs.Label.Text.TextColor3,
+
+                Instances = {}
+            }
+        }
+
+        local function setColor(v)
+            if v.Instance then
+                v.Instance[v.Property] = setColorOffset(colors[v.Class].Color, v.Offset)
+            end
+        end
+        local function addClass(class, prop, instance, setCol)
+            local tbl = {Class = class, Property = prop, Instance = instance, Default = instance[prop], Offset = getColorOffset(instance[prop], colors[class].Default)}
+            table.insert(colors[class].Instances, tbl)
+            if setCol == nil or setCol then
+                setColor(tbl)
+            end
+            return tbl
+        end
+
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Bar)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Bar.Fill)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Bar)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Bar.Fill)
+        addClass("Main", "BackgroundColor3", window)
+        addClass("Main", "ImageColor3", window.HolderFrame.KeySystem.Copy.ToggleOuter.Frame.ImageLabel)
+        addClass("Main", "ImageColor3", window.HolderFrame.KeySystem.Redeem.ToggleOuter.Frame.ImageLabel)
+        addClass("Main", "ImageColor3", window.HolderFrame.KeySystem.CloseUI.ToggleOuter.Frame.ImageLabel)
+        addClass("Main", "BackgroundColor3", keybinds)
+
+        addClass("Back", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain)
+        addClass("Back", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Separator)
+        addClass("Back", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain)
+        addClass("Back", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Separator)
+        addClass("Back", "BackgroundColor3", window.HolderFrame)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.Separator)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.StarterFade)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.StarterFade)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.Copy.ToggleOuter)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.Copy.ToggleOuter.Frame)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.Redeem.ToggleOuter)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.Redeem.ToggleOuter.Frame)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.CloseUI.ToggleOuter)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.CloseUI.ToggleOuter.Frame)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.TextBox.TextBoxOuter)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.TextBox.TextBoxOuter.TextBoxBackground)
+        addClass("Back", "BackgroundColor3", keybinds.HolderFrame)
+        addClass("Back", "BackgroundColor3", keybinds.HolderFrame.Separator)
+
+        addClass("Text", "TextColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Title)
+        addClass("Text", "TextColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Lines["1"])
+        addClass("Text", "TextColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Title)
+        addClass("Text", "TextColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Lines["1"])
+        addClass("Text", "ImageColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.No)
+        addClass("Text", "ImageColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Yes)
+        addClass("Text", "TextColor3", window.HolderFrame.Title)
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.Copy:FindFirstChild("Text"))
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.Redeem:FindFirstChild("Text"))
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.CloseUI:FindFirstChild("Text"))
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.Label.Text)
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.TextBox.TextBoxOuter.TextBox)
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.TextBox:FindFirstChild("Text"))
+        addClass("Text", "PlaceholderColor3", window.HolderFrame.KeySystem.TextBox.TextBoxOuter.TextBox, false)
+        addClass("Text", "TextColor3", keybinds.HolderFrame.Title)
+
+        local cd = false
+        local windowFuncs; windowFuncs = {
+            ThemeColors = setmetatable({}, {
+                __newindex = function(self, name, newVal)
+                    if colors[name:gsub("WTF", "")..""] and typeof(newVal) == "Color3" then
+                        coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                        colors[name:gsub("WTF", "")..""].Color = newVal
+                        if not name:match("WTF") and themeColorPickers[name:gsub("WTF", "")..""] then
+                            themeColorPickers[name:gsub("WTF", "")..""]:Set(newVal)
+                        end
+                        for i,v in colors[name:gsub("WTF", "")..""].Instances do
+                            pcall(setColor, v)
+                        end
+                    end
+                end,
+                __index = function(self, name)
+                    if colors[name] then
+                        return colors[name].Color
+                    end
+                end,
+            }),
+            Opened = true,
+            Close = function(self)
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                task.spawn(function()
+                    while cd and task.wait() do end
+                    self.Opened = false
+                    self:Hide()
+                    binds = {}
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    task.wait(fadeTime + 0.01)
+                    window:Destroy()
+                    task.wait(0.5)
+                    keybinds:Destroy()
+                end)
+            end,
+            Show = function(self)
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                task.spawn(function()
+                    while cd and task.wait() do end
+                    cd = true
+                    maximize.Visible = isMobile
+                    window.Visible = true
+                    game:GetService("TweenService"):Create(window, TweenInfo.new(fadeTime / 2.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = size}):Play()
+                    game:GetService("TweenService"):Create(window.HolderFrame.StarterFade, TweenInfo.new(fadeTime, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {BackgroundTransparency = 1}):Play()
+                    task.wait(fadeTime / 2.5)
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    task.wait(fadeTime - (fadeTime / 2.5) + 0.01)
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    cd = false
+                    window.HolderFrame.StarterFade.ZIndex -= 1000
+                    window.HolderFrame.StarterFade.Visible = false
+                end)
+                return true
+            end,
+            Toggle = function(self, state)
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                if state == nil then
+                    state = window.Visible
+                else
+                    state = not state
+                end
+                if state then
+                    return self:Hide()
+                else
+                    return self:Show()
+                end
+            end,
+            Hide = function(self)
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                task.spawn(function()
+                    while cd and task.wait() do end
+                    cd = true
+                    maximize.Visible = isMobile
+                    window.HolderFrame.StarterFade.Visible = true
+                    window.HolderFrame.StarterFade.ZIndex += 1000
+                    game:GetService("TweenService"):Create(window, TweenInfo.new(fadeTime, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Size = UDim2.fromScale(0,0)}):Play()
+                    game:GetService("TweenService"):Create(window.HolderFrame.StarterFade, TweenInfo.new(fadeTime / 2.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {BackgroundTransparency = 0}):Play()
+                    task.wait(fadeTime / 2.5)
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    task.wait(fadeTime - (fadeTime / 2.5) + 0.01)
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    cd = false
+                    window.Visible = false
+                end)
+                return true
+            end,
+            AddPage = function(self, options)
+                options = getOptions(options)
+                local text = getText(options) or "Page"
+                local counterTextPage = count(text, 1)
+                local order = math.clamp(tonumber(options.Order) or 1, 0, 999)
+                configStructure[counterTextPage] = {}
+                local struct = configStructure[counterTextPage]
+                local pageButton = window.HolderFrame.PageButtons.PageButton:Clone()
+                pageButton.Parent = window.HolderFrame.PageButtons
+                pageButton.Visible = true
+                pageButton.Name = ""
+                pageButton.LayoutOrder = -order
+
+                --addClass("Back", "BackgroundColor3", pageButton)
+                addClass("Main", "BackgroundColor3", pageButton.Selection)
+                addClass("Text", "TextColor3", pageButton.Text)
+
+                pageButton:FindFirstChild("Text").Text = text
+                cons[#cons+1] = pageButton.Trigger.MouseEnter:Connect(function()
+                    playSound("MouseHover")
+                end)
+                pageButton.Size = UDim2.fromScale((#pageButton:FindFirstChild("Text").Text / 55) + 0.05, 1)
+                local page = window.HolderFrame.PageDisplay.Page:Clone()
+                addClass("Main", "ScrollBarImageColor3", page)
+                page.Parent = window.HolderFrame.PageDisplay
+                page.Name = ""
+                cons[#cons+1] = pageButton.Trigger.MouseButton1Click:Connect(function()
+                    playSound("Click")
+                    if pageButton.Selection.Visible then
+                        page.Visible = false
+                        pageButton.Selection.Visible = false
+                    else
+                        for i,v in page.Parent:GetChildren() do
+                            if v and v:IsA(page.ClassName) then
+                                v.Visible = false
+                            end
+                        end
+                        page.Visible = true
+                        for i,v in pageButton.Parent:GetChildren() do
+                            if v and v:IsA(pageButton.ClassName) then
+                                v.Selection.Visible = false
+                            end
+                        end
+                        pageButton.Selection.Visible = true
+                        task.wait()
+                        page.Frame.Visible = false
+                    end
+                end)
+
+                task.spawn(function()
+                    while window and window.Parent and task.wait() do -- that shit is created cuz of mobile execs: there's a roblox bug with AutomaticCanvasSize
+                        page.Frame.Visible = true
+                        page.Frame.Size = UDim2.new(math.random(0, 100)/100, 0, 0, 1)
+                    end
+                end)
+
+                windowFuncs.Tabs[counterTextPage] = {}
+
+                local currentGroupbox
+
+                local pageFuncs; pageFuncs = {
+                    AddLeftGroupbox = function(self, options)
+                        if isMobile then
+                            return pageFuncs
+                        end
+
+                        options = getOptions(options)
+                        local text = getText(options) or "Left Groupbox"
+
+                        if not currentGroupbox or currentGroupbox.LeftGroupboxHolder.Visible then
+                            currentGroupbox = objs.GroupboxZone:Clone()
+                            currentGroupbox.Parent = page
+                            currentGroupbox.Name = ""
+                            currentGroupbox.Visible = true
+                            currentGroupbox.LeftGroupboxHolder.Visible = false
+                            currentGroupbox.RightGroupboxHolder.Visible = false
+                        end
+
+                        local gp = currentGroupbox.LeftGroupboxHolder
+                        gp.Visible = true
+
+                        addClass("Back", "BackgroundColor3", gp.Display)
+                        addClass("Main", "BackgroundColor3", gp.Display.TopNeon)
+                        addClass("Text", "TextColor3", gp.Display.Title)
+
+                        local function updateSize()
+                            local gp = gp.Parent
+
+                            local ch1 = gp.RightGroupboxHolder.Display.ContentHolder:GetChildren()
+                            local ch2 = gp.LeftGroupboxHolder.Display.ContentHolder:GetChildren()
+
+                            local max = math.max(#ch1, #ch2)
+                            gp.Size = UDim2.fromScale(1, max/10)
+
+                            for i,v in ch1 do
+                                if v:IsA("Frame") then
+                                    v.Size = UDim2.fromScale(1, 1 / (max - 1))
+                                end
+                            end
+                            for i,v in ch2 do
+                                if v:IsA("Frame") then
+                                    v.Size = UDim2.fromScale(1, 1 / (max - 1))
+                                end
+                            end
+                        end
+
+                        local funcs = {}
+                        for i,v in pageFuncs do
+                            if typeof(v) == "function" and i:sub(1, 3) == "Add" and not i:match("Groupbox") then
+                                funcs[i] = function(...)
+                                    local obj = v(...)
+                                    if obj.Object then
+                                        obj.Object.Parent = gp.Display.ContentHolder
+                                        for idx,val in obj.Object:GetChildren() do
+                                            if val and val.Name:match("Separator") then
+                                                val:Destroy()
+                                            end
+                                        end
+
+                                        updateSize()
+
+                                        local myChange = false
+                                        obj.Object:GetPropertyChangedSignal("Size"):Connect(function()
+                                            if not myChange then
+                                                myChange = true
+                                                updateSize()
+                                                task.wait()
+                                                myChange = false
+                                            end
+                                        end)
+                                    end
+
+                                    return obj
+                                end
+
+                                funcs[i:gsub("Add", "Create")] = funcs[i]
+                                funcs[i:gsub("Add", "")] = funcs[i]
+                            end
+                        end
+
+                        funcs.Object = gp
+
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object.Display.Title.Text = tostring(txt)
+                        end
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+
+                        funcs:SetText(text)
+
+                        return funcs
+                    end,
+                    AddRightGroupbox = function(self, options)
+                        if isMobile then
+                            return pageFuncs
+                        end
+
+                        options = getOptions(options)
+                        local text = getText(options) or "Right Groupbox"
+
+                        if not currentGroupbox or currentGroupbox.RightGroupboxHolder.Visible then
+                            currentGroupbox = objs.GroupboxZone:Clone()
+                            currentGroupbox.Parent = page
+                            currentGroupbox.Name = ""
+                            currentGroupbox.Visible = true
+                            currentGroupbox.LeftGroupboxHolder.Visible = false
+                            currentGroupbox.RightGroupboxHolder.Visible = false
+                        end
+
+                        local gp = currentGroupbox.RightGroupboxHolder
+                        gp.Visible = true
+
+                        addClass("Back", "BackgroundColor3", gp.Display)
+                        addClass("Main", "BackgroundColor3", gp.Display.TopNeon)
+                        addClass("Text", "TextColor3", gp.Display.Title)
+
+                        local function updateSize()
+                            local gp = gp.Parent
+
+                            local ch1 = gp.RightGroupboxHolder.Display.ContentHolder:GetChildren()
+                            local ch2 = gp.LeftGroupboxHolder.Display.ContentHolder:GetChildren()
+
+                            local max = math.max(#ch1, #ch2)
+                            gp.Size = UDim2.fromScale(1, max/10)
+
+                            for i,v in ch1 do
+                                if v:IsA("Frame") then
+                                    v.Size = UDim2.fromScale(1, 1 / (max - 1))
+                                end
+                            end
+                            for i,v in ch2 do
+                                if v:IsA("Frame") then
+                                    v.Size = UDim2.fromScale(1, 1 / (max - 1))
+                                end
+                            end
+                        end
+
+                        local funcs = {}
+                        for i,v in pageFuncs do
+                            if typeof(v) == "function" and i:sub(1, 3) == "Add" and not i:match("Groupbox") then
+                                funcs[i] = function(...)
+                                    local obj = v(...)
+                                    if obj.Object then
+                                        obj.Object.Parent = gp.Display.ContentHolder
+                                        for idx,val in obj.Object:GetChildren() do
+                                            if val and val.Name:match("Separator") then
+                                                val:Destroy()
+                                            end
+                                        end
+
+                                        updateSize()
+
+                                        local myChange = false
+                                        obj.Object:GetPropertyChangedSignal("Size"):Connect(function()
+                                            if not myChange then
+                                                myChange = true
+                                                updateSize()
+                                                task.wait()
+                                                myChange = false
+                                            end
+                                        end)
+                                    end
+
+                                    return obj
+                                end
+
+                                funcs[i:gsub("Add", "Create")] = funcs[i]
+                                funcs[i:gsub("Add", "")] = funcs[i]
+                            end
+                        end
+
+                        funcs.Object = gp
+
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object.Display.Title.Text = tostring(txt)
+                        end
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+
+                        funcs:SetText(text)
+
+                        return funcs
+                    end,
+                    AddSlider = function(self, options)
+                        options = getOptions(options)
+                        options.Min = tonumber(options.Min or options.Minimum) or 0
+                        options.Max = tonumber(options.Max or options.Maximum) or 100
+                        options.Callback = getCallback(options)
+                        local text = getText(options) or "Slider"
+                        local counterText = count(text, 2)
+                        if options.Min > options.Max then
+                            local max, min = options.Max, options.Min
+                            options.Min = max
+                            options.Max = min
+                        --[[elseif options.Min == options.Max then
+                            local cb = options.Callback
+                            options.Callback = function()
+                                cb(options.Min)
+                            end
+                            return self:AddButton(options)]]
+                        end
+                        local funcs = {Options = options}
+                        options.Step = tonumber(options.Step) or tonumber(options.Per) or (options.Max - options.Min) / 25
+                        options.Default = tonumber(options.Default) or tonumber(options.Base) or options.Min
+                        local cb = options.Callback
+
+                        --
+
+                        local slider = objs.Slider:Clone()
+                        slider.Parent = page
+                        slider.Name = ""
+                        slider.Visible = true
+                        slider:FindFirstChild("Text").Text = text
+                        funcs.Object = slider
+
+                        addClass("Back", "BackgroundColor3", slider.SliderOuter)
+                        addClass("Back", "BackgroundColor3", slider.SliderOuter.Bar)
+                        addClass("Main", "BackgroundColor3", slider.SliderOuter.Bar.Fill)
+                        addClass("Text", "TextColor3", slider.SliderOuter.Bar.Progress)
+                        addClass("Back", "BackgroundColor3", slider.Separator)
+                        addClass("Back", "BackgroundColor3", slider.Separator2)
+
+                        local set = setupSlider(slider, nil, options)
+                        set(options.Default)
+                        options.Callback = function(newVal)
+                            if funcs.Value == newVal then return end
+                            funcs.Value = newVal
+                            set(newVal)
+                            struct[counterText] = newVal
+                            return cb(newVal)
+                        end
+                        options.Set = set
+
+                        --
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Set(value)
+                            if not self or not self.Object then return end
+                            self.Options.Set(tonumber(value) or self.Value)
+                        end
+                        function funcs:SetCustomTextDisplay(func)
+                            if not self or not self.Object then return end
+                            self.Options.CustomTextDisplay = func
+                        end
+                        function funcs:SetStep(val)
+                            if not self or not self.Object then return end
+                            self.Options.Step = tonumber(val) or self.Options.Step
+                        end
+                        function funcs:SetMinimum(val)
+                            if not self or not self.Object then return end
+                            self.Options.Min = tonumber(val) or self.Options.Min
+                        end
+                        function funcs:SetMaximum(val)
+                            if not self or not self.Object then return end
+                            self.Options.Max = tonumber(val) or self.Options.Max
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.Callback = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = newVal
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        funcs.SetMax = funcs.SetMaximum
+                        funcs.SetMin = funcs.SetMinimum
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(val)
+                        end)
+
+                        return funcs
+                    end,
+                    AddSeparator = function(self)
+                        local sep = objs.Separator:Clone()
+                        sep.Parent = page
+                        sep.Visible = true
+                        sep.Name = ""
+
+                        addClass("Back", "BackgroundColor3", sep.Separator)
+
+                        local funcs = {}
+                        funcs.Object = sep
+
+                        windowFuncs.Tabs[counterTextPage][count(getText({Text = "Separator"}), 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+
+                        return funcs
+                    end,
+                    AddButton = function(self, options)
+                        options = getOptions(options)
+
+                        local button = objs.Button:Clone()
+                        button.Parent = page
+                        button.Visible = true
+                        button.Name = ""
+                        button:FindFirstChild("Text").Text = getText(options) or "Button"
+                        local counterText = count(text, 2)
+
+                        local focused = false
+                        local keybind = typeof(options.Keybind) == "EnumItem" and options.Keybind or typeof(options.Keybind) == "string" and Enum.KeyCode:FromName(options.Keybind) or typeof(options.Keybind) == "number" and Enum.KeyCode:FromValue(options.Keybind) or nil
+                        local con, inpt = nil, keybind
+                        local bind = {button.Text.Text, keybind, false}
+                        
+                        local cb = function()
+                            struct[counterText.."_Keybind"] = bind[2] and bind[2].Value or nil
+                            coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                            getCallback(options)()
+                        end
+                        cons[#cons+1] = button.Trigger.MouseEnter:Connect(function()
+                            playSound("MouseHover")
+                        end)
+                        cons[#cons+1] = button.Trigger.MouseButton1Click:Connect(function()
+                            playSound("Click")
+                            coroutineCall(cb)()
+                            bind[3] = true
+                            updateFloatingKeybinds(keybinds, binds, colors)
+                            task.wait(0.1)
+                            bind[3] = false
+                            updateFloatingKeybinds(keybinds, binds, colors)
+                        end)
+                        
+                        local allowKeybinds = typeof(options.AllowKeybinds) == "boolean" and options.AllowKeybins or typeof(options.Keybinds) == "boolean" and options.Keybinds or typeof(options.AllowKeybinds) ~= "boolean" and typeof(options.Keybinds) ~= "boolean" and true
+
+                        button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+
+                        button.Trigger.Size = (isMobile or not allowKeybinds) and UDim2.fromScale(1, 1) or UDim2.fromScale(0.7, 1)
+                        button.KeybindTrigger.Visible = not (isMobile or not allowKeybinds)
+                        button.InputOuter.Visible = button.KeybindTrigger.Visible
+                        
+                        if allowKeybinds then
+                            binds[#binds+1] = bind
+
+                            cons[#cons+1] = game:GetService("UserInputService").InputBegan:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                bind[3] = true
+
+                                playSound("Click")
+                                cb()
+                            end)
+                            cons[#cons+1] = game:GetService("UserInputService").InputEnded:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                bind[3] = false
+
+                                updateFloatingKeybinds(keybinds, binds, colors)
+                            end)
+                            
+                            cons[#cons+1] = button.KeybindTrigger.MouseEnter:Connect(function()
+                                playSound("MouseHover")
+                            end)
+                            cons[#cons+1] = button.KeybindTrigger.MouseButton1Click:Connect(function()
+                                playSound("Click")
+                                focused = not focused
+                                button.InputOuter.Frame.Input.Text = "..."
+                                if focused then
+                                    con = game:GetService("UserInputService").InputBegan:Connect(function(s, chat)
+                                        if chat or table.find(blockedCodes, s.KeyCode) then return end
+                                        focused = false
+                                        con:Disconnect()
+                                        con = nil
+                                        inpt = nil
+                                        game:GetService("RunService").RenderStepped:Wait()
+                                        inpt = s.KeyCode
+                                        bind[2] = inpt
+                                        button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                        updateFloatingKeybinds(keybinds, binds, colors)
+                                    end)
+
+                                    cons[#cons+1] = con
+                                else
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    inpt = nil
+                                    bind[2] = inpt
+                                    button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                    if con then
+                                        con:Disconnect()
+                                        con = nil
+                                    end
+                                    updateFloatingKeybinds(keybinds, binds, colors)
+                                end
+                            end)
+                        end
+                        
+                        local funcs = {}
+                        funcs.Object = button
+
+                        addClass("Back", "BackgroundColor3", button.Separator2)
+                        addClass("Back", "BackgroundColor3", button.Separator)
+                        addClass("Back", "BackgroundColor3", button.ButtonOuter)
+                        addClass("Back", "BackgroundColor3", button.ButtonOuter.Frame)
+                        addClass("Main", "ImageColor3", button.ButtonOuter.Frame.ImageLabel)
+                        addClass("Text", "TextColor3", button:FindFirstChild("Text"))
+
+                        addClass("Back", "BackgroundColor3", button.InputOuter)
+                        addClass("Back", "BackgroundColor3", button.InputOuter.Frame)
+                        addClass("Main", "TextColor3", button.InputOuter.Frame.Input)
+
+                        windowFuncs.Tabs[counterTextPage][count(getText(options) or "Object", 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.Callback = function()
+                                return cb()
+                            end
+                            self.Options.CB = self.Options.Callback
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                            bind[1] = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                --val = val[counterText]
+                                local keybind = val[counterText.."_Keybind"]
+                                if keybind then
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    bind[2] = Enum.KeyCode:FromValue(keybind)
+                                    inpt = bind[2]
+                                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                                end
+                            end
+                        end)
+
+                        return funcs
+                    end,
+                    AddHoldableButton = function(self, options)
+                        options = getOptions(options)
+
+                        local button = objs.Button:Clone()
+                        button.Parent = page
+                        button.Visible = true
+                        button.Name = ""
+                        button:FindFirstChild("Text").Text = getText(options) or "Button"
+                        local counterText = count(text, 2)
+
+                        local focused = false
+                        local keybind = typeof(options.Keybind) == "EnumItem" and options.Keybind or typeof(options.Keybind) == "string" and Enum.KeyCode:FromName(options.Keybind) or typeof(options.Keybind) == "number" and Enum.KeyCode:FromValue(options.Keybind) or nil
+                        local con, inpt = nil, keybind
+                        local bind = {button.Text.Text, keybind, false}
+
+                        local cb = function(b)
+                            struct[counterText.."_Keybind"] = bind[2] and bind[2].Value or nil
+                            coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                            getCallback(options)(b)
+                        end
+                        cons[#cons+1] = button.Trigger.MouseEnter:Connect(function()
+                            playSound("MouseHover")
+                        end)
+                        cons[#cons+1] = button.Trigger.MouseButton1Down:Connect(function()
+                            bind[3] = true
+                            playSound("Click")
+                            cb(true)
+                        end)
+                        cons[#cons+1] = button.Trigger.MouseButton1Up:Connect(function()
+                            bind[3] = false
+                            playSound("Click")
+                            cb(false)
+                        end)
+
+                        local allowKeybinds = typeof(options.AllowKeybinds) == "boolean" and options.AllowKeybins or typeof(options.Keybinds) == "boolean" and options.Keybinds or typeof(options.AllowKeybinds) ~= "boolean" and typeof(options.Keybinds) ~= "boolean" and true
+
+                        button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+
+                        button.Trigger.Size = (isMobile or not allowKeybinds) and UDim2.fromScale(1, 1) or UDim2.fromScale(0.7, 1)
+                        button.KeybindTrigger.Visible = not (isMobile or not allowKeybinds)
+                        button.InputOuter.Visible = button.KeybindTrigger.Visible
+
+                        if allowKeybinds then
+                            binds[#binds+1] = bind
+
+                            cons[#cons+1] = game:GetService("UserInputService").InputBegan:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                bind[3] = true
+
+                                playSound("Click")
+                                cb(true)
+                            end)
+                            cons[#cons+1] = game:GetService("UserInputService").InputEnded:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                bind[3] = false
+
+                                playSound("Click")
+                                cb(false)
+                            end)
+
+                            cons[#cons+1] = button.KeybindTrigger.MouseEnter:Connect(function()
+                                playSound("MouseHover")
+                            end)
+                            cons[#cons+1] = button.KeybindTrigger.MouseButton1Click:Connect(function()
+                                playSound("Click")
+                                focused = not focused
+                                button.InputOuter.Frame.Input.Text = "..."
+                                if focused then
+                                    con = game:GetService("UserInputService").InputBegan:Connect(function(s, chat)
+                                        if chat or table.find(blockedCodes, s.KeyCode) then return end
+                                        focused = false
+                                        con:Disconnect()
+                                        con = nil
+                                        inpt = nil
+                                        game:GetService("RunService").RenderStepped:Wait()
+                                        inpt = s.KeyCode
+                                        bind[2] = inpt
+                                        button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                        updateFloatingKeybinds(keybinds, binds, colors)
+                                    end)
+
+                                    cons[#cons+1] = con
+                                else
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    inpt = nil
+                                    bind[2] = inpt
+                                    button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                    if con then
+                                        con:Disconnect()
+                                        con = nil
+                                    end
+                                    updateFloatingKeybinds(keybinds, binds, colors)
+                                end
+                            end)
+                        end
+
+                        local funcs = {}
+                        funcs.Object = button
+
+                        addClass("Back", "BackgroundColor3", button.Separator2)
+                        addClass("Back", "BackgroundColor3", button.Separator)
+                        addClass("Back", "BackgroundColor3", button.ButtonOuter)
+                        addClass("Back", "BackgroundColor3", button.ButtonOuter.Frame)
+                        addClass("Main", "ImageColor3", button.ButtonOuter.Frame.ImageLabel)
+                        addClass("Text", "TextColor3", button:FindFirstChild("Text"))
+
+                        addClass("Back", "BackgroundColor3", button.InputOuter)
+                        addClass("Back", "BackgroundColor3", button.InputOuter.Frame)
+                        addClass("Main", "TextColor3", button.InputOuter.Frame.Input)
+
+                        windowFuncs.Tabs[counterTextPage][count(getText(options) or "Object", 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.Callback = function(b)
+                                return cb(b)
+                            end
+                            self.Options.CB = self.Options.Callback
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                            bind[1] = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                --val = val[counterText]
+                                local keybind = val[counterText.."_Keybind"]
+                                if keybind then
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    bind[2] = Enum.KeyCode:FromValue(keybind)
+                                    inpt = bind[2]
+                                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                                end
+                            end
+                        end)
+
+                        return funcs
+                    end,
+                    AddToggle = function(self, options)
+                        options = getOptions(options)
+
+                        local state = typeof(options.Default) == "boolean" and options.Default or typeof(options.Base) == "boolean" and options.Base or false
+                        local toggle = objs.Toggle:Clone()
+                        toggle.Parent = page
+                        toggle.Visible = true
+                        toggle.Name = ""
+                        local text = getText(options) or "Toggle"
+                        local counterText = count(text, 2)
+                        toggle:FindFirstChild("Text").Text = text
+                        cons[#cons+1] = toggle.Trigger.MouseEnter:Connect(function()
+                            playSound("MouseHover")
+                        end)
+                        local funcs = {Options = options}
+                        
+                        local allowKeybinds = typeof(options.AllowKeybinds) == "boolean" and options.AllowKeybins or typeof(options.Keybinds) == "boolean" and options.Keybinds or typeof(options.AllowKeybinds) ~= "boolean" and typeof(options.Keybinds) ~= "boolean" and true
+                        
+                        local focused = false
+                        local keybind = typeof(options.Keybind) == "EnumItem" and options.Keybind or typeof(options.Keybind) == "string" and Enum.KeyCode:FromName(options.Keybind) or typeof(options.Keybind) == "number" and Enum.KeyCode:FromValue(options.Keybind) or nil
+                        local con, inpt = nil, keybind
+                        
+                        toggle.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+
+                        toggle.Trigger.Size = (isMobile or not allowKeybinds) and UDim2.fromScale(1, 1) or UDim2.fromScale(0.7, 1)
+                        toggle.KeybindTrigger.Visible = not (isMobile or not allowKeybinds)
+                        toggle.InputOuter.Visible = toggle.KeybindTrigger.Visible
+
+                        local bind = {toggle.Text.Text, keybind, state}
+                        local cb = function(bool)
+                            funcs.Value = bool
+                            state = bool
+                            toggle.ToggleOuter.Frame.ImageHolder.Visible = bool
+                            struct[counterText] = bool
+                            struct[counterText.."_Keybind"] = bind[2] and bind[2].Value or nil
+                            bind[3] = bool
+                            coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                            getCallback(options)(bool)
+                        end
+                        
+                        if allowKeybinds then
+                            binds[#binds+1] = bind
+
+                            cons[#cons+1] = game:GetService("UserInputService").InputBegan:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                state = not state
+                                bind[3] = state
+
+                                playSound("Click")
+                                cb(state)
+                            end)
+
+                            cons[#cons+1] = toggle.KeybindTrigger.MouseEnter:Connect(function()
+                                playSound("MouseHover")
+                            end)
+                            cons[#cons+1] = toggle.KeybindTrigger.MouseButton1Click:Connect(function()
+                                playSound("Click")
+                                focused = not focused
+                                toggle.InputOuter.Frame.Input.Text = "..."
+                                if focused then
+                                    con = game:GetService("UserInputService").InputBegan:Connect(function(s, chat)
+                                        if chat or table.find(blockedCodes, s.KeyCode) then return end
+                                        focused = false
+                                        con:Disconnect()
+                                        con = nil
+                                        inpt = nil
+                                        game:GetService("RunService").RenderStepped:Wait()
+                                        inpt = s.KeyCode
+                                        bind[2] = inpt
+                                        toggle.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                        updateFloatingKeybinds(keybinds, binds, colors)
+                                    end)
+
+                                    cons[#cons+1] = con
+                                else
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    inpt = nil
+                                    bind[2] = inpt
+                                    toggle.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                    if con then
+                                        con:Disconnect()
+                                        con = nil
+                                    end
+                                    updateFloatingKeybinds(keybinds, binds, colors)
+                                end
+                            end)
+                        end
+                        
+                        coroutineCall(cb)(state)
+                        options.CB = cb
+                        toggle.ToggleOuter.Frame.ImageHolder.Visible = state
+                        cons[#cons+1] = toggle.Trigger.MouseButton1Click:Connect(function()
+                            playSound("Click")
+                            state = not state
+                            cb(state)
+                        end)
+
+                        funcs.Object = toggle
+
+                        addClass("Back", "BackgroundColor3", toggle.Separator2)
+                        addClass("Back", "BackgroundColor3", toggle.Separator)
+                        addClass("Back", "BackgroundColor3", toggle.ToggleOuter)
+                        addClass("Back", "BackgroundColor3", toggle.ToggleOuter.Frame)
+                        addClass("Main", "BackgroundColor3", toggle.ToggleOuter.Frame.ImageHolder)
+                        addClass("Main", "ImageColor3", toggle.ToggleOuter.Frame.ImageHolder.ImageLabel)
+                        addClass("Text", "TextColor3", toggle:FindFirstChild("Text"))
+
+                        addClass("Back", "BackgroundColor3", toggle.InputOuter)
+                        addClass("Back", "BackgroundColor3", toggle.InputOuter.Frame)
+                        addClass("Main", "TextColor3", toggle.InputOuter.Frame.Input)
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Set(val)
+                            if not self or not self.Object then return end
+                            self.Object.ToggleOuter.Frame.ImageHolder.Visible = val
+                            self.Options.CB(not not val)
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.Callback = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = newVal
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                local keybind = val[counterText.."_Keybind"]
+                                if keybind then
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    bind[2] = Enum.KeyCode:FromValue(keybind)
+                                    inpt = bind[2]
+                                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                                end
+                                
+                                val = val[counterText]
+                                funcs:Set(val)
+                            end
+                        end)
+
+                        return funcs
+                    end,
+                    AddLabel = function(self, options)
+                        options = getOptions(options)
+
+                        local label = objs.Label:Clone()
+                        label.Parent = page
+                        label.Visible = true
+                        label.Name = ""
+                        label:FindFirstChild("Text").Text = getText(options) or "Label"
+
+                        addClass("Back", "BackgroundColor3", label.Separator2)
+                        addClass("Back", "BackgroundColor3", label.Separator)
+                        addClass("Text", "TextColor3", label.Text)
+
+                        local funcs = {}
+                        funcs.Object = label
+
+                        windowFuncs.Tabs[counterTextPage][count(getText(options) or "Object", 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+
+                        return funcs
+                    end,
+                    AddTextBox = function(self, options)
+                        options = getOptions(options)
+
+                        local tb = objs.TextBox:Clone()
+                        tb.Parent = page
+                        tb.Visible = true
+                        tb.Name = ""
+                        local text = getText(options) or "Text Box"
+                        local counterText = count(text, 2)
+                        tb:FindFirstChild("Text").Text = text
+                        tb.TextBoxOuter.TextBox.PlaceholderText = typeof(options.Placeholder) == "string" and options.Placeholder or typeof(options.PlaceholderText) == "string" and options.PlaceholderText or ""
+                        tb.TextBoxOuter.TextBox.Text = typeof(options.Default) == "string" and options.Default or typeof(options.Base) == "string" and options.Base or ""
+                        cons[#cons+1] = tb.Trigger.MouseButton1Click:Connect(function()
+                            playSound("MouseHover")
+                            tb.TextBoxOuter.TextBox:CaptureFocus()
+                        end)
+                        local funcs = {}
+                        local function cb(txt)
+                            funcs.Value = txt
+                            tb.TextBoxOuter.TextBox.Text = txt
+                            struct[counterText] = txt
+                            getCallback(options)(txt)
+                        end
+                        coroutineCall(cb)(tb.TextBoxOuter.TextBox.Text)
+                        options.CB = cb
+                        cons[#cons+1] = tb.TextBoxOuter.TextBox.FocusLost:Connect(function(enter)
+                            if (options.Enter or options.NeedEnter or options.NeedsEnter) and enter or not (options.Enter or options.NeedEnter or options.NeedsEnter) then
+                                playSound("Click")
+                                options.CB(tb.TextBoxOuter.TextBox.Text)
+                            end
+                        end)
+
+                        funcs.Object = tb
+                        funcs.Options = options
+
+                        addClass("Back", "BackgroundColor3", tb.Separator2)
+                        addClass("Back", "BackgroundColor3", tb.Separator)
+                        addClass("Text", "TextColor3", tb.Text)
+                        addClass("Back", "BackgroundColor3", tb.TextBoxOuter)
+                        addClass("Back", "BackgroundColor3", tb.TextBoxOuter.TextBoxBackground)
+                        addClass("Text", "TextColor3", tb.TextBoxOuter.TextBox)
+                        addClass("Text", "PlaceholderColor3", tb.TextBoxOuter.TextBox)
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Set(txt)
+                            if not self or not self.Object then return end
+                            self.Object.TextBoxOuter.TextBox.Text = tostring(txt)
+                            getCallback(self.Options)(tostring(txt))
+                        end
+                        function funcs:SetPlaceholder(txt)
+                            if not self or not self.Object then return end
+                            self.Object.TextBoxOuter.TextBox.PlaceholderText = tostring(txt)
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.CB = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = newVal
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+                        funcs.SetPlaceholderText = funcs.SetPlaceholder
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(val)
+                        end)
+
+                        return funcs
+                    end,
+                    AddInput = function(self, options)
+                        options = getOptions(options)
+                        options.Default = typeof(options.Default) == "string" and options.Default or typeof(options.Base) == "string" and options.Base or "LeftAlt"
+                        local funcs = {}
+                        local text = getText(options) or "Input"
+                        local counterText = count(text, 2)
+                        local input = objs.Input:Clone()
+                        local function cb(inpt)
+                            if typeof(inpt) == "number" then
+                                inpt = Enum.KeyCode:FromValue(inpt)
+                            elseif typeof(inpt) == "string" then
+                                inpt = Enum.KeyCode:FromName(inpt)
+                            end
+                            funcs.Value = inpt or Enum.KeyCode.Power
+                            input.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                            struct[counterText] = (inpt or Enum.KeyCode.Power).Value
+                            getCallback(options)(inpt or Enum.KeyCode.Power)
+                        end
+                        options.CB = cb
+                        local focused = false
+                        local con
+                        input.Parent = page
+                        input.Visible = not isMobile
+                        input.Name = ""
+                        input:FindFirstChild("Text").Text = text
+                        local inpt = Enum.KeyCode:FromName(options.Default) or Enum.KeyCode:FromValue(options.Default)
+                        coroutineCall(cb)(inpt)
+                        input.InputOuter.Frame.Input.Text = inpt.Name
+                        cons[#cons+1] = input.Trigger.MouseButton1Click:Connect(function()
+                            playSound("Click")
+                            focused = not focused
+                            input.InputOuter.Frame.Input.Text = "..."
+                            if focused then
+                                con = game:GetService("UserInputService").InputBegan:Connect(function(s, chat)
+                                    if chat or table.find(blockedCodes, s.KeyCode) then return end
+                                    focused = false
+                                    con:Disconnect()
+                                    con = nil
+                                    inpt = s.KeyCode
+                                    options.CB(inpt)
+                                end)
+
+                                cons[#cons+1] = con
+                            else
+                                inpt = nil
+                                input.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                if con then
+                                    con:Disconnect()
+                                    con = nil
+                                end
+                                options.CB(inpt)
+                            end
+                        end)
+                        cons[#cons+1] = input.Trigger.MouseEnter:Connect(function()
+                            playSound("MouseHover")
+                        end)
+
+                        funcs.Object = input
+
+                        addClass("Back", "BackgroundColor3", input.Separator2)
+                        addClass("Back", "BackgroundColor3", input.Separator)
+                        addClass("Text", "TextColor3", input.Text)
+                        addClass("Back", "BackgroundColor3", input.InputOuter)
+                        addClass("Back", "BackgroundColor3", input.InputOuter.Frame)
+                        addClass("Main", "TextColor3", input.InputOuter.Frame.Input)
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Set(input)
+                            if not self or not self.Object or (typeof(input) ~= "EnumItem" or input.EnumType ~= Enum.KeyCode or not tonumber(input)) then return end
+                            if tonumber(input) then
+                                input = Enum.KeyCode:FromValue(input)
+                            end
+                            if not input then return end
+                            self.Object.InputOuter.Frame.Input.Text = input.Name
+                            self.Options.CB(input)
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.CB = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = newVal
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(val)
+                        end)
+
+                        return funcs
+                    end,
+                    AddDropdown = function(self, options)
+                        options = getOptions(options)
+                        local rows = typeof(options.Items) == "table" and options.Items or typeof(options.Rows) == "table" and options.Rows or typeof(options.Objects) == "table" and options.Objects or {}
+                        options.Default = (typeof(options.Default) == "string" or typeof(options.Default) == "number") and options.Default or (typeof(options.Base) == "string" or typeof(options.Base) == "number") and options.Base
+                        local text = getText(options) or "Dropdown"
+                        local counterText = count(text, 2)
+
+                        local funcs = {}
+
+                        local dd = objs.Dropdown:Clone()
+                        dd.Parent = page
+                        dd.Visible = true
+                        dd.DropdownOuter.ContentHolder.Values.ListButton.Visible = false
+                        dd.Name = ""
+                        dd:FindFirstChild("Text").Text = text
+                        local enabled = false
+                        local function cb(v1, ...)
+                            funcs.Value = v1
+                            struct[counterText] = v1
+                            getCallback(options)(v1, ...)
+                        end
+                        options.CB = cb
+                        dd.DropdownOuter.Default.Text = options.Default ~= "" and options.Default or "None"
+
+                        local function update()
+                            dd:TweenSize(UDim2.fromScale(1, enabled and 0.4 or 0.1), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, 0, true)
+                            dd.DropdownOuter:TweenSizeAndPosition(enabled and UDim2.new(0.9, -2, 0.85, 0) or UDim2.new(0.9, -2, 0.4, 0), enabled and UDim2.new(0.05, 1, 0.13, -1) or UDim2.new(0.05, 1, 0.5, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 0, true)
+                            dd:FindFirstChild("Text"):TweenSizeAndPosition(UDim2.fromScale(0.9, enabled and 0.1 or 0.4), UDim2.fromScale(0.5, enabled and 0.015 or 0.05), Enum.EasingDirection.InOut, Enum.EasingStyle.Sine, 0, true)
+                            dd.DropdownOuter.Default.Visible = not enabled
+                            dd.DropdownOuter.ContentHolder.Values.Visible = enabled
+                            playSound("MouseHover")
+                        end
+
+                        local refs = {}
+                        local indexRefs = {}
+
+                        local function setSelected(idx, val)
+                            local row = indexRefs[idx]
+                            if not row then return error("Unable to set value", 0) end
+                            if val then
+                                coroutineCall(options.CB)(idx, typeof(val) == "boolean" and rows[idx] or val)
+                            end
+
+                            for i,v in refs do
+                                if colors[v.Class] then
+                                    local found = table.find(colors[v.Class].Instances, v)
+                                    if found then
+                                        table.remove(colors[v.Class].Instances, found)
+                                    end
+
+                                    i.TextColor3 = colors.Text.Color
+                                    if i ~= row then
+                                        refs[i] = addClass("Text", "TextColor3", i)
+                                    end
+                                end
+                            end
+
+                            row.TextColor3 = colors.Main.Color
+                            refs[row] = addClass("Main", "TextColor3", row)
+
+                            dd.DropdownOuter.Default.Text = row.Text
+                            enabled = false
+                            update()
+                        end
+
+                        local function addRow(i, v)
+                            i = tonumber(i) or 0
+                            v = tostring(v)
+                            rows[i] = v
+
+                            local row = dd.DropdownOuter.ContentHolder.Values.ListButton:Clone()
+                            indexRefs[i] = row
+                            row.Parent = dd.DropdownOuter.ContentHolder.Values
+                            row.Text = v
+                            row.Name = ""
+                            row.Visible = true
+                            cons[#cons+1] = row.MouseButton1Click:Connect(function()
+                                coroutineCall(playSound)("Click")
+                                setSelected(i, v)
+                            end)
+                            cons[#cons+1] = row.MouseEnter:Connect(function()
+                                playSound("MouseHover")
+                            end)
+                            if v == options.Default or i == options.Default then
+                                setSelected(i)
+                            else
+                                refs[row] = addClass("Text", "TextColor3", row)
+                            end
+
+                            addClass("Back", "BackgroundColor3", row)
+                        end
+
+                        for i,v in rows do
+                            addRow(i,v)
+                        end
+
+                        cons[#cons+1] = dd.Trigger.MouseButton1Click:Connect(function()
+                            coroutineCall(playSound)("Click")
+                            enabled = not enabled
+                            update()
+                        end)
+                        cons[#cons+1] = dd.Trigger.MouseEnter:Connect(function()
+                            coroutineCall(playSound)("MouseHover")
+                        end)
+
+                        funcs.Object = dd
+
+                        addClass("Back", "BackgroundColor3", dd.Separator2)
+                        addClass("Back", "BackgroundColor3", dd.Separator)
+                        addClass("Text", "TextColor3", dd.Text)
+                        addClass("Back", "BackgroundColor3", dd.DropdownOuter)
+                        addClass("Back", "BackgroundColor3", dd.DropdownOuter.ContentHolder)
+                        addClass("Main", "TextColor3", dd.DropdownOuter.Default)
+
+                        windowFuncs.Tabs[counterTextPage][count(getText(options) or "Object", 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+                        function funcs:Expand()
+                            if not self or not self.Object then return end
+                            enabled = true
+                            update()
+                        end
+                        function funcs:Shrink()
+                            if not self or not self.Object then return end
+                            enabled = false
+                            update()
+                        end
+                        function funcs:Toggle()
+                            if not self or not self.Object then return end
+                            enabled = not enabled
+                            update()
+                        end
+                        function funcs:SetRows(newRows)
+                            if not self or not self.Object then return end
+                            rows = newRows
+                            refs = {}
+                            indexRefs = {}
+                            for i,v in dd.DropdownOuter.ContentHolder.Values:GetChildren() do
+                                if v:IsA("TextButton") and v.Visible then
+                                    v:Destroy()
+                                end
+                            end
+                            for i,v in rows do
+                                addRow(i,v)
+                            end
+                        end
+                        function funcs:Set(idx)
+                            if typeof(idx) ~= "number" then
+                                idx = table.find(rows, idx) or 1
+                            end
+                            setSelected(idx, true)
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.CB = function(v1, ...)
+                                funcs.Value = v1
+                                struct[counterText] = v1
+                                return cb(v1, ...)
+                            end
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(val)
+                        end)
+
+                        return funcs
+                    end,
+                    AddColorPicker = function(self, options)
+                        options = getOptions(options)
+                        options.Default = typeof(options.Default) == "Color3" and options.Default or typeof(options.Base) == "Color3" and options.Base or Color3.fromRGB(255, 255, 255)
+
+                        local cp = objs.ColorPicker:Clone()
+                        cp.Parent = page
+                        cp.Visible = true
+                        cp.Name = ""
+                        local text = getText(options) or "Color Picker"
+                        local counterText = count(text, 2)
+                        cp:FindFirstChild("Text").Text = text
+
+                        local col = options.Default
+                        cp:FindFirstChild("Text").Color.BackgroundColor3 = col
+                        cp.RGB.RHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.new(col.R, 0, 0)
+                        cp.RGB.GHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.new(0, col.G, 0)
+                        cp.RGB.BHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.new(0, 0, col.B)
+                        local funcs = {}
+                        local Rs, Gs, Bs
+                        local function cb(col)
+                            funcs.Value = col
+                            Rs(math.round(col.R * 255))
+                            Gs(math.round(col.G * 255))
+                            Bs(math.round(col.B * 255))
+                            struct[counterText] = {col.R * 255, col.G * 255, col.B * 255}
+                            getCallback(options)(col)
+                        end
+                        coroutineCall(cb)(col)
+                        options.CB = cb
+                        Rs, Gs, Bs = 
+                            setupSlider(cp.RGB.RHolder, nil, {Min = 0, Max = 255, Step = 1, Default = math.round(col.R * 255), Callback = function(v)
+                                if v == col.R then return end
+                                col = Color3.new(v/255, col.G, col.B)
+                                cp:FindFirstChild("Text").Color.BackgroundColor3 = col
+                                cp.RGB.RHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.fromRGB(v, 0, 0)
+                                options.CB(col)
+                            end}),
+                        setupSlider(cp.RGB.GHolder, nil, {Min = 0, Max = 255, Step = 1, Default = math.round(col.G * 255), Callback = function(v)
+                            if v == col.G then return end
+                            col = Color3.new(col.R, v/255, col.B)
+                            cp:FindFirstChild("Text").Color.BackgroundColor3 = col
+                            cp.RGB.GHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.fromRGB(0, v, 0)
+                            options.CB(col)
+                        end}),
+                        setupSlider(cp.RGB.BHolder, nil, {Min = 0, Max = 255, Step = 1, Default = math.round(col.B * 255), Callback = function(v)
+                            if v == col.B then return end
+                            col = Color3.new(col.R, col.G, v/255)
+                            cp:FindFirstChild("Text").Color.BackgroundColor3 = col
+                            cp.RGB.BHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.fromRGB(0, 0, v)
+                            options.CB(col)
+                        end})
+
+                        funcs.Object = cp
+                        funcs.Options = options
+
+                        addClass("Back", "BackgroundColor3", cp.Separator2)
+                        addClass("Back", "BackgroundColor3", cp.Separator)
+                        addClass("Text", "TextColor3", cp.Text)
+                        addClass("Back", "BackgroundColor3", cp.RGB.RHolder.SliderOuter)
+                        addClass("Back", "BackgroundColor3", cp.RGB.GHolder.SliderOuter)
+                        addClass("Back", "BackgroundColor3", cp.RGB.BHolder.SliderOuter)
+                        addClass("Back", "BackgroundColor3", cp.RGB.RHolder.SliderOuter.Bar)
+                        addClass("Back", "BackgroundColor3", cp.RGB.GHolder.SliderOuter.Bar)
+                        addClass("Back", "BackgroundColor3", cp.RGB.BHolder.SliderOuter.Bar)
+                        addClass("Text", "BackgroundColor3", cp.RGB.RHolder.SliderOuter.Bar.Progress)
+                        addClass("Text", "BackgroundColor3", cp.RGB.GHolder.SliderOuter.Bar.Progress)
+                        addClass("Text", "BackgroundColor3", cp.RGB.BHolder.SliderOuter.Bar.Progress)
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Set(obj)
+                            if not self or not self.Object or typeof(obj) ~= "Color3" then return end
+                            self.Options.CB(obj)
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.CB = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = {newVal.R * 255, newVal.G * 255, newVal.B * 255}
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(Color3.fromRGB(val[1], val[2], val[3]))
+                        end)
+
+                        return funcs
+                    end,
+                }
+                pageFuncs.AddSwitch = pageFuncs.AddToggle
+                for i,v in pageFuncs do
+                    if i:sub(1,3) == "Add" then
+                        pageFuncs[i:gsub("Add", "Create")] = v
+                        pageFuncs[i:gsub("Add", "")] = v
+                    end
+                end
+
+                return pageFuncs
+            end,
+        }
+
+        windowFuncs.Tabs = windowFuncs.Tabs or {}
+        windowFuncs.Pages = windowFuncs.Tabs
+
+        windowFuncs.CreatePage = windowFuncs.AddPage
+        windowFuncs.AddTab = windowFuncs.AddPage
+        windowFuncs.CreateTab = windowFuncs.AddPage
+
+        windowFuncs.Shutdown = windowFuncs.Close
+        windowFuncs.Minimize = windowFuncs.Hide
+        windowFuncs.Maximize = windowFuncs.Show
+
+        local tbl = typeof(options.ThemeTable) == "table" and options.ThemeTable or typeof(options.ThemeColors) == "table" and options.ThemeColors or typeof(options.Theme) == "table" and options.Theme
+        if tbl then
+            for i,v in tbl do
+                windowFuncs.ThemeColors[i] = v
+            end
+        end
+
+        windowFuncs:Show()
+
+        local keySystemFunc = type(options.KeySystemFunction) == "function" and options.KeySystemFunction or type(options.KeySystemFunc) == "function" and options.KeySystemFunc or type(options.KeySystem) == "function" and options.KeySystem or type(options.KeyCheck) == "function" and options.KeyCheck or type(options.Key) == "function" and options.Key
+        local keySystemUrl = type(options.KeySystemUrl) == "string" and options.KeySystemUrl or type(options.Url) == "string" and options.Url or type(options.KeyUrl) == "string" and options.KeyUrl
+        local newSize = typeof(options.WindowSize) == "UDim2" and options.WindowSize or typeof(options.CustomWindowSize) == "UDim2" and options.CustomWindowSize or typeof(options.Size) == "UDim2" and options.Size or bestDeviceSize
+
+        if keySystemFunc and keySystemUrl then
+            size = bestDeviceSize
+            
+            window.HolderFrame.KeySystem.Visible = true
+            window.HolderFrame.PageButtons.Visible = false
+            window.HolderFrame.PageDisplay.Visible = false
+
+            local keysys = window.HolderFrame.KeySystem
+            local redeemed = true
+            local closed = false
+            local buzy = false
+
+            keysys.Copy.Trigger.MouseEnter:Connect(function()
+                playSound("MouseHover")
+            end)
+            keysys.Copy.Trigger.MouseButton1Click:Connect(function()
+                coroutineCall(playSound)("Click")
+                if getfenv().toclipboard or getfenv().setclipboard or getfenv().Clipboard and getfenv().Clipboard.set then
+                    (getfenv().toclipboard or getfenv().setclipboard or getfenv().Clipboard and getfenv().Clipboard.set)(keySystemUrl)
+                else
+                    keysys.TextBox.TextBoxOuter.TextBox.Text = keySystemUrl
+                end
+            end)
+            keysys.CloseUI.Trigger.MouseEnter:Connect(function()
+                playSound("MouseHover")
+            end)
+            keysys.CloseUI.Trigger.MouseButton1Click:Connect(function()
+                coroutineCall(playSound)("Click")
+                closed = true
+                windowFuncs:Close()
+            end)
+            keysys.Redeem.Trigger.MouseEnter:Connect(function()
+                playSound("MouseHover")
+            end)
+            keysys.Redeem.Trigger.MouseButton1Click:Connect(function()
+                coroutineCall(playSound)("Click")
+                if buzy then return end
+                buzy = true
+                if keySystemFunc(keysys.TextBox.TextBoxOuter.TextBox.Text) then
+                    window.HolderFrame.StarterFade.Visible = true
+                    window.HolderFrame.StarterFade.BackgroundTransparency = 1
+                    window.HolderFrame.StarterFade.ZIndex += 1000
+                    game:GetService("TweenService"):Create(window.HolderFrame.StarterFade, TweenInfo.new(fadeTime / 2.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {BackgroundTransparency = 0}):Play()
+                    task.wait((fadeTime / 2.5) + 0.5)
+                    redeemed = true
+                    size = newSize
+                    windowFuncs:Show()
+                end
+                buzy = false
+            end)
+            keysys.TextBox.Trigger.MouseEnter:Connect(function()
+                playSound("MouseHover")
+            end)
+            keysys.TextBox.Trigger.MouseButton1Click:Connect(function()
+                keysys.TextBox.TextBoxOuter.TextBox:CaptureFocus()
+            end)
+            keysys.TextBox.TextBoxOuter.TextBox.FocusLost:Connect(function()
+                coroutineCall(playSound)("Click")
+            end)
+
+            repeat task.wait() until redeemed or closed
+            if closed then
+                task.wait(9e9)
+            end
+        end
+
+        size = newSize
+
+        window.HolderFrame.KeySystem.Visible = false
+        window.HolderFrame.PageButtons.Visible = true
+        window.HolderFrame.PageDisplay.Visible = true
+
+        local page = windowFuncs:AddPage({Title = "Main", Order = 999})
+        local toggleKey = Enum.KeyCode.LeftAlt
+        page:AddButton({Text = "Hide UI", Callback = function()
+            if windowFuncs:Minimize() then
+                lib.Notifications:Notification({Title = "UI Hidden", Text = "Press "..toggleKey.Name.." to show the UI"})
+            end
+        end, Keybinds = false})
+        page:AddInput({Text = "Toggle UI Key", Default = toggleKey.Name, Callback = function(kc)
+            task.wait()
+            toggleKey = kc
+        end, IgnoreConfigs = true})
+        cons[#cons+1] = game:GetService("UserInputService").InputBegan:Connect(function(input)
+            if game:GetService("UserInputService"):GetFocusedTextBox() or input.KeyCode ~= toggleKey then return end
+            windowFuncs:Toggle()
+        end)
+        local closeCallback = function()
+            maximize:Destroy()
+            for i,v in cons do
+                if v and v.Connected then
+                    v:Disconnect()
+                end
+            end;
+            (typeof(options.CloseCallback) == "function" and options.CloseCallback or getCallback(options))()
+        end
+        cons[#cons+1] = maximize.DragButton.MouseButton1Click:Connect(function()
+            windowFuncs:Toggle()
+        end)
+        page:AddButton({Text = "Close UI", Callback = function()
+            lib.Notifications:ChooseNotification({Title = "Are you sure?", Text = "Are you sure that you want to close\n"..window.HolderFrame.Title.Text.."?", Callback = function(b)
+                if b then
+                    windowFuncs:Close()
+                    closeCallback()
+                end
+            end})
+        end, Keybinds = false})
+        page:AddSeparator()
+        local execName = "RobloxClient"
+        local execVersion = getfenv().version()
+
+        if getfenv().identifyexecutor then
+            local s, en, ev = pcall(getfenv().identifyexecutor)
+            if s then
+                if en then
+                    execName = tostring(en)
+                    if ev then
+                        execVersion = tostring(ev)
+                    end
+                end
+            end
+        end
+
+        if getGlobalTable().FireHubLoaded then
+            page:AddLabel({Text = "NullFire Version: "..versions.FireHubVersion})
+        end
+        page:AddLabel({Text = "FireLib Version: "..versions.FireLibraryVersion})
+        page:AddLabel({Text = "Executor Name & Version: " .. execName .. "; " .. execVersion})
+        page:AddSeparator()
+        
+        local emulator, realPlatform = false, nil
+        local s, platform = pcall(game:GetService("UserInputService").GetPlatform, game:GetService("UserInputService"))
+        if s then
+            realPlatform = platform
+            local isMobilePlatform = table.find({Enum.Platform.IOS, Enum.Platform.Android, Enum.Platform.Ouya, Enum.Platform.AndroidTV}, platform)
+            if isMobilePlatform and not isMobile or isMobile and not isMobilePlatform then
+                emulator = true
+            end
+        end
+        
+        if platform ~= Enum.Platform.Windows and platform ~= Enum.Platform.IOS and platform ~= Enum.Platform.Android then
+            platform = not isMobile and Enum.Platform.Windows or Enum.Platform.Android
+        end
+
+        page:AddLabel({Text = "Emulation detected: ".. (emulator and "Yes" or "No")})
+        page:AddLabel({Text = "Current NullFire version: ".. (isMobile and "Mobile" or "PC")})
+        page:AddLabel({Text = "Current platform: ".. (realPlatform or platform).Name})
+
+        page:AddSeparator()
+        
+        if configsEnabled then
+            local function load(got)
+                for i,v in got do
+                    if typeof(v) == "table" then
+                        for idx, val in v do
+                            if typeof(val) == "table" then
+                                for index, value in val do
+                                    if typeof(configStructure[i]) == "table" and typeof(configStructure[i][idx]) == "table" and configStructure[i][idx][index] ~= nil then
+                                        configStructure[i][idx][index] = value
+                                    end
+                                end
+                            else
+                                configStructure[i][idx] = val
+                            end
+                        end
+                    else
+                        configStructure[i] = v
+                    end
+                end
+                configEvent:Fire(got)
+
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+            end
+            local currentConfig = ""
+            page:AddTextBox({Text = "Config name", NeedEnter = false, Callback = function(text)
+                currentConfig = text
+            end})
+            local suffix = ""
+            local prefix = ""
+            local format = "json"
+            local folder = "FireLib_Configs"
+            if makefolder then
+                makefolder(folder)
+                prefix = folder.."\\"
+                suffix = "-Config."..format
+            else
+                suffix = "-FireLib_Config."..format
+            end
+            suffix = ("-"..game:GetService("HttpService"):UrlEncode(window.HolderFrame.Title.Text)..suffix):gsub("%%", "x")
+            page:AddButton({Text = "Save Config", Callback = function()
+                local s,got = pcall(readfile,prefix..currentConfig..suffix)
+                if s then
+                    lib.Notifications:ChooseNotification({Callback = function(b)
+                        if b then
+                            writefile(prefix..currentConfig..suffix, game:GetService("HttpService"):JSONEncode(configStructure))
+                            lib.Notifications:Notification({Title = "Success", Text = "Config \""..currentConfig.."\" has been created!"})
+                        end
+                    end, Title = "Wait!", Text = "Config called \""..currentConfig.."\" already exist, do you want to rewrite it?"})
+                else
+                    writefile(prefix..currentConfig..suffix, game:GetService("HttpService"):JSONEncode(configStructure))
+                    lib.Notifications:Notification({Title = "Success", Text = "Config \""..currentConfig.."\" has been created!"})
+                end
+            end})
+            page:AddButton({Text = "Load Config", Callback = function()
+                local s,got = pcall(readfile,prefix..currentConfig..suffix)
+                if not s then
+                    return lib.Notifications:Notification({Title = "Uh oh!", Text = "Config called \""..currentConfig.."\" not found!"})
+                end
+                if got then
+                    got = game:GetService("HttpService"):JSONDecode(got)
+                end
+                load(got)
+                lib.Notifications:Notification({Title = "Success", Text = "Config \""..currentConfig.."\" has been loaded!"})
+            end})
+
+            local first = true
+            local tb = page:AddTextBox({Text = "Auto load config [leave empty to disable]", NeedEnter = false, Default = "", Callback = function(text)
+                if first then first = false return end
+                writefile("AutoLoad"..suffix..".skibidi", text)
+            end, IgnoreConfigs = true})
+            local s,e = task.spawn(function()
+                for i=1, 3 do
+                    game:GetService("RunService").RenderStepped:Wait()
+                    task.wait(0.1)
+                    game:GetService("RunService").RenderStepped:Wait()
+                end
+                local s, content = pcall(readfile, "AutoLoad"..suffix..".skibidi")
+                
+                if s then
+                    content = content:gsub("\n", ""):gsub("\r", "")
+
+                    if content:gsub(" ", ""):gsub("\t", "") == "" then return end
+                    tb:Set(content)
+
+                    local s,got = pcall(readfile, prefix..content..suffix)
+                    if not s then
+                        return lib.Notifications:Notification({Title = "Uh oh!", Text = "Config called \""..content.."\" not found!"})
+                    end
+                    if got then
+                        got = game:GetService("HttpService"):JSONDecode(got)
+                    end
+                    if not got then return end
+                    load(got)
+                    lib.Notifications:Notification({Title = "Success", Text = "Config \""..content.."\" has been loaded!"})
+                end
+            end)
+        else
+            page:AddLabel({Text = execName .. " does not support configs!"})
+        end
+        
+        page:AddSeparator()
+
+        page:AddTextBox({Text = "Window Size [BE CAREFUL WITH IT]", Default = ((math.round(size.X.Scale * 1000) / 1000) .. ", " .. size.X.Offset) .. ", " .. ((math.round(size.Y.Scale * 1000) / 1000) .. ", " .. size.Y.Offset), Callback = function(txt)
+            local new = txt:gsub("{", ""):gsub("}", ""):gsub(" ", ""):split(",")
+            for i=1, 4 do
+                new[i] = tonumber(new[i]) or 0
+            end
+
+            new[1] = isMobile and math.clamp(new[1], 0.5, 1.75) or math.clamp(new[1], 0.3, 2)
+            new[2] = math.max(new[2], 0)
+            new[3] = math.clamp(new[3], isMobile and 0.5 or 0.3, 1)
+            new[4] = math.max(new[4], 0)
+
+            size = UDim2.new(new[1], new[2], new[3], new[4])
+            windowFuncs:Show()
+        end})
+
+        page:AddSeparator()
+
+        page:AddLabel({Text = "Themes"})
+
+        for i,v in colors do
+            themeColorPickers[i] = page:AddColorPicker({Text = i, Default = v.Color, Callback = function(col)
+                windowFuncs.ThemeColors[i.."WTF"] = col
+            end})
+        end
+        if configsEnabled then
+            page:AddSeparator()
+            
+            local currentConfig = ""
+            page:AddTextBox({Text = "Theme name", NeedEnter = false, Callback = function(text)
+                currentConfig = text
+            end, IgnoreConfigs = true})
+            local suffix = ""
+            local prefix = ""
+            local format = "wave"
+            local folder = "FireLib_Themes"
+            if makefolder then
+                makefolder(folder)
+                prefix = folder.."\\"
+                suffix = "-Theme."..format
+            else
+                suffix = "-"..folder.."."..format
+            end
+            suffix = "-"..suffix
+            page:AddButton({Text = "Save Theme", Callback = function()
+                local s,got = pcall(readfile,prefix..currentConfig..suffix)
+                if s then
+                    lib.Notifications:ChooseNotification({Callback = function(b)
+                        if b then
+                            local colorsT = {}
+                            for i,v in colors do
+                                colorsT[i] = {R = v.Color.R, G = v.Color.G, B = v.Color.B}
+                            end
+                            writefile(prefix..currentConfig..suffix, game:GetService("HttpService"):JSONEncode(colorsT))
+                            lib.Notifications:Notification({Title = "Success", Text = "Theme \""..currentConfig.."\" has been created!"})
+                        end
+                    end, Title = "Wait!", Text = "Theme called \""..currentConfig.."\" already exist, do you want to rewrite it?"})
+                else
+                    local colorsT = {}
+                    for i,v in colors do
+                        colorsT[i] = {R = v.Color.R, G = v.Color.G, B = v.Color.B}
+                    end
+                    writefile(prefix..currentConfig..suffix, game:GetService("HttpService"):JSONEncode(colorsT))
+                    lib.Notifications:Notification({Title = "Success", Text = "Theme \""..currentConfig.."\" has been created!"})
+                end
+            end})
+            page:AddButton({Text = "Load Theme", Callback = function()
+                local s,got = pcall(readfile, prefix..currentConfig..suffix)
+                if not s then
+                    return lib.Notifications:Notification({Title = "Uh oh!", Text = "Theme called \""..currentConfig.."\" not found!"})
+                end
+                if got then
+                    got = game:GetService("HttpService"):JSONDecode(got)
+                end
+                if not got then return end
+                for i,v in got do
+                    windowFuncs.ThemeColors[i] = Color3.new(v.R, v.G, v.B)
+                    lib.Notifications:Notification({Title = "Success", Text = "Theme \""..currentConfig.."\" has been loaded!"})
+                end
+            end})
+        end
+
+        local themeRows = {}
+        for i,v in themes.Themes do
+            themeRows[#themeRows+1] = i
+        end
+
+        page:AddSeparator()
+
+        page:AddDropdown({Title = "Themes", Rows = themeRows, Callback = function(_,v)
+            for i,v in themes.Themes[v] do
+                windowFuncs.ThemeColors[i] = v
+            end
+        end, IgnoreConfigs = true})
+
+        page:AddLabel({Text = "Back image"})
+
+        local tileMode = false
+        local rows = {}
+        for i,v in themes.Patterns do
+            rows[#rows+1] = i
+        end
+
+        local function updAll()
+            local str = script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = script.Parent.Notification.ChooseNotificationHolder.NotificationColored.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = script.Parent.Notification.NotificationHolder.NotificationColored.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = keybinds.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = keybinds.HolderFrame.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+        end
+
+        local custom, tile
+        local dd = page:AddDropdown({Title = "Background image", Rows = rows, Callback = function(_,v)
+            window.Stripes.Image = themes.Patterns[v]
+            window.HolderFrame.Stripes.Image = themes.Patterns[v]
+
+            window.Stripes.ScaleType = v == "Custom" and not tileMode and Enum.ScaleType.Fit or Enum.ScaleType.Tile
+            window.HolderFrame.Stripes.ScaleType = window.Stripes.ScaleType
+
+            updAll()
+
+            if v == "Custom" then
+                custom:Show()
+                tile:Show()
+            else
+                custom:Hide()
+                tile:Hide()
+            end
+        end, Default = "Stripes", IgnoreConfigs = true})
+
+        custom = page:AddTextBox({Title = "Custom image id", Default = "", Callback = function(text)
+            if not text:match("rbxassetid") and not text:match("asset/%?id%=") then
+                return custom:Set("rbxassetid://"..text)
+            end
+            themes.Patterns.Custom = text
+            window.Stripes.Image = text
+            window.HolderFrame.Stripes.Image = text
+            
+            updAll()
+        end, IgnoreConfigs = true})
+        tile = page:AddToggle({Title = "Tile mode", Default = false, Callback = function(new)
+            tileMode = new
+
+            window.Stripes.ScaleType = tileMode and Enum.ScaleType.Tile or Enum.ScaleType.Fit
+            window.HolderFrame.Stripes.ScaleType = window.Stripes.ScaleType
+            
+            updAll()
+        end, IgnoreConfigs = true})
+
+        tile:Hide()
+        custom:Hide()
+
+        window.Stripes.ScaleType = Enum.ScaleType.Tile
+        window.HolderFrame.Stripes.ScaleType = window.Stripes.ScaleType
+        window.Stripes.Image = themes.Patterns.Stripes
+        window.HolderFrame.Stripes.Image = themes.Patterns.Stripes
+        
+        updAll()
+
+        page:AddSeparator()
+        page:AddColorPicker({Text = "Outline image color", Default = window.Stripes.ImageColor3, Callback = function(col)
+            window.Stripes.ImageColor3 = col
+            keybinds.Stripes.ImageColor3 = col
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.Stripes.ImageColor3 = col
+            script.Parent.Notification.NotificationHolder.NotificationColored.Stripes.ImageColor3 = col
+        end})
+        page:AddColorPicker({Text = "Background image color", Default = window.HolderFrame.Stripes.ImageColor3, Callback = function(col)
+            window.HolderFrame.Stripes.ImageColor3 = col
+            keybinds.HolderFrame.Stripes.ImageColor3 = col
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageColor3 = col
+            script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageColor3 = col
+        end})
+        page:AddSlider({Text = "Outline image opacity", Default = (1 - window.Stripes.ImageTransparency) * 100, Min = 0, Max = 100, Step = 1, Callback = function(val)
+            window.Stripes.ImageTransparency = 1 - (val / 100)
+            keybinds.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.NotificationHolder.NotificationColored.Stripes.ImageTransparency = 1 - (val / 100)
+        end, CustomTextDisplay = function(i)
+            return i .. "%"
+        end})
+        page:AddSlider({Text = "Background image opacity", Default = (1 - window.HolderFrame.Stripes.ImageTransparency) * 100, Min = 0, Max = 100, Step = 1, Callback = function(val)
+            window.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
+            keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+        end, CustomTextDisplay = function(i)
+            return i .. "%"
+        end})
+        
+        return windowFuncs
+    end,
+    IsMobile = isMobile
+}
+
+lib.CreateWindow = lib.MakeWindow
+lib.AddWindow = lib.MakeWindow
+lib.Notifications.Notify = lib.Notifications.Notification
+lib.Notifications.SelectNotification = lib.Notifications.ChooseNotification
+lib.Notifications.SelectionNotification = lib.Notifications.ChooseNotification
+
+script.Parent.Notification.ChooseNotificationHolder.Visible = false
+script.Parent.Notification.NotificationHolder.Visible = false
+script.Parent.Enabled = true
+
+local add = 2
+if isMobile then
+    script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Lines['1'].TextSize += add
+    script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Lines['1'].TextSize += add
+    script.Parent.Notification.ChooseNotificationHolder.Size = UDim2.new(1, 0, 0, 125)
+    script.Parent.Notification.NotificationHolder.Size = script.Parent.Notification.ChooseNotificationHolder.Size
+    script.Parent.Notification.Size = UDim2.new(0, 300, 1, 0)
+end
+
+getGlobalTable()._FIRELIB = lib
+
+return lib
+    end;
+end;
+
+-- YOUR CODE DOWN HERE --
+
+local obj = objects["Instance0"];
+return require(objects["Instance218"])-- Set modules
+local o_require = require; local require;
+local modules do
+    modules = {};
+    require = function(object)
+        if modules[object] then
+            return modules[object]();
+        end
+        return o_require(object);
+    end;
+
+    getfenv().require = require;
+
+    modules[objects["Instance218"]] = function()
+        local script = objects["Instance218"];
+local function getGlobalTable()
+    return typeof(getfenv().getgenv) == "function" and typeof(getfenv().getgenv()) == "table" and getfenv().getgenv() or _G
+end
+if getGlobalTable()._FIRELIB then
+    task.spawn(function()
+        task.wait()
+        script.Parent:Destroy()
+    end)
+    return getGlobalTable()._FIRELIB
+end
+
+script.Parent.Holder.Window.Visible = false
+script.Parent.Holder.Window.HolderFrame.PageDisplay.Page.Visible = false
+script.Parent.Holder.Window.HolderFrame.PageButtons.PageButton.Visible = false
+
+script.Parent.LeftHolder.Keybinds.Visible = false
+script.Parent.LeftHolder.Keybinds.Size = UDim2.fromOffset(200, 45)
+script.Parent.LeftHolder.Keybinds.HolderFrame.List.TextLabel.Visible = false
+
+for i,v in script.Parent.Holder.Window.HolderFrame.PageDisplay.Page:GetChildren() do
+    if v and v:IsA("GuiObject") then
+        v.Visible = false
+    end
+end
+
+local writefile, readfile, makefolder, isfolder, isfile, listfiles = getfenv().writefile, getfenv().readfile, getfenv().makefolder or getfenv().createfolder, getfenv().isfolder, getfenv().isfile or getfenv().readfile and function(path)
+    return typeof(select(2, pcall(getfenv().readfile, path))) == "string"
+end, getfenv().listfiles
+local configsEnabled = typeof(writefile) == "function" and typeof(readfile) == "function"
+
+local themes
+local versions
+if not pcall(function()
+        local str = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Data/Versions.json"))
+        versions = {
+            ["FireLibraryVersion"] = str[2],
+            ["FireHubVersion"] = str[1]
+        }
+        themes = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/refs/heads/main/Core/Data/Theme.json"))
+    end) then
+    versions = {
+        ["FireLibraryVersion"] = "5.4.2",
+        ["FireHubVersion"] = "4.0.2"
+    }
+    themes = {
+        Patterns = {
+            ["Stripes"] = "rbxassetid://87577631610763",
+            ["Rounded corner pattern"] = "rbxassetid://846693570",
+            ["Checkers pattern"] = "rbxassetid://15562720000",
+            ["Custom"] = ""
+        },
+        Themes = {
+            Default = {
+                Main = {170, 0, 255},
+                Back = {35, 35, 35},
+                Text = {255, 255, 255}
+            },
+            Acid = {
+                Main = {0, 255, 0},
+                Back = {35, 35, 35},
+                Text = {255, 255, 255}
+            },
+            Light = {
+                Main = {100, 100, 100},
+                Back = {255, 255, 255},
+                Text = {0, 0, 0}
+            }
+        }
+    }
+end
+
+for i,v in themes.Themes do
+    for idx, val in themes.Themes[i] do
+        themes.Themes[i][idx] = Color3.fromRGB(themes.Themes[i][idx][1], themes.Themes[i][idx][2], themes.Themes[i][idx][3])
+    end
+end
+
+script.Parent.Name = "Fire-Lib [ID:"..game:GetService("HttpService"):GenerateGUID(false).."]"
+getGlobalTable()._FLVersions = versions
+local isMobile = game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").KeyboardEnabled
+local uiHolder = pcall(game.GetFullName, game.CoreGui) and game.CoreGui:FindFirstChild("DevConsoleMaster") and getfenv().gethui and getfenv().gethui() or pcall(game.GetFullName, game.CoreGui) and game.CoreGui:FindFirstChild("RobloxGui") or game:GetService("Players").LocalPlayer.PlayerGui
+script.Parent.Parent = uiHolder
+if not pcall(function() script.Parent.OnTopOfCoreBlur = true end) and pcall(game.GetFullName, game.CoreGui) then
+    local devCon; devCon = game.CoreGui.ChildAdded:Connect(function(c)
+        if c and c.Name == "DevConsoleMaster" then
+            devCon:Disconnect()
+            uiHolder = c
+            script.Parent.Parent = c
+        end
+    end)
+end
+
+local function playSound(soundName)
+    task.spawn(function()
+        local sCopy = script.Parent.Sounds.SoundsFolder:FindFirstChild(soundName)
+        if not sCopy then return end
+        sCopy = sCopy:Clone()
+        sCopy.Parent = script.Parent.Sounds
+        sCopy.Volume = 0.5
+        sCopy.Looped = false
+        sCopy.TimePosition = 0
+        sCopy:Play()
+        task.wait(sCopy.TimeLength)
+        sCopy:Destroy()
+    end)
+end
+
+local function coroutineCall(f)
+    return coroutine.wrap(function(...)
+        pcall(f, ...)
+    end)
+end
+
+local function setupSlider(slider, holder, options)
+    local val = options.Default
+    local prevVal = val
+    local customTextDisplay = function(val, max)
+        if typeof(options.CustomTextDisplay) == "function" then
+            local res = options.CustomTextDisplay(val, max)
+            if typeof(res) == "string" or typeof(res) == "number" then
+                return tostring(res)
+            end
+        end
+        return val .. " / " .. max
+    end
+    holder = holder or slider.Parent:IsA("Button") and slider.Parent or slider:FindFirstChildOfClass("TextButton") or slider
+    local sliderDrag = holder
+    local sliderBar = slider.SliderOuter.Bar.Fill
+    local dragging = false
+
+    sliderDrag.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+            dragging = true 
+        end 
+    end)
+    sliderDrag.InputEnded:Connect(function(input) 
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+            dragging = false 
+        end 
+    end)
+
+    local function round(Number, Factor)
+        local Result = math.floor(Number/Factor + (math.sign(Number) * 0.5)) * Factor
+        if Result < 0 then Result = Result + Factor end
+        return Result
+    end
+
+    local newVal
+    local function set(num)
+        newVal = math.round((math.clamp(round(num, options.Step), options.Min, options.Max))*1000)/1000
+        if newVal then
+            sliderBar:TweenSize(UDim2.fromScale((newVal - options.Min) / (options.Max - options.Min), 1), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
+            val = newVal
+            sliderBar.Parent.Progress.Text = customTextDisplay(val, options.Max)
+            if newVal ~= prevVal then
+                coroutineCall(options.Callback)(newVal)
+                prevVal = newVal
+                --newVal = nil
+            end
+        end
+    end
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or Enum.UserInputType.Touch) then 
+            local sizeScale = math.clamp((input.Position.X - sliderBar.Parent.AbsolutePosition.X) / sliderBar.Parent.AbsoluteSize.X, 0, 1)
+            local pval = prevVal
+            set(options.Min + ((options.Max - options.Min) * sizeScale))
+            if pval ~= prevVal then
+                coroutineCall(playSound)("MouseHover")
+            end
+        end
+    end)
+
+    set(val)
+
+    return set
+end
+
+local delta, dragInput
+local function update(input, gui, dragStart, startPos)
+    delta = input.Position - dragStart
+    gui:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), nil, nil, 0.3, true)
+    delta = nil
+end
+
+local function getOptions(options) -- cuz i was lazy to always insert the same line of code
+    -- also idk how properly call that function
+    return typeof(options) == "table" and options or {}
+end
+local function getCallback(options)
+    return typeof(options.Function) == "function" and options.Function or typeof(options.Callback) == "function" and options.Callback or function() end
+end
+local function getText(options)
+    return typeof(options.Title) == "string" and options.Title or typeof(options.Caption) == "string" and options.Caption or typeof(options.Name) == "string" and options.Name or typeof(options.Text) == "string" and options.Text or typeof(options.Description) == "string" and options.Description or typeof(options.Content) == "string" and options.Content
+end
+
+local blockedCodes = {
+    Enum.KeyCode.Unknown,
+    Enum.KeyCode.Power,
+    Enum.KeyCode.Left,
+    Enum.KeyCode.Right,
+    Enum.KeyCode.Up,
+    Enum.KeyCode.Down,
+    Enum.KeyCode.F11,
+    Enum.KeyCode.F9,
+    Enum.KeyCode.CapsLock,
+    Enum.KeyCode.ScrollLock,
+    Enum.KeyCode.NumLock
+}
+
+local bestDeviceSize = isMobile and UDim2.fromScale(0.775, 0.75) or UDim2.fromScale(0.625, 0.475)
+local function updateFloatingKeybinds(binds, list, colors)
+    if isMobile then
+        binds.Visible = false
+        return
+    end
+
+    local prevChildren = binds.HolderFrame.List:GetChildren()
+    local prevLen = #prevChildren
+    
+    for i,v in prevChildren do
+        if v and v:IsA("TextLabel") and v.Visible then
+            v:Destroy()
+        end
+    end
+    
+    for i,v in list do
+        if v[2] then
+            local label = binds.HolderFrame.List.TextLabel:Clone()
+            label.Parent = binds.HolderFrame.List
+            label.Visible = true
+            label.Text = "[ " .. v[2].Name .. " ] " .. v[1]
+            label.TextColor3 = v[3] and colors.Main.Color or colors.Text.Color
+            label.Name = ""
+        end
+    end
+    
+    local children = binds.HolderFrame.List:GetChildren()
+    if #children == 2 then
+        binds:TweenSize(UDim2.fromOffset(binds.Size.X.Offset, 30), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 0.25, true)
+        task.wait(0.25)
+        binds.Visible = false
+        return
+    end
+    
+    local maxX = 0
+    
+    for i,v in children do
+        if v and v:IsA("TextLabel") then
+            maxX = math.max(maxX, (#v.Text * 7) + 20)
+        end
+    end
+    
+    maxX = math.max(maxX, 200)
+    local y = ((#children - 2) * 15) + (2 * math.max((#children - 2) - 1, 0)) + 30
+
+    binds.Visible = true
+    
+    if prevLen == 2 then
+        binds.Size = UDim2.fromOffset(maxX, 30)
+    end
+    
+    binds:TweenSize(UDim2.fromOffset(maxX, y), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 0.25, true)
+end
+
+local lib; lib = {
+    Notifications = {
+        _AnimateNotification = {
+            In = function(notification)
+                if not notification or not notification.Parent then return end
+                playSound("Notification")
+                local size = notification.Size
+                notification.Size = UDim2.fromScale()
+                notification.Visible = true
+                notification:TweenSize(size, nil, nil, 0.3, true)
+                notification.NotificationColored.Position = UDim2.new(-1, -1, 0, 0)
+                notification.NotificationColored.NotificationMain.Position = UDim2.new(-1, 0, 0, 2)
+                task.wait(0.32)
+                if not notification or not notification.Parent then return end
+                notification.NotificationColored:TweenPosition(UDim2.fromScale(0,0), nil, nil, 0.3, true)
+                notification.NotificationColored.NotificationMain:TweenPosition(UDim2.fromOffset(0, 2), nil, nil, 0.45, true)
+            end,
+            Out = function(notification)
+                if not notification or not notification.Parent then return end
+                notification.NotificationColored.NotificationMain:TweenPosition(UDim2.new(-1, 0, 0, 2), nil, nil, 0.45, true)
+                notification.NotificationColored:TweenPosition(UDim2.new(-1, -1, 0, 0), nil, nil, 0.3, true)
+                task.wait(0.32)
+                if not notification or not notification.Parent then return end
+                notification:TweenSize(UDim2.fromScale(0, 0), nil, nil, 0.3, true)
+                task.wait(0.31)
+                if not notification or not notification.Parent then return end
+                notification:Destroy()
+            end
+        },
+        Notification = function(self, options)
+            task.spawn(function()
+                local notification = script.Parent.Notification.NotificationHolder:Clone()
+                notification.Parent = script.Parent.Notification
+                notification.Name = ""
+                notification.NotificationColored.NotificationMain.Bar.Fill.Size = UDim2.fromScale(1,1)
+                notification.NotificationColored.NotificationMain.Bar.Fill.Position = UDim2.fromScale(0,0)
+                notification.NotificationColored.NotificationMain.Title.Text = typeof(options.Title) == "string" and options.Title or typeof(options.Name) == "string" and options.Name or "Notification"
+                local text = typeof(options.Text) == "string" and options.Text or typeof(options.Description) == "string" and options.Description or typeof(options.Content) == "string" and options.Content or ""
+                notification.NotificationColored.NotificationMain.Lines["1"].Text = text
+                coroutineCall(self._AnimateNotification.In)(notification)
+                local time = tonumber(options.Time) or tonumber(options.Delay) or tonumber(options.Length) or 5
+                notification.NotificationColored.NotificationMain.Bar.Fill:TweenSizeAndPosition(UDim2.fromScale(0, 1), UDim2.fromScale(1, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, time, true)
+                task.wait(time)
+                coroutineCall(self._AnimateNotification.Out)(notification)
+            end)
+        end,
+        ChooseNotification = function(self, options)
+            task.spawn(function()
+                local notification = script.Parent.Notification.ChooseNotificationHolder:Clone()
+                notification.Parent = script.Parent.Notification
+                notification.Name = ""
+                notification.NotificationColored.NotificationMain.Bar.Fill.Size = UDim2.fromScale(1,1)
+                notification.NotificationColored.NotificationMain.Bar.Fill.Position = UDim2.fromScale(0,0)
+                notification.NotificationColored.NotificationMain.Title.Text = typeof(options.Title) == "string" and options.Title or typeof(options.Name) == "string" and options.Name or "Notification"
+                local text = typeof(options.Text) == "string" and options.Text or typeof(options.Description) == "string" and options.Description or typeof(options.Content) == "string" and options.Content or ""
+                notification.NotificationColored.NotificationMain.Lines["1"].Text = text
+                local done = false
+                notification.NotificationColored.NotificationMain.Yes.MouseButton1Click:Connect(function()
+                    if done then return end
+                    coroutineCall(self._AnimateNotification.Out)(notification)
+                    done = true
+                    getCallback(options)(true)
+                end)
+                notification.NotificationColored.NotificationMain.No.MouseButton1Click:Connect(function()
+                    if done then return end
+                    coroutineCall(self._AnimateNotification.Out)(notification)
+                    done = true
+                    getCallback(options)(false)
+                end)
+                coroutineCall(self._AnimateNotification.In)(notification)
+                local time = tonumber(options.Time) or tonumber(options.Delay) or tonumber(options.Length) or 5
+                notification.NotificationColored.NotificationMain.Bar.Fill:TweenSizeAndPosition(UDim2.fromScale(0, 1), UDim2.fromScale(1, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, time, true)
+                task.wait(time)
+                coroutineCall(self._AnimateNotification.Out)(notification)
+            end)
+        end
+    },
+    Versions = versions,
+    MakeWindow = function(self, options)
+        local configStructure = {}
+
+        getGlobalTable().Struct = configStructure
+
+        local configEvent = Instance.new("BindableEvent")
+        local counter = {}
+        local function count(name, layer)
+            counter[layer] = counter[layer] or {}
+            counter[layer][name] = (tonumber(counter[layer][name]) or 0) + 1
+            return name..counter[layer][name]
+        end
+        options = getOptions(options)
+        local session = {}
+        local cons = {}
+        local window = script.Parent.Holder.Window:Clone()
+        window.Parent = script.Parent.Holder
+        local fadeTime = 1
+        local size = typeof(options.WindowSize) == "UDim2" and options.WindowSize or typeof(options.CustomWindowSize) == "UDim2" and options.CustomWindowSize or typeof(options.Size) == "UDim2" and options.Size or bestDeviceSize
+        window.Name = ""
+        window.HolderFrame.Title.Text = getText(options) or "Fire Library | "..versions.FireLibraryVersion
+        window.Visible = true
+        window.Position = UDim2.fromScale(0.5, 0.5)
+        window.HolderFrame.StarterFade.Visible = true
+        window.Size = UDim2.fromScale(0,0)
+        local maximize = script.Parent.Holder.MobileMaximize:Clone()
+        maximize.Parent = script.Parent.Holder
+        maximize.Name = ""
+        maximize.Visible = isMobile
+        
+        local objs = Instance.new("Folder", window)
+        for i,v in window.HolderFrame.PageDisplay.Page:GetChildren() do
+            if v and (v:IsA("TextButton") or v:IsA("Frame")) and v.Name ~= "Frame" then
+                v.Parent = objs
+            end
+        end
+        
+        objs.Name = "UIElements"
+        
+        local keybinds = script.Parent.LeftHolder.Keybinds:Clone()
+        keybinds.Parent = script.Parent.LeftHolder
+        keybinds.Visible = false
+        keybinds.Name = ""
+
+        local function makeDraggable(gui)
+            local dragging, dragStart, startPos, delta
+
+            cons[#cons+1] = gui.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    dragging = true
+                    dragStart = input.Position
+                    startPos = gui.Position
+
+                    cons[#cons+1] = input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            dragging = false
+                        end
+                    end)
+                end
+            end)
+
+            cons[#cons+1] = gui.InputChanged:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                    dragInput = input
+                end
+            end)
+
+            cons[#cons+1] = game:GetService("UserInputService").InputChanged:Connect(function(input)
+                if input == dragInput and dragging then
+                    update(input, gui, dragStart, startPos)
+                end
+            end)
+        end
+
+        makeDraggable(maximize.DragButton)
+        makeDraggable(window)
+        makeDraggable(keybinds)
+        
+        local binds = {}
+
+        local themeColorPickers = {}
+        local function getColorOffset(a,b)
+            return Color3.new(math.clamp(a.R - b.R, 0, 1),math.clamp(a.G - b.G, 0, 1),math.clamp(a.B - b.B, 0, 1))
+        end
+        local function setColorOffset(a,b)
+            return Color3.new(math.clamp(a.R + b.R, 0, 1),math.clamp(a.G + b.G, 0, 1),math.clamp(a.B + b.B, 0, 1))
+        end
+
+        local colors = {
+            ["Main"] = {
+                Color = window.BackgroundColor3,
+                Default = window.BackgroundColor3,
+
+                Instances = {}
+            },
+            ["Back"] = {
+                Color = window.HolderFrame.BackgroundColor3,
+                Default = window.HolderFrame.BackgroundColor3,
+
+                Instances = {}
+            },
+            ["Text"] = {
+                Color = objs.Label.Text.TextColor3,
+                Default = objs.Label.Text.TextColor3,
+
+                Instances = {}
+            }
+        }
+
+        local function setColor(v)
+            if v.Instance then
+                v.Instance[v.Property] = setColorOffset(colors[v.Class].Color, v.Offset)
+            end
+        end
+        local function addClass(class, prop, instance, setCol)
+            local tbl = {Class = class, Property = prop, Instance = instance, Default = instance[prop], Offset = getColorOffset(instance[prop], colors[class].Default)}
+            table.insert(colors[class].Instances, tbl)
+            if setCol == nil or setCol then
+                setColor(tbl)
+            end
+            return tbl
+        end
+
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Bar)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Bar.Fill)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Bar)
+        addClass("Main", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Bar.Fill)
+        addClass("Main", "BackgroundColor3", window)
+        addClass("Main", "ImageColor3", window.HolderFrame.KeySystem.Copy.ToggleOuter.Frame.ImageLabel)
+        addClass("Main", "ImageColor3", window.HolderFrame.KeySystem.Redeem.ToggleOuter.Frame.ImageLabel)
+        addClass("Main", "ImageColor3", window.HolderFrame.KeySystem.CloseUI.ToggleOuter.Frame.ImageLabel)
+        addClass("Main", "BackgroundColor3", keybinds)
+
+        addClass("Back", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain)
+        addClass("Back", "BackgroundColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Separator)
+        addClass("Back", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain)
+        addClass("Back", "BackgroundColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Separator)
+        addClass("Back", "BackgroundColor3", window.HolderFrame)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.Separator)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.StarterFade)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.StarterFade)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.Copy.ToggleOuter)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.Copy.ToggleOuter.Frame)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.Redeem.ToggleOuter)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.Redeem.ToggleOuter.Frame)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.CloseUI.ToggleOuter)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.CloseUI.ToggleOuter.Frame)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.TextBox.TextBoxOuter)
+        addClass("Back", "BackgroundColor3", window.HolderFrame.KeySystem.TextBox.TextBoxOuter.TextBoxBackground)
+        addClass("Back", "BackgroundColor3", keybinds.HolderFrame)
+        addClass("Back", "BackgroundColor3", keybinds.HolderFrame.Separator)
+
+        addClass("Text", "TextColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Title)
+        addClass("Text", "TextColor3", script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Lines["1"])
+        addClass("Text", "TextColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Title)
+        addClass("Text", "TextColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Lines["1"])
+        addClass("Text", "ImageColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.No)
+        addClass("Text", "ImageColor3", script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Yes)
+        addClass("Text", "TextColor3", window.HolderFrame.Title)
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.Copy:FindFirstChild("Text"))
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.Redeem:FindFirstChild("Text"))
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.CloseUI:FindFirstChild("Text"))
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.Label.Text)
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.TextBox.TextBoxOuter.TextBox)
+        addClass("Text", "TextColor3", window.HolderFrame.KeySystem.TextBox:FindFirstChild("Text"))
+        addClass("Text", "PlaceholderColor3", window.HolderFrame.KeySystem.TextBox.TextBoxOuter.TextBox, false)
+        addClass("Text", "TextColor3", keybinds.HolderFrame.Title)
+
+        local cd = false
+        local windowFuncs; windowFuncs = {
+            ThemeColors = setmetatable({}, {
+                __newindex = function(self, name, newVal)
+                    if colors[name:gsub("WTF", "")..""] and typeof(newVal) == "Color3" then
+                        coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                        colors[name:gsub("WTF", "")..""].Color = newVal
+                        if not name:match("WTF") and themeColorPickers[name:gsub("WTF", "")..""] then
+                            themeColorPickers[name:gsub("WTF", "")..""]:Set(newVal)
+                        end
+                        for i,v in colors[name:gsub("WTF", "")..""].Instances do
+                            pcall(setColor, v)
+                        end
+                    end
+                end,
+                __index = function(self, name)
+                    if colors[name] then
+                        return colors[name].Color
+                    end
+                end,
+            }),
+            Opened = true,
+            Close = function(self)
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                task.spawn(function()
+                    while cd and task.wait() do end
+                    self.Opened = false
+                    self:Hide()
+                    binds = {}
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    task.wait(fadeTime + 0.01)
+                    window:Destroy()
+                    task.wait(0.5)
+                    keybinds:Destroy()
+                end)
+            end,
+            Show = function(self)
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                task.spawn(function()
+                    while cd and task.wait() do end
+                    cd = true
+                    maximize.Visible = isMobile
+                    window.Visible = true
+                    game:GetService("TweenService"):Create(window, TweenInfo.new(fadeTime / 2.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = size}):Play()
+                    game:GetService("TweenService"):Create(window.HolderFrame.StarterFade, TweenInfo.new(fadeTime, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {BackgroundTransparency = 1}):Play()
+                    task.wait(fadeTime / 2.5)
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    task.wait(fadeTime - (fadeTime / 2.5) + 0.01)
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    cd = false
+                    window.HolderFrame.StarterFade.ZIndex -= 1000
+                    window.HolderFrame.StarterFade.Visible = false
+                end)
+                return true
+            end,
+            Toggle = function(self, state)
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                if state == nil then
+                    state = window.Visible
+                else
+                    state = not state
+                end
+                if state then
+                    return self:Hide()
+                else
+                    return self:Show()
+                end
+            end,
+            Hide = function(self)
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                task.spawn(function()
+                    while cd and task.wait() do end
+                    cd = true
+                    maximize.Visible = isMobile
+                    window.HolderFrame.StarterFade.Visible = true
+                    window.HolderFrame.StarterFade.ZIndex += 1000
+                    game:GetService("TweenService"):Create(window, TweenInfo.new(fadeTime, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Size = UDim2.fromScale(0,0)}):Play()
+                    game:GetService("TweenService"):Create(window.HolderFrame.StarterFade, TweenInfo.new(fadeTime / 2.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {BackgroundTransparency = 0}):Play()
+                    task.wait(fadeTime / 2.5)
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    task.wait(fadeTime - (fadeTime / 2.5) + 0.01)
+                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                    cd = false
+                    window.Visible = false
+                end)
+                return true
+            end,
+            AddPage = function(self, options)
+                options = getOptions(options)
+                local text = getText(options) or "Page"
+                local counterTextPage = count(text, 1)
+                local order = math.clamp(tonumber(options.Order) or 1, 0, 999)
+                configStructure[counterTextPage] = {}
+                local struct = configStructure[counterTextPage]
+                local pageButton = window.HolderFrame.PageButtons.PageButton:Clone()
+                pageButton.Parent = window.HolderFrame.PageButtons
+                pageButton.Visible = true
+                pageButton.Name = ""
+                pageButton.LayoutOrder = -order
+
+                --addClass("Back", "BackgroundColor3", pageButton)
+                addClass("Main", "BackgroundColor3", pageButton.Selection)
+                addClass("Text", "TextColor3", pageButton.Text)
+
+                pageButton:FindFirstChild("Text").Text = text
+                cons[#cons+1] = pageButton.Trigger.MouseEnter:Connect(function()
+                    playSound("MouseHover")
+                end)
+                pageButton.Size = UDim2.fromScale((#pageButton:FindFirstChild("Text").Text / 55) + 0.05, 1)
+                local page = window.HolderFrame.PageDisplay.Page:Clone()
+                addClass("Main", "ScrollBarImageColor3", page)
+                page.Parent = window.HolderFrame.PageDisplay
+                page.Name = ""
+                cons[#cons+1] = pageButton.Trigger.MouseButton1Click:Connect(function()
+                    playSound("Click")
+                    if pageButton.Selection.Visible then
+                        page.Visible = false
+                        pageButton.Selection.Visible = false
+                    else
+                        for i,v in page.Parent:GetChildren() do
+                            if v and v:IsA(page.ClassName) then
+                                v.Visible = false
+                            end
+                        end
+                        page.Visible = true
+                        for i,v in pageButton.Parent:GetChildren() do
+                            if v and v:IsA(pageButton.ClassName) then
+                                v.Selection.Visible = false
+                            end
+                        end
+                        pageButton.Selection.Visible = true
+                        task.wait()
+                        page.Frame.Visible = false
+                    end
+                end)
+
+                task.spawn(function()
+                    while window and window.Parent and task.wait() do -- that shit is created cuz of mobile execs: there's a roblox bug with AutomaticCanvasSize
+                        page.Frame.Visible = true
+                        page.Frame.Size = UDim2.new(math.random(0, 100)/100, 0, 0, 1)
+                    end
+                end)
+
+                windowFuncs.Tabs[counterTextPage] = {}
+
+                local currentGroupbox
+
+                local pageFuncs; pageFuncs = {
+                    AddLeftGroupbox = function(self, options)
+                        if isMobile then
+                            return pageFuncs
+                        end
+
+                        options = getOptions(options)
+                        local text = getText(options) or "Left Groupbox"
+
+                        if not currentGroupbox or currentGroupbox.LeftGroupboxHolder.Visible then
+                            currentGroupbox = objs.GroupboxZone:Clone()
+                            currentGroupbox.Parent = page
+                            currentGroupbox.Name = ""
+                            currentGroupbox.Visible = true
+                            currentGroupbox.LeftGroupboxHolder.Visible = false
+                            currentGroupbox.RightGroupboxHolder.Visible = false
+                        end
+
+                        local gp = currentGroupbox.LeftGroupboxHolder
+                        gp.Visible = true
+
+                        addClass("Back", "BackgroundColor3", gp.Display)
+                        addClass("Main", "BackgroundColor3", gp.Display.TopNeon)
+                        addClass("Text", "TextColor3", gp.Display.Title)
+
+                        local function updateSize()
+                            local gp = gp.Parent
+
+                            local ch1 = gp.RightGroupboxHolder.Display.ContentHolder:GetChildren()
+                            local ch2 = gp.LeftGroupboxHolder.Display.ContentHolder:GetChildren()
+
+                            local max = math.max(#ch1, #ch2)
+                            gp.Size = UDim2.fromScale(1, max/10)
+
+                            for i,v in ch1 do
+                                if v:IsA("Frame") then
+                                    v.Size = UDim2.fromScale(1, 1 / (max - 1))
+                                end
+                            end
+                            for i,v in ch2 do
+                                if v:IsA("Frame") then
+                                    v.Size = UDim2.fromScale(1, 1 / (max - 1))
+                                end
+                            end
+                        end
+
+                        local funcs = {}
+                        for i,v in pageFuncs do
+                            if typeof(v) == "function" and i:sub(1, 3) == "Add" and not i:match("Groupbox") then
+                                funcs[i] = function(...)
+                                    local obj = v(...)
+                                    if obj.Object then
+                                        obj.Object.Parent = gp.Display.ContentHolder
+                                        for idx,val in obj.Object:GetChildren() do
+                                            if val and val.Name:match("Separator") then
+                                                val:Destroy()
+                                            end
+                                        end
+
+                                        updateSize()
+
+                                        local myChange = false
+                                        obj.Object:GetPropertyChangedSignal("Size"):Connect(function()
+                                            if not myChange then
+                                                myChange = true
+                                                updateSize()
+                                                task.wait()
+                                                myChange = false
+                                            end
+                                        end)
+                                    end
+
+                                    return obj
+                                end
+
+                                funcs[i:gsub("Add", "Create")] = funcs[i]
+                                funcs[i:gsub("Add", "")] = funcs[i]
+                            end
+                        end
+
+                        funcs.Object = gp
+
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object.Display.Title.Text = tostring(txt)
+                        end
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+
+                        funcs:SetText(text)
+
+                        return funcs
+                    end,
+                    AddRightGroupbox = function(self, options)
+                        if isMobile then
+                            return pageFuncs
+                        end
+
+                        options = getOptions(options)
+                        local text = getText(options) or "Right Groupbox"
+
+                        if not currentGroupbox or currentGroupbox.RightGroupboxHolder.Visible then
+                            currentGroupbox = objs.GroupboxZone:Clone()
+                            currentGroupbox.Parent = page
+                            currentGroupbox.Name = ""
+                            currentGroupbox.Visible = true
+                            currentGroupbox.LeftGroupboxHolder.Visible = false
+                            currentGroupbox.RightGroupboxHolder.Visible = false
+                        end
+
+                        local gp = currentGroupbox.RightGroupboxHolder
+                        gp.Visible = true
+
+                        addClass("Back", "BackgroundColor3", gp.Display)
+                        addClass("Main", "BackgroundColor3", gp.Display.TopNeon)
+                        addClass("Text", "TextColor3", gp.Display.Title)
+
+                        local function updateSize()
+                            local gp = gp.Parent
+
+                            local ch1 = gp.RightGroupboxHolder.Display.ContentHolder:GetChildren()
+                            local ch2 = gp.LeftGroupboxHolder.Display.ContentHolder:GetChildren()
+
+                            local max = math.max(#ch1, #ch2)
+                            gp.Size = UDim2.fromScale(1, max/10)
+
+                            for i,v in ch1 do
+                                if v:IsA("Frame") then
+                                    v.Size = UDim2.fromScale(1, 1 / (max - 1))
+                                end
+                            end
+                            for i,v in ch2 do
+                                if v:IsA("Frame") then
+                                    v.Size = UDim2.fromScale(1, 1 / (max - 1))
+                                end
+                            end
+                        end
+
+                        local funcs = {}
+                        for i,v in pageFuncs do
+                            if typeof(v) == "function" and i:sub(1, 3) == "Add" and not i:match("Groupbox") then
+                                funcs[i] = function(...)
+                                    local obj = v(...)
+                                    if obj.Object then
+                                        obj.Object.Parent = gp.Display.ContentHolder
+                                        for idx,val in obj.Object:GetChildren() do
+                                            if val and val.Name:match("Separator") then
+                                                val:Destroy()
+                                            end
+                                        end
+
+                                        updateSize()
+
+                                        local myChange = false
+                                        obj.Object:GetPropertyChangedSignal("Size"):Connect(function()
+                                            if not myChange then
+                                                myChange = true
+                                                updateSize()
+                                                task.wait()
+                                                myChange = false
+                                            end
+                                        end)
+                                    end
+
+                                    return obj
+                                end
+
+                                funcs[i:gsub("Add", "Create")] = funcs[i]
+                                funcs[i:gsub("Add", "")] = funcs[i]
+                            end
+                        end
+
+                        funcs.Object = gp
+
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object.Display.Title.Text = tostring(txt)
+                        end
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+
+                        funcs:SetText(text)
+
+                        return funcs
+                    end,
+                    AddSlider = function(self, options)
+                        options = getOptions(options)
+                        options.Min = tonumber(options.Min or options.Minimum) or 0
+                        options.Max = tonumber(options.Max or options.Maximum) or 100
+                        options.Callback = getCallback(options)
+                        local text = getText(options) or "Slider"
+                        local counterText = count(text, 2)
+                        if options.Min > options.Max then
+                            local max, min = options.Max, options.Min
+                            options.Min = max
+                            options.Max = min
+                        --[[elseif options.Min == options.Max then
+                            local cb = options.Callback
+                            options.Callback = function()
+                                cb(options.Min)
+                            end
+                            return self:AddButton(options)]]
+                        end
+                        local funcs = {Options = options}
+                        options.Step = tonumber(options.Step) or tonumber(options.Per) or (options.Max - options.Min) / 25
+                        options.Default = tonumber(options.Default) or tonumber(options.Base) or options.Min
+                        local cb = options.Callback
+
+                        --
+
+                        local slider = objs.Slider:Clone()
+                        slider.Parent = page
+                        slider.Name = ""
+                        slider.Visible = true
+                        slider:FindFirstChild("Text").Text = text
+                        funcs.Object = slider
+
+                        addClass("Back", "BackgroundColor3", slider.SliderOuter)
+                        addClass("Back", "BackgroundColor3", slider.SliderOuter.Bar)
+                        addClass("Main", "BackgroundColor3", slider.SliderOuter.Bar.Fill)
+                        addClass("Text", "TextColor3", slider.SliderOuter.Bar.Progress)
+                        addClass("Back", "BackgroundColor3", slider.Separator)
+                        addClass("Back", "BackgroundColor3", slider.Separator2)
+
+                        local set = setupSlider(slider, nil, options)
+                        set(options.Default)
+                        options.Callback = function(newVal)
+                            if funcs.Value == newVal then return end
+                            funcs.Value = newVal
+                            set(newVal)
+                            struct[counterText] = newVal
+                            return cb(newVal)
+                        end
+                        options.Set = set
+
+                        --
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Set(value)
+                            if not self or not self.Object then return end
+                            self.Options.Set(tonumber(value) or self.Value)
+                        end
+                        function funcs:SetCustomTextDisplay(func)
+                            if not self or not self.Object then return end
+                            self.Options.CustomTextDisplay = func
+                        end
+                        function funcs:SetStep(val)
+                            if not self or not self.Object then return end
+                            self.Options.Step = tonumber(val) or self.Options.Step
+                        end
+                        function funcs:SetMinimum(val)
+                            if not self or not self.Object then return end
+                            self.Options.Min = tonumber(val) or self.Options.Min
+                        end
+                        function funcs:SetMaximum(val)
+                            if not self or not self.Object then return end
+                            self.Options.Max = tonumber(val) or self.Options.Max
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.Callback = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = newVal
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        funcs.SetMax = funcs.SetMaximum
+                        funcs.SetMin = funcs.SetMinimum
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(val)
+                        end)
+
+                        return funcs
+                    end,
+                    AddSeparator = function(self)
+                        local sep = objs.Separator:Clone()
+                        sep.Parent = page
+                        sep.Visible = true
+                        sep.Name = ""
+
+                        addClass("Back", "BackgroundColor3", sep.Separator)
+
+                        local funcs = {}
+                        funcs.Object = sep
+
+                        windowFuncs.Tabs[counterTextPage][count(getText({Text = "Separator"}), 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+
+                        return funcs
+                    end,
+                    AddButton = function(self, options)
+                        options = getOptions(options)
+
+                        local button = objs.Button:Clone()
+                        button.Parent = page
+                        button.Visible = true
+                        button.Name = ""
+                        button:FindFirstChild("Text").Text = getText(options) or "Button"
+                        local counterText = count(text, 2)
+
+                        local focused = false
+                        local keybind = typeof(options.Keybind) == "EnumItem" and options.Keybind or typeof(options.Keybind) == "string" and Enum.KeyCode:FromName(options.Keybind) or typeof(options.Keybind) == "number" and Enum.KeyCode:FromValue(options.Keybind) or nil
+                        local con, inpt = nil, keybind
+                        local bind = {button.Text.Text, keybind, false}
+                        
+                        local cb = function()
+                            struct[counterText.."_Keybind"] = bind[2] and bind[2].Value or nil
+                            coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                            getCallback(options)()
+                        end
+                        cons[#cons+1] = button.Trigger.MouseEnter:Connect(function()
+                            playSound("MouseHover")
+                        end)
+                        cons[#cons+1] = button.Trigger.MouseButton1Click:Connect(function()
+                            playSound("Click")
+                            coroutineCall(cb)()
+                            bind[3] = true
+                            updateFloatingKeybinds(keybinds, binds, colors)
+                            task.wait(0.1)
+                            bind[3] = false
+                            updateFloatingKeybinds(keybinds, binds, colors)
+                        end)
+                        
+                        local allowKeybinds = typeof(options.AllowKeybinds) == "boolean" and options.AllowKeybins or typeof(options.Keybinds) == "boolean" and options.Keybinds or typeof(options.AllowKeybinds) ~= "boolean" and typeof(options.Keybinds) ~= "boolean" and true
+
+                        button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+
+                        button.Trigger.Size = (isMobile or not allowKeybinds) and UDim2.fromScale(1, 1) or UDim2.fromScale(0.7, 1)
+                        button.KeybindTrigger.Visible = not (isMobile or not allowKeybinds)
+                        button.InputOuter.Visible = button.KeybindTrigger.Visible
+                        
+                        if allowKeybinds then
+                            binds[#binds+1] = bind
+
+                            cons[#cons+1] = game:GetService("UserInputService").InputBegan:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                bind[3] = true
+
+                                playSound("Click")
+                                cb()
+                            end)
+                            cons[#cons+1] = game:GetService("UserInputService").InputEnded:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                bind[3] = false
+
+                                updateFloatingKeybinds(keybinds, binds, colors)
+                            end)
+                            
+                            cons[#cons+1] = button.KeybindTrigger.MouseEnter:Connect(function()
+                                playSound("MouseHover")
+                            end)
+                            cons[#cons+1] = button.KeybindTrigger.MouseButton1Click:Connect(function()
+                                playSound("Click")
+                                focused = not focused
+                                button.InputOuter.Frame.Input.Text = "..."
+                                if focused then
+                                    con = game:GetService("UserInputService").InputBegan:Connect(function(s, chat)
+                                        if chat or table.find(blockedCodes, s.KeyCode) then return end
+                                        focused = false
+                                        con:Disconnect()
+                                        con = nil
+                                        inpt = nil
+                                        game:GetService("RunService").RenderStepped:Wait()
+                                        inpt = s.KeyCode
+                                        bind[2] = inpt
+                                        button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                        updateFloatingKeybinds(keybinds, binds, colors)
+                                    end)
+
+                                    cons[#cons+1] = con
+                                else
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    inpt = nil
+                                    bind[2] = inpt
+                                    button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                    if con then
+                                        con:Disconnect()
+                                        con = nil
+                                    end
+                                    updateFloatingKeybinds(keybinds, binds, colors)
+                                end
+                            end)
+                        end
+                        
+                        local funcs = {}
+                        funcs.Object = button
+
+                        addClass("Back", "BackgroundColor3", button.Separator2)
+                        addClass("Back", "BackgroundColor3", button.Separator)
+                        addClass("Back", "BackgroundColor3", button.ButtonOuter)
+                        addClass("Back", "BackgroundColor3", button.ButtonOuter.Frame)
+                        addClass("Main", "ImageColor3", button.ButtonOuter.Frame.ImageLabel)
+                        addClass("Text", "TextColor3", button:FindFirstChild("Text"))
+
+                        addClass("Back", "BackgroundColor3", button.InputOuter)
+                        addClass("Back", "BackgroundColor3", button.InputOuter.Frame)
+                        addClass("Main", "TextColor3", button.InputOuter.Frame.Input)
+
+                        windowFuncs.Tabs[counterTextPage][count(getText(options) or "Object", 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.Callback = function()
+                                return cb()
+                            end
+                            self.Options.CB = self.Options.Callback
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                            bind[1] = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                --val = val[counterText]
+                                local keybind = val[counterText.."_Keybind"]
+                                if keybind then
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    bind[2] = Enum.KeyCode:FromValue(keybind)
+                                    inpt = bind[2]
+                                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                                end
+                            end
+                        end)
+
+                        return funcs
+                    end,
+                    AddHoldableButton = function(self, options)
+                        options = getOptions(options)
+
+                        local button = objs.Button:Clone()
+                        button.Parent = page
+                        button.Visible = true
+                        button.Name = ""
+                        button:FindFirstChild("Text").Text = getText(options) or "Button"
+                        local counterText = count(text, 2)
+
+                        local focused = false
+                        local keybind = typeof(options.Keybind) == "EnumItem" and options.Keybind or typeof(options.Keybind) == "string" and Enum.KeyCode:FromName(options.Keybind) or typeof(options.Keybind) == "number" and Enum.KeyCode:FromValue(options.Keybind) or nil
+                        local con, inpt = nil, keybind
+                        local bind = {button.Text.Text, keybind, false}
+
+                        local cb = function(b)
+                            struct[counterText.."_Keybind"] = bind[2] and bind[2].Value or nil
+                            coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                            getCallback(options)(b)
+                        end
+                        cons[#cons+1] = button.Trigger.MouseEnter:Connect(function()
+                            playSound("MouseHover")
+                        end)
+                        cons[#cons+1] = button.Trigger.MouseButton1Down:Connect(function()
+                            bind[3] = true
+                            playSound("Click")
+                            cb(true)
+                        end)
+                        cons[#cons+1] = button.Trigger.MouseButton1Up:Connect(function()
+                            bind[3] = false
+                            playSound("Click")
+                            cb(false)
+                        end)
+
+                        local allowKeybinds = typeof(options.AllowKeybinds) == "boolean" and options.AllowKeybins or typeof(options.Keybinds) == "boolean" and options.Keybinds or typeof(options.AllowKeybinds) ~= "boolean" and typeof(options.Keybinds) ~= "boolean" and true
+
+                        button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+
+                        button.Trigger.Size = (isMobile or not allowKeybinds) and UDim2.fromScale(1, 1) or UDim2.fromScale(0.7, 1)
+                        button.KeybindTrigger.Visible = not (isMobile or not allowKeybinds)
+                        button.InputOuter.Visible = button.KeybindTrigger.Visible
+
+                        if allowKeybinds then
+                            binds[#binds+1] = bind
+
+                            cons[#cons+1] = game:GetService("UserInputService").InputBegan:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                bind[3] = true
+
+                                playSound("Click")
+                                cb(true)
+                            end)
+                            cons[#cons+1] = game:GetService("UserInputService").InputEnded:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                bind[3] = false
+
+                                playSound("Click")
+                                cb(false)
+                            end)
+
+                            cons[#cons+1] = button.KeybindTrigger.MouseEnter:Connect(function()
+                                playSound("MouseHover")
+                            end)
+                            cons[#cons+1] = button.KeybindTrigger.MouseButton1Click:Connect(function()
+                                playSound("Click")
+                                focused = not focused
+                                button.InputOuter.Frame.Input.Text = "..."
+                                if focused then
+                                    con = game:GetService("UserInputService").InputBegan:Connect(function(s, chat)
+                                        if chat or table.find(blockedCodes, s.KeyCode) then return end
+                                        focused = false
+                                        con:Disconnect()
+                                        con = nil
+                                        inpt = nil
+                                        game:GetService("RunService").RenderStepped:Wait()
+                                        inpt = s.KeyCode
+                                        bind[2] = inpt
+                                        button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                        updateFloatingKeybinds(keybinds, binds, colors)
+                                    end)
+
+                                    cons[#cons+1] = con
+                                else
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    inpt = nil
+                                    bind[2] = inpt
+                                    button.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                    if con then
+                                        con:Disconnect()
+                                        con = nil
+                                    end
+                                    updateFloatingKeybinds(keybinds, binds, colors)
+                                end
+                            end)
+                        end
+
+                        local funcs = {}
+                        funcs.Object = button
+
+                        addClass("Back", "BackgroundColor3", button.Separator2)
+                        addClass("Back", "BackgroundColor3", button.Separator)
+                        addClass("Back", "BackgroundColor3", button.ButtonOuter)
+                        addClass("Back", "BackgroundColor3", button.ButtonOuter.Frame)
+                        addClass("Main", "ImageColor3", button.ButtonOuter.Frame.ImageLabel)
+                        addClass("Text", "TextColor3", button:FindFirstChild("Text"))
+
+                        addClass("Back", "BackgroundColor3", button.InputOuter)
+                        addClass("Back", "BackgroundColor3", button.InputOuter.Frame)
+                        addClass("Main", "TextColor3", button.InputOuter.Frame.Input)
+
+                        windowFuncs.Tabs[counterTextPage][count(getText(options) or "Object", 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.Callback = function(b)
+                                return cb(b)
+                            end
+                            self.Options.CB = self.Options.Callback
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                            bind[1] = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                --val = val[counterText]
+                                local keybind = val[counterText.."_Keybind"]
+                                if keybind then
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    bind[2] = Enum.KeyCode:FromValue(keybind)
+                                    inpt = bind[2]
+                                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                                end
+                            end
+                        end)
+
+                        return funcs
+                    end,
+                    AddToggle = function(self, options)
+                        options = getOptions(options)
+
+                        local state = typeof(options.Default) == "boolean" and options.Default or typeof(options.Base) == "boolean" and options.Base or false
+                        local toggle = objs.Toggle:Clone()
+                        toggle.Parent = page
+                        toggle.Visible = true
+                        toggle.Name = ""
+                        local text = getText(options) or "Toggle"
+                        local counterText = count(text, 2)
+                        toggle:FindFirstChild("Text").Text = text
+                        cons[#cons+1] = toggle.Trigger.MouseEnter:Connect(function()
+                            playSound("MouseHover")
+                        end)
+                        local funcs = {Options = options}
+                        
+                        local allowKeybinds = typeof(options.AllowKeybinds) == "boolean" and options.AllowKeybins or typeof(options.Keybinds) == "boolean" and options.Keybinds or typeof(options.AllowKeybinds) ~= "boolean" and typeof(options.Keybinds) ~= "boolean" and true
+                        
+                        local focused = false
+                        local keybind = typeof(options.Keybind) == "EnumItem" and options.Keybind or typeof(options.Keybind) == "string" and Enum.KeyCode:FromName(options.Keybind) or typeof(options.Keybind) == "number" and Enum.KeyCode:FromValue(options.Keybind) or nil
+                        local con, inpt = nil, keybind
+                        
+                        toggle.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+
+                        toggle.Trigger.Size = (isMobile or not allowKeybinds) and UDim2.fromScale(1, 1) or UDim2.fromScale(0.7, 1)
+                        toggle.KeybindTrigger.Visible = not (isMobile or not allowKeybinds)
+                        toggle.InputOuter.Visible = toggle.KeybindTrigger.Visible
+
+                        local bind = {toggle.Text.Text, keybind, state}
+                        local cb = function(bool)
+                            funcs.Value = bool
+                            state = bool
+                            toggle.ToggleOuter.Frame.ImageHolder.Visible = bool
+                            struct[counterText] = bool
+                            struct[counterText.."_Keybind"] = bind[2] and bind[2].Value or nil
+                            bind[3] = bool
+                            coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                            getCallback(options)(bool)
+                        end
+                        
+                        if allowKeybinds then
+                            binds[#binds+1] = bind
+
+                            cons[#cons+1] = game:GetService("UserInputService").InputBegan:Connect(function(input, chat)
+                                if chat or input.KeyCode ~= inpt or focused then return end
+
+                                state = not state
+                                bind[3] = state
+
+                                playSound("Click")
+                                cb(state)
+                            end)
+
+                            cons[#cons+1] = toggle.KeybindTrigger.MouseEnter:Connect(function()
+                                playSound("MouseHover")
+                            end)
+                            cons[#cons+1] = toggle.KeybindTrigger.MouseButton1Click:Connect(function()
+                                playSound("Click")
+                                focused = not focused
+                                toggle.InputOuter.Frame.Input.Text = "..."
+                                if focused then
+                                    con = game:GetService("UserInputService").InputBegan:Connect(function(s, chat)
+                                        if chat or table.find(blockedCodes, s.KeyCode) then return end
+                                        focused = false
+                                        con:Disconnect()
+                                        con = nil
+                                        inpt = nil
+                                        game:GetService("RunService").RenderStepped:Wait()
+                                        inpt = s.KeyCode
+                                        bind[2] = inpt
+                                        toggle.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                        updateFloatingKeybinds(keybinds, binds, colors)
+                                    end)
+
+                                    cons[#cons+1] = con
+                                else
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    inpt = nil
+                                    bind[2] = inpt
+                                    toggle.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                    if con then
+                                        con:Disconnect()
+                                        con = nil
+                                    end
+                                    updateFloatingKeybinds(keybinds, binds, colors)
+                                end
+                            end)
+                        end
+                        
+                        coroutineCall(cb)(state)
+                        options.CB = cb
+                        toggle.ToggleOuter.Frame.ImageHolder.Visible = state
+                        cons[#cons+1] = toggle.Trigger.MouseButton1Click:Connect(function()
+                            playSound("Click")
+                            state = not state
+                            cb(state)
+                        end)
+
+                        funcs.Object = toggle
+
+                        addClass("Back", "BackgroundColor3", toggle.Separator2)
+                        addClass("Back", "BackgroundColor3", toggle.Separator)
+                        addClass("Back", "BackgroundColor3", toggle.ToggleOuter)
+                        addClass("Back", "BackgroundColor3", toggle.ToggleOuter.Frame)
+                        addClass("Main", "BackgroundColor3", toggle.ToggleOuter.Frame.ImageHolder)
+                        addClass("Main", "ImageColor3", toggle.ToggleOuter.Frame.ImageHolder.ImageLabel)
+                        addClass("Text", "TextColor3", toggle:FindFirstChild("Text"))
+
+                        addClass("Back", "BackgroundColor3", toggle.InputOuter)
+                        addClass("Back", "BackgroundColor3", toggle.InputOuter.Frame)
+                        addClass("Main", "TextColor3", toggle.InputOuter.Frame.Input)
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Set(val)
+                            if not self or not self.Object then return end
+                            self.Object.ToggleOuter.Frame.ImageHolder.Visible = val
+                            self.Options.CB(not not val)
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.Callback = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = newVal
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                local keybind = val[counterText.."_Keybind"]
+                                if keybind then
+                                    inpt = nil
+                                    game:GetService("RunService").RenderStepped:Wait()
+                                    bind[2] = Enum.KeyCode:FromValue(keybind)
+                                    inpt = bind[2]
+                                    coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+                                end
+                                
+                                val = val[counterText]
+                                funcs:Set(val)
+                            end
+                        end)
+
+                        return funcs
+                    end,
+                    AddLabel = function(self, options)
+                        options = getOptions(options)
+
+                        local label = objs.Label:Clone()
+                        label.Parent = page
+                        label.Visible = true
+                        label.Name = ""
+                        label:FindFirstChild("Text").Text = getText(options) or "Label"
+
+                        addClass("Back", "BackgroundColor3", label.Separator2)
+                        addClass("Back", "BackgroundColor3", label.Separator)
+                        addClass("Text", "TextColor3", label.Text)
+
+                        local funcs = {}
+                        funcs.Object = label
+
+                        windowFuncs.Tabs[counterTextPage][count(getText(options) or "Object", 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+
+                        return funcs
+                    end,
+                    AddTextBox = function(self, options)
+                        options = getOptions(options)
+
+                        local tb = objs.TextBox:Clone()
+                        tb.Parent = page
+                        tb.Visible = true
+                        tb.Name = ""
+                        local text = getText(options) or "Text Box"
+                        local counterText = count(text, 2)
+                        tb:FindFirstChild("Text").Text = text
+                        tb.TextBoxOuter.TextBox.PlaceholderText = typeof(options.Placeholder) == "string" and options.Placeholder or typeof(options.PlaceholderText) == "string" and options.PlaceholderText or ""
+                        tb.TextBoxOuter.TextBox.Text = typeof(options.Default) == "string" and options.Default or typeof(options.Base) == "string" and options.Base or ""
+                        cons[#cons+1] = tb.Trigger.MouseButton1Click:Connect(function()
+                            playSound("MouseHover")
+                            tb.TextBoxOuter.TextBox:CaptureFocus()
+                        end)
+                        local funcs = {}
+                        local function cb(txt)
+                            funcs.Value = txt
+                            tb.TextBoxOuter.TextBox.Text = txt
+                            struct[counterText] = txt
+                            getCallback(options)(txt)
+                        end
+                        coroutineCall(cb)(tb.TextBoxOuter.TextBox.Text)
+                        options.CB = cb
+                        cons[#cons+1] = tb.TextBoxOuter.TextBox.FocusLost:Connect(function(enter)
+                            if (options.Enter or options.NeedEnter or options.NeedsEnter) and enter or not (options.Enter or options.NeedEnter or options.NeedsEnter) then
+                                playSound("Click")
+                                options.CB(tb.TextBoxOuter.TextBox.Text)
+                            end
+                        end)
+
+                        funcs.Object = tb
+                        funcs.Options = options
+
+                        addClass("Back", "BackgroundColor3", tb.Separator2)
+                        addClass("Back", "BackgroundColor3", tb.Separator)
+                        addClass("Text", "TextColor3", tb.Text)
+                        addClass("Back", "BackgroundColor3", tb.TextBoxOuter)
+                        addClass("Back", "BackgroundColor3", tb.TextBoxOuter.TextBoxBackground)
+                        addClass("Text", "TextColor3", tb.TextBoxOuter.TextBox)
+                        addClass("Text", "PlaceholderColor3", tb.TextBoxOuter.TextBox)
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Set(txt)
+                            if not self or not self.Object then return end
+                            self.Object.TextBoxOuter.TextBox.Text = tostring(txt)
+                            getCallback(self.Options)(tostring(txt))
+                        end
+                        function funcs:SetPlaceholder(txt)
+                            if not self or not self.Object then return end
+                            self.Object.TextBoxOuter.TextBox.PlaceholderText = tostring(txt)
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.CB = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = newVal
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+                        funcs.SetPlaceholderText = funcs.SetPlaceholder
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(val)
+                        end)
+
+                        return funcs
+                    end,
+                    AddInput = function(self, options)
+                        options = getOptions(options)
+                        options.Default = typeof(options.Default) == "string" and options.Default or typeof(options.Base) == "string" and options.Base or "LeftAlt"
+                        local funcs = {}
+                        local text = getText(options) or "Input"
+                        local counterText = count(text, 2)
+                        local input = objs.Input:Clone()
+                        local function cb(inpt)
+                            if typeof(inpt) == "number" then
+                                inpt = Enum.KeyCode:FromValue(inpt)
+                            elseif typeof(inpt) == "string" then
+                                inpt = Enum.KeyCode:FromName(inpt)
+                            end
+                            funcs.Value = inpt or Enum.KeyCode.Power
+                            input.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                            struct[counterText] = (inpt or Enum.KeyCode.Power).Value
+                            getCallback(options)(inpt or Enum.KeyCode.Power)
+                        end
+                        options.CB = cb
+                        local focused = false
+                        local con
+                        input.Parent = page
+                        input.Visible = not isMobile
+                        input.Name = ""
+                        input:FindFirstChild("Text").Text = text
+                        local inpt = Enum.KeyCode:FromName(options.Default) or Enum.KeyCode:FromValue(options.Default)
+                        coroutineCall(cb)(inpt)
+                        input.InputOuter.Frame.Input.Text = inpt.Name
+                        cons[#cons+1] = input.Trigger.MouseButton1Click:Connect(function()
+                            playSound("Click")
+                            focused = not focused
+                            input.InputOuter.Frame.Input.Text = "..."
+                            if focused then
+                                con = game:GetService("UserInputService").InputBegan:Connect(function(s, chat)
+                                    if chat or table.find(blockedCodes, s.KeyCode) then return end
+                                    focused = false
+                                    con:Disconnect()
+                                    con = nil
+                                    inpt = s.KeyCode
+                                    options.CB(inpt)
+                                end)
+
+                                cons[#cons+1] = con
+                            else
+                                inpt = nil
+                                input.InputOuter.Frame.Input.Text = inpt and inpt.Name or "None"
+                                if con then
+                                    con:Disconnect()
+                                    con = nil
+                                end
+                                options.CB(inpt)
+                            end
+                        end)
+                        cons[#cons+1] = input.Trigger.MouseEnter:Connect(function()
+                            playSound("MouseHover")
+                        end)
+
+                        funcs.Object = input
+
+                        addClass("Back", "BackgroundColor3", input.Separator2)
+                        addClass("Back", "BackgroundColor3", input.Separator)
+                        addClass("Text", "TextColor3", input.Text)
+                        addClass("Back", "BackgroundColor3", input.InputOuter)
+                        addClass("Back", "BackgroundColor3", input.InputOuter.Frame)
+                        addClass("Main", "TextColor3", input.InputOuter.Frame.Input)
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Set(input)
+                            if not self or not self.Object or (typeof(input) ~= "EnumItem" or input.EnumType ~= Enum.KeyCode or not tonumber(input)) then return end
+                            if tonumber(input) then
+                                input = Enum.KeyCode:FromValue(input)
+                            end
+                            if not input then return end
+                            self.Object.InputOuter.Frame.Input.Text = input.Name
+                            self.Options.CB(input)
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.CB = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = newVal
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(val)
+                        end)
+
+                        return funcs
+                    end,
+                    AddDropdown = function(self, options)
+                        options = getOptions(options)
+                        local rows = typeof(options.Items) == "table" and options.Items or typeof(options.Rows) == "table" and options.Rows or typeof(options.Objects) == "table" and options.Objects or {}
+                        options.Default = (typeof(options.Default) == "string" or typeof(options.Default) == "number") and options.Default or (typeof(options.Base) == "string" or typeof(options.Base) == "number") and options.Base
+                        local text = getText(options) or "Dropdown"
+                        local counterText = count(text, 2)
+
+                        local funcs = {}
+
+                        local dd = objs.Dropdown:Clone()
+                        dd.Parent = page
+                        dd.Visible = true
+                        dd.DropdownOuter.ContentHolder.Values.ListButton.Visible = false
+                        dd.Name = ""
+                        dd:FindFirstChild("Text").Text = text
+                        local enabled = false
+                        local function cb(v1, ...)
+                            funcs.Value = v1
+                            struct[counterText] = v1
+                            getCallback(options)(v1, ...)
+                        end
+                        options.CB = cb
+                        dd.DropdownOuter.Default.Text = options.Default ~= "" and options.Default or "None"
+
+                        local function update()
+                            dd:TweenSize(UDim2.fromScale(1, enabled and 0.4 or 0.1), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, 0, true)
+                            dd.DropdownOuter:TweenSizeAndPosition(enabled and UDim2.new(0.9, -2, 0.85, 0) or UDim2.new(0.9, -2, 0.4, 0), enabled and UDim2.new(0.05, 1, 0.13, -1) or UDim2.new(0.05, 1, 0.5, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 0, true)
+                            dd:FindFirstChild("Text"):TweenSizeAndPosition(UDim2.fromScale(0.9, enabled and 0.1 or 0.4), UDim2.fromScale(0.5, enabled and 0.015 or 0.05), Enum.EasingDirection.InOut, Enum.EasingStyle.Sine, 0, true)
+                            dd.DropdownOuter.Default.Visible = not enabled
+                            dd.DropdownOuter.ContentHolder.Values.Visible = enabled
+                            playSound("MouseHover")
+                        end
+
+                        local refs = {}
+                        local indexRefs = {}
+
+                        local function setSelected(idx, val)
+                            local row = indexRefs[idx]
+                            if not row then return error("Unable to set value", 0) end
+                            if val then
+                                coroutineCall(options.CB)(idx, typeof(val) == "boolean" and rows[idx] or val)
+                            end
+
+                            for i,v in refs do
+                                if colors[v.Class] then
+                                    local found = table.find(colors[v.Class].Instances, v)
+                                    if found then
+                                        table.remove(colors[v.Class].Instances, found)
+                                    end
+
+                                    i.TextColor3 = colors.Text.Color
+                                    if i ~= row then
+                                        refs[i] = addClass("Text", "TextColor3", i)
+                                    end
+                                end
+                            end
+
+                            row.TextColor3 = colors.Main.Color
+                            refs[row] = addClass("Main", "TextColor3", row)
+
+                            dd.DropdownOuter.Default.Text = row.Text
+                            enabled = false
+                            update()
+                        end
+
+                        local function addRow(i, v)
+                            i = tonumber(i) or 0
+                            v = tostring(v)
+                            rows[i] = v
+
+                            local row = dd.DropdownOuter.ContentHolder.Values.ListButton:Clone()
+                            indexRefs[i] = row
+                            row.Parent = dd.DropdownOuter.ContentHolder.Values
+                            row.Text = v
+                            row.Name = ""
+                            row.Visible = true
+                            cons[#cons+1] = row.MouseButton1Click:Connect(function()
+                                coroutineCall(playSound)("Click")
+                                setSelected(i, v)
+                            end)
+                            cons[#cons+1] = row.MouseEnter:Connect(function()
+                                playSound("MouseHover")
+                            end)
+                            if v == options.Default or i == options.Default then
+                                setSelected(i)
+                            else
+                                refs[row] = addClass("Text", "TextColor3", row)
+                            end
+
+                            addClass("Back", "BackgroundColor3", row)
+                        end
+
+                        for i,v in rows do
+                            addRow(i,v)
+                        end
+
+                        cons[#cons+1] = dd.Trigger.MouseButton1Click:Connect(function()
+                            coroutineCall(playSound)("Click")
+                            enabled = not enabled
+                            update()
+                        end)
+                        cons[#cons+1] = dd.Trigger.MouseEnter:Connect(function()
+                            coroutineCall(playSound)("MouseHover")
+                        end)
+
+                        funcs.Object = dd
+
+                        addClass("Back", "BackgroundColor3", dd.Separator2)
+                        addClass("Back", "BackgroundColor3", dd.Separator)
+                        addClass("Text", "TextColor3", dd.Text)
+                        addClass("Back", "BackgroundColor3", dd.DropdownOuter)
+                        addClass("Back", "BackgroundColor3", dd.DropdownOuter.ContentHolder)
+                        addClass("Main", "TextColor3", dd.DropdownOuter.Default)
+
+                        windowFuncs.Tabs[counterTextPage][count(getText(options) or "Object", 2)] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+                        function funcs:Expand()
+                            if not self or not self.Object then return end
+                            enabled = true
+                            update()
+                        end
+                        function funcs:Shrink()
+                            if not self or not self.Object then return end
+                            enabled = false
+                            update()
+                        end
+                        function funcs:Toggle()
+                            if not self or not self.Object then return end
+                            enabled = not enabled
+                            update()
+                        end
+                        function funcs:SetRows(newRows)
+                            if not self or not self.Object then return end
+                            rows = newRows
+                            refs = {}
+                            indexRefs = {}
+                            for i,v in dd.DropdownOuter.ContentHolder.Values:GetChildren() do
+                                if v:IsA("TextButton") and v.Visible then
+                                    v:Destroy()
+                                end
+                            end
+                            for i,v in rows do
+                                addRow(i,v)
+                            end
+                        end
+                        function funcs:Set(idx)
+                            if typeof(idx) ~= "number" then
+                                idx = table.find(rows, idx) or 1
+                            end
+                            setSelected(idx, true)
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.CB = function(v1, ...)
+                                funcs.Value = v1
+                                struct[counterText] = v1
+                                return cb(v1, ...)
+                            end
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(val)
+                        end)
+
+                        return funcs
+                    end,
+                    AddColorPicker = function(self, options)
+                        options = getOptions(options)
+                        options.Default = typeof(options.Default) == "Color3" and options.Default or typeof(options.Base) == "Color3" and options.Base or Color3.fromRGB(255, 255, 255)
+
+                        local cp = objs.ColorPicker:Clone()
+                        cp.Parent = page
+                        cp.Visible = true
+                        cp.Name = ""
+                        local text = getText(options) or "Color Picker"
+                        local counterText = count(text, 2)
+                        cp:FindFirstChild("Text").Text = text
+
+                        local col = options.Default
+                        cp:FindFirstChild("Text").Color.BackgroundColor3 = col
+                        cp.RGB.RHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.new(col.R, 0, 0)
+                        cp.RGB.GHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.new(0, col.G, 0)
+                        cp.RGB.BHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.new(0, 0, col.B)
+                        local funcs = {}
+                        local Rs, Gs, Bs
+                        local function cb(col)
+                            funcs.Value = col
+                            Rs(math.round(col.R * 255))
+                            Gs(math.round(col.G * 255))
+                            Bs(math.round(col.B * 255))
+                            struct[counterText] = {col.R * 255, col.G * 255, col.B * 255}
+                            getCallback(options)(col)
+                        end
+                        coroutineCall(cb)(col)
+                        options.CB = cb
+                        Rs, Gs, Bs = 
+                            setupSlider(cp.RGB.RHolder, nil, {Min = 0, Max = 255, Step = 1, Default = math.round(col.R * 255), Callback = function(v)
+                                if v == col.R then return end
+                                col = Color3.new(v/255, col.G, col.B)
+                                cp:FindFirstChild("Text").Color.BackgroundColor3 = col
+                                cp.RGB.RHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.fromRGB(v, 0, 0)
+                                options.CB(col)
+                            end}),
+                        setupSlider(cp.RGB.GHolder, nil, {Min = 0, Max = 255, Step = 1, Default = math.round(col.G * 255), Callback = function(v)
+                            if v == col.G then return end
+                            col = Color3.new(col.R, v/255, col.B)
+                            cp:FindFirstChild("Text").Color.BackgroundColor3 = col
+                            cp.RGB.GHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.fromRGB(0, v, 0)
+                            options.CB(col)
+                        end}),
+                        setupSlider(cp.RGB.BHolder, nil, {Min = 0, Max = 255, Step = 1, Default = math.round(col.B * 255), Callback = function(v)
+                            if v == col.B then return end
+                            col = Color3.new(col.R, col.G, v/255)
+                            cp:FindFirstChild("Text").Color.BackgroundColor3 = col
+                            cp.RGB.BHolder.SliderOuter.Bar.Fill.BackgroundColor3 = Color3.fromRGB(0, 0, v)
+                            options.CB(col)
+                        end})
+
+                        funcs.Object = cp
+                        funcs.Options = options
+
+                        addClass("Back", "BackgroundColor3", cp.Separator2)
+                        addClass("Back", "BackgroundColor3", cp.Separator)
+                        addClass("Text", "TextColor3", cp.Text)
+                        addClass("Back", "BackgroundColor3", cp.RGB.RHolder.SliderOuter)
+                        addClass("Back", "BackgroundColor3", cp.RGB.GHolder.SliderOuter)
+                        addClass("Back", "BackgroundColor3", cp.RGB.BHolder.SliderOuter)
+                        addClass("Back", "BackgroundColor3", cp.RGB.RHolder.SliderOuter.Bar)
+                        addClass("Back", "BackgroundColor3", cp.RGB.GHolder.SliderOuter.Bar)
+                        addClass("Back", "BackgroundColor3", cp.RGB.BHolder.SliderOuter.Bar)
+                        addClass("Text", "BackgroundColor3", cp.RGB.RHolder.SliderOuter.Bar.Progress)
+                        addClass("Text", "BackgroundColor3", cp.RGB.GHolder.SliderOuter.Bar.Progress)
+                        addClass("Text", "BackgroundColor3", cp.RGB.BHolder.SliderOuter.Bar.Progress)
+
+                        windowFuncs.Tabs[counterTextPage][counterText] = funcs
+                        function funcs:Destroy()
+                            if not self or not self.Object then return end
+                            self.Object:Destroy()
+                        end
+                        function funcs:Set(obj)
+                            if not self or not self.Object or typeof(obj) ~= "Color3" then return end
+                            self.Options.CB(obj)
+                        end
+                        function funcs:Hide()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = false
+                        end
+                        function funcs:Show()
+                            if not self or not self.Object then return end
+                            self.Object.Visible = true
+                        end
+                        function funcs:Visible(bool)
+                            if not self or not self.Object then return end
+                            self.Object.Visible = not not bool
+                        end
+                        function funcs:SetCallback(cb)
+                            if not self or not self.Object then return end
+                            self.Options.CB = function(newVal)
+                                funcs.Value = newVal
+                                struct[counterText] = {newVal.R * 255, newVal.G * 255, newVal.B * 255}
+                                return cb(newVal)
+                            end
+                        end
+                        function funcs:SetText(txt)
+                            if not self or not self.Object then return end
+                            self.Object:FindFirstChild("Text").Text = tostring(txt)
+                        end
+
+                        cons[#cons+1] = configEvent.Event:Connect(function(config)
+                            if options.IgnoreConfig or options.IgnoreConfigs then return end
+                            local val = config[counterTextPage]
+                            if val then
+                                val = val[counterText]
+                            end
+                            if not val then return end
+                            funcs:Set(Color3.fromRGB(val[1], val[2], val[3]))
+                        end)
+
+                        return funcs
+                    end,
+                }
+                pageFuncs.AddSwitch = pageFuncs.AddToggle
+                for i,v in pageFuncs do
+                    if i:sub(1,3) == "Add" then
+                        pageFuncs[i:gsub("Add", "Create")] = v
+                        pageFuncs[i:gsub("Add", "")] = v
+                    end
+                end
+
+                return pageFuncs
+            end,
+        }
+
+        windowFuncs.Tabs = windowFuncs.Tabs or {}
+        windowFuncs.Pages = windowFuncs.Tabs
+
+        windowFuncs.CreatePage = windowFuncs.AddPage
+        windowFuncs.AddTab = windowFuncs.AddPage
+        windowFuncs.CreateTab = windowFuncs.AddPage
+
+        windowFuncs.Shutdown = windowFuncs.Close
+        windowFuncs.Minimize = windowFuncs.Hide
+        windowFuncs.Maximize = windowFuncs.Show
+
+        local tbl = typeof(options.ThemeTable) == "table" and options.ThemeTable or typeof(options.ThemeColors) == "table" and options.ThemeColors or typeof(options.Theme) == "table" and options.Theme
+        if tbl then
+            for i,v in tbl do
+                windowFuncs.ThemeColors[i] = v
+            end
+        end
+
+        windowFuncs:Show()
+
+        local keySystemFunc = type(options.KeySystemFunction) == "function" and options.KeySystemFunction or type(options.KeySystemFunc) == "function" and options.KeySystemFunc or type(options.KeySystem) == "function" and options.KeySystem or type(options.KeyCheck) == "function" and options.KeyCheck or type(options.Key) == "function" and options.Key
+        local keySystemUrl = type(options.KeySystemUrl) == "string" and options.KeySystemUrl or type(options.Url) == "string" and options.Url or type(options.KeyUrl) == "string" and options.KeyUrl
+        local newSize = typeof(options.WindowSize) == "UDim2" and options.WindowSize or typeof(options.CustomWindowSize) == "UDim2" and options.CustomWindowSize or typeof(options.Size) == "UDim2" and options.Size or bestDeviceSize
+
+        if keySystemFunc and keySystemUrl then
+            size = bestDeviceSize
+            
+            window.HolderFrame.KeySystem.Visible = true
+            window.HolderFrame.PageButtons.Visible = false
+            window.HolderFrame.PageDisplay.Visible = false
+
+            local keysys = window.HolderFrame.KeySystem
+            local redeemed = false
+            local closed = false
+            local buzy = false
+
+            keysys.Copy.Trigger.MouseEnter:Connect(function()
+                playSound("MouseHover")
+            end)
+            keysys.Copy.Trigger.MouseButton1Click:Connect(function()
+                coroutineCall(playSound)("Click")
+                if getfenv().toclipboard or getfenv().setclipboard or getfenv().Clipboard and getfenv().Clipboard.set then
+                    (getfenv().toclipboard or getfenv().setclipboard or getfenv().Clipboard and getfenv().Clipboard.set)(keySystemUrl)
+                else
+                    keysys.TextBox.TextBoxOuter.TextBox.Text = keySystemUrl
+                end
+            end)
+            keysys.CloseUI.Trigger.MouseEnter:Connect(function()
+                playSound("MouseHover")
+            end)
+            keysys.CloseUI.Trigger.MouseButton1Click:Connect(function()
+                coroutineCall(playSound)("Click")
+                closed = true
+                windowFuncs:Close()
+            end)
+            keysys.Redeem.Trigger.MouseEnter:Connect(function()
+                playSound("MouseHover")
+            end)
+            keysys.Redeem.Trigger.MouseButton1Click:Connect(function()
+                coroutineCall(playSound)("Click")
+                if buzy then return end
+                buzy = true
+                if keySystemFunc(keysys.TextBox.TextBoxOuter.TextBox.Text) then
+                    window.HolderFrame.StarterFade.Visible = true
+                    window.HolderFrame.StarterFade.BackgroundTransparency = 1
+                    window.HolderFrame.StarterFade.ZIndex += 1000
+                    game:GetService("TweenService"):Create(window.HolderFrame.StarterFade, TweenInfo.new(fadeTime / 2.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {BackgroundTransparency = 0}):Play()
+                    task.wait((fadeTime / 2.5) + 0.5)
+                    redeemed = true
+                    size = newSize
+                    windowFuncs:Show()
+                end
+                buzy = false
+            end)
+            keysys.TextBox.Trigger.MouseEnter:Connect(function()
+                playSound("MouseHover")
+            end)
+            keysys.TextBox.Trigger.MouseButton1Click:Connect(function()
+                keysys.TextBox.TextBoxOuter.TextBox:CaptureFocus()
+            end)
+            keysys.TextBox.TextBoxOuter.TextBox.FocusLost:Connect(function()
+                coroutineCall(playSound)("Click")
+            end)
+
+            repeat task.wait() until redeemed or closed
+            if closed then
+                task.wait(9e9)
+            end
+        end
+
+        size = newSize
+
+        window.HolderFrame.KeySystem.Visible = false
+        window.HolderFrame.PageButtons.Visible = true
+        window.HolderFrame.PageDisplay.Visible = true
+
+        local page = windowFuncs:AddPage({Title = "Main", Order = 999})
+        local toggleKey = Enum.KeyCode.LeftAlt
+        page:AddButton({Text = "Hide UI", Callback = function()
+            if windowFuncs:Minimize() then
+                lib.Notifications:Notification({Title = "UI Hidden", Text = "Press "..toggleKey.Name.." to show the UI"})
+            end
+        end, Keybinds = false})
+        page:AddInput({Text = "Toggle UI Key", Default = toggleKey.Name, Callback = function(kc)
+            task.wait()
+            toggleKey = kc
+        end, IgnoreConfigs = true})
+        cons[#cons+1] = game:GetService("UserInputService").InputBegan:Connect(function(input)
+            if game:GetService("UserInputService"):GetFocusedTextBox() or input.KeyCode ~= toggleKey then return end
+            windowFuncs:Toggle()
+        end)
+        local closeCallback = function()
+            maximize:Destroy()
+            for i,v in cons do
+                if v and v.Connected then
+                    v:Disconnect()
+                end
+            end;
+            (typeof(options.CloseCallback) == "function" and options.CloseCallback or getCallback(options))()
+        end
+        cons[#cons+1] = maximize.DragButton.MouseButton1Click:Connect(function()
+            windowFuncs:Toggle()
+        end)
+        page:AddButton({Text = "Close UI", Callback = function()
+            lib.Notifications:ChooseNotification({Title = "Are you sure?", Text = "Are you sure that you want to close\n"..window.HolderFrame.Title.Text.."?", Callback = function(b)
+                if b then
+                    windowFuncs:Close()
+                    closeCallback()
+                end
+            end})
+        end, Keybinds = false})
+        page:AddSeparator()
+        local execName = "RobloxClient"
+        local execVersion = getfenv().version()
+
+        if getfenv().identifyexecutor then
+            local s, en, ev = pcall(getfenv().identifyexecutor)
+            if s then
+                if en then
+                    execName = tostring(en)
+                    if ev then
+                        execVersion = tostring(ev)
+                    end
+                end
+            end
+        end
+
+        if getGlobalTable().FireHubLoaded then
+            page:AddLabel({Text = "NullFire Version: "..versions.FireHubVersion})
+        end
+        page:AddLabel({Text = "FireLib Version: "..versions.FireLibraryVersion})
+        page:AddLabel({Text = "Executor Name & Version: " .. execName .. "; " .. execVersion})
+        page:AddSeparator()
+        
+        local emulator, realPlatform = false, nil
+        local s, platform = pcall(game:GetService("UserInputService").GetPlatform, game:GetService("UserInputService"))
+        if s then
+            realPlatform = platform
+            local isMobilePlatform = table.find({Enum.Platform.IOS, Enum.Platform.Android, Enum.Platform.Ouya, Enum.Platform.AndroidTV}, platform)
+            if isMobilePlatform and not isMobile or isMobile and not isMobilePlatform then
+                emulator = true
+            end
+        end
+        
+        if platform ~= Enum.Platform.Windows and platform ~= Enum.Platform.IOS and platform ~= Enum.Platform.Android then
+            platform = not isMobile and Enum.Platform.Windows or Enum.Platform.Android
+        end
+
+        page:AddLabel({Text = "Emulation detected: ".. (emulator and "Yes" or "No")})
+        page:AddLabel({Text = "Current NullFire version: ".. (isMobile and "Mobile" or "PC")})
+        page:AddLabel({Text = "Current platform: ".. (realPlatform or platform).Name})
+
+        page:AddSeparator()
+        
+        if configsEnabled then
+            local function load(got)
+                for i,v in got do
+                    if typeof(v) == "table" then
+                        for idx, val in v do
+                            if typeof(val) == "table" then
+                                for index, value in val do
+                                    if typeof(configStructure[i]) == "table" and typeof(configStructure[i][idx]) == "table" and configStructure[i][idx][index] ~= nil then
+                                        configStructure[i][idx][index] = value
+                                    end
+                                end
+                            else
+                                configStructure[i][idx] = val
+                            end
+                        end
+                    else
+                        configStructure[i] = v
+                    end
+                end
+                configEvent:Fire(got)
+
+                coroutineCall(updateFloatingKeybinds)(keybinds, binds, colors)
+            end
+            local currentConfig = ""
+            page:AddTextBox({Text = "Config name", NeedEnter = false, Callback = function(text)
+                currentConfig = text
+            end})
+            local suffix = ""
+            local prefix = ""
+            local format = "json"
+            local folder = "FireLib_Configs"
+            if makefolder then
+                makefolder(folder)
+                prefix = folder.."\\"
+                suffix = "-Config."..format
+            else
+                suffix = "-FireLib_Config."..format
+            end
+            suffix = ("-"..game:GetService("HttpService"):UrlEncode(window.HolderFrame.Title.Text)..suffix):gsub("%%", "x")
+            page:AddButton({Text = "Save Config", Callback = function()
+                local s,got = pcall(readfile,prefix..currentConfig..suffix)
+                if s then
+                    lib.Notifications:ChooseNotification({Callback = function(b)
+                        if b then
+                            writefile(prefix..currentConfig..suffix, game:GetService("HttpService"):JSONEncode(configStructure))
+                            lib.Notifications:Notification({Title = "Success", Text = "Config \""..currentConfig.."\" has been created!"})
+                        end
+                    end, Title = "Wait!", Text = "Config called \""..currentConfig.."\" already exist, do you want to rewrite it?"})
+                else
+                    writefile(prefix..currentConfig..suffix, game:GetService("HttpService"):JSONEncode(configStructure))
+                    lib.Notifications:Notification({Title = "Success", Text = "Config \""..currentConfig.."\" has been created!"})
+                end
+            end})
+            page:AddButton({Text = "Load Config", Callback = function()
+                local s,got = pcall(readfile,prefix..currentConfig..suffix)
+                if not s then
+                    return lib.Notifications:Notification({Title = "Uh oh!", Text = "Config called \""..currentConfig.."\" not found!"})
+                end
+                if got then
+                    got = game:GetService("HttpService"):JSONDecode(got)
+                end
+                load(got)
+                lib.Notifications:Notification({Title = "Success", Text = "Config \""..currentConfig.."\" has been loaded!"})
+            end})
+
+            local first = true
+            local tb = page:AddTextBox({Text = "Auto load config [leave empty to disable]", NeedEnter = false, Default = "", Callback = function(text)
+                if first then first = false return end
+                writefile("AutoLoad"..suffix..".skibidi", text)
+            end, IgnoreConfigs = true})
+            local s,e = task.spawn(function()
+                for i=1, 3 do
+                    game:GetService("RunService").RenderStepped:Wait()
+                    task.wait(0.1)
+                    game:GetService("RunService").RenderStepped:Wait()
+                end
+                local s, content = pcall(readfile, "AutoLoad"..suffix..".skibidi")
+                
+                if s then
+                    content = content:gsub("\n", ""):gsub("\r", "")
+
+                    if content:gsub(" ", ""):gsub("\t", "") == "" then return end
+                    tb:Set(content)
+
+                    local s,got = pcall(readfile, prefix..content..suffix)
+                    if not s then
+                        return lib.Notifications:Notification({Title = "Uh oh!", Text = "Config called \""..content.."\" not found!"})
+                    end
+                    if got then
+                        got = game:GetService("HttpService"):JSONDecode(got)
+                    end
+                    if not got then return end
+                    load(got)
+                    lib.Notifications:Notification({Title = "Success", Text = "Config \""..content.."\" has been loaded!"})
+                end
+            end)
+        else
+            page:AddLabel({Text = execName .. " does not support configs!"})
+        end
+        
+        page:AddSeparator()
+
+        page:AddTextBox({Text = "Window Size [BE CAREFUL WITH IT]", Default = ((math.round(size.X.Scale * 1000) / 1000) .. ", " .. size.X.Offset) .. ", " .. ((math.round(size.Y.Scale * 1000) / 1000) .. ", " .. size.Y.Offset), Callback = function(txt)
+            local new = txt:gsub("{", ""):gsub("}", ""):gsub(" ", ""):split(",")
+            for i=1, 4 do
+                new[i] = tonumber(new[i]) or 0
+            end
+
+            new[1] = isMobile and math.clamp(new[1], 0.5, 1.75) or math.clamp(new[1], 0.3, 2)
+            new[2] = math.max(new[2], 0)
+            new[3] = math.clamp(new[3], isMobile and 0.5 or 0.3, 1)
+            new[4] = math.max(new[4], 0)
+
+            size = UDim2.new(new[1], new[2], new[3], new[4])
+            windowFuncs:Show()
+        end})
+
+        page:AddSeparator()
+
+        page:AddLabel({Text = "Themes"})
+
+        for i,v in colors do
+            themeColorPickers[i] = page:AddColorPicker({Text = i, Default = v.Color, Callback = function(col)
+                windowFuncs.ThemeColors[i.."WTF"] = col
+            end})
+        end
+        if configsEnabled then
+            page:AddSeparator()
+            
+            local currentConfig = ""
+            page:AddTextBox({Text = "Theme name", NeedEnter = false, Callback = function(text)
+                currentConfig = text
+            end, IgnoreConfigs = true})
+            local suffix = ""
+            local prefix = ""
+            local format = "wave"
+            local folder = "FireLib_Themes"
+            if makefolder then
+                makefolder(folder)
+                prefix = folder.."\\"
+                suffix = "-Theme."..format
+            else
+                suffix = "-"..folder.."."..format
+            end
+            suffix = "-"..suffix
+            page:AddButton({Text = "Save Theme", Callback = function()
+                local s,got = pcall(readfile,prefix..currentConfig..suffix)
+                if s then
+                    lib.Notifications:ChooseNotification({Callback = function(b)
+                        if b then
+                            local colorsT = {}
+                            for i,v in colors do
+                                colorsT[i] = {R = v.Color.R, G = v.Color.G, B = v.Color.B}
+                            end
+                            writefile(prefix..currentConfig..suffix, game:GetService("HttpService"):JSONEncode(colorsT))
+                            lib.Notifications:Notification({Title = "Success", Text = "Theme \""..currentConfig.."\" has been created!"})
+                        end
+                    end, Title = "Wait!", Text = "Theme called \""..currentConfig.."\" already exist, do you want to rewrite it?"})
+                else
+                    local colorsT = {}
+                    for i,v in colors do
+                        colorsT[i] = {R = v.Color.R, G = v.Color.G, B = v.Color.B}
+                    end
+                    writefile(prefix..currentConfig..suffix, game:GetService("HttpService"):JSONEncode(colorsT))
+                    lib.Notifications:Notification({Title = "Success", Text = "Theme \""..currentConfig.."\" has been created!"})
+                end
+            end})
+            page:AddButton({Text = "Load Theme", Callback = function()
+                local s,got = pcall(readfile, prefix..currentConfig..suffix)
+                if not s then
+                    return lib.Notifications:Notification({Title = "Uh oh!", Text = "Theme called \""..currentConfig.."\" not found!"})
+                end
+                if got then
+                    got = game:GetService("HttpService"):JSONDecode(got)
+                end
+                if not got then return end
+                for i,v in got do
+                    windowFuncs.ThemeColors[i] = Color3.new(v.R, v.G, v.B)
+                    lib.Notifications:Notification({Title = "Success", Text = "Theme \""..currentConfig.."\" has been loaded!"})
+                end
+            end})
+        end
+
+        local themeRows = {}
+        for i,v in themes.Themes do
+            themeRows[#themeRows+1] = i
+        end
+
+        page:AddSeparator()
+
+        page:AddDropdown({Title = "Themes", Rows = themeRows, Callback = function(_,v)
+            for i,v in themes.Themes[v] do
+                windowFuncs.ThemeColors[i] = v
+            end
+        end, IgnoreConfigs = true})
+
+        page:AddLabel({Text = "Back image"})
+
+        local tileMode = false
+        local rows = {}
+        for i,v in themes.Patterns do
+            rows[#rows+1] = i
+        end
+
+        local function updAll()
+            local str = script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = script.Parent.Notification.ChooseNotificationHolder.NotificationColored.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = script.Parent.Notification.NotificationHolder.NotificationColored.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = keybinds.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+
+            local str = keybinds.HolderFrame.Stripes
+            str.ScaleType = window.Stripes.ScaleType
+            str.Image = window.Stripes.Image
+        end
+
+        local custom, tile
+        local dd = page:AddDropdown({Title = "Background image", Rows = rows, Callback = function(_,v)
+            window.Stripes.Image = themes.Patterns[v]
+            window.HolderFrame.Stripes.Image = themes.Patterns[v]
+
+            window.Stripes.ScaleType = v == "Custom" and not tileMode and Enum.ScaleType.Fit or Enum.ScaleType.Tile
+            window.HolderFrame.Stripes.ScaleType = window.Stripes.ScaleType
+
+            updAll()
+
+            if v == "Custom" then
+                custom:Show()
+                tile:Show()
+            else
+                custom:Hide()
+                tile:Hide()
+            end
+        end, Default = "Stripes", IgnoreConfigs = true})
+
+        custom = page:AddTextBox({Title = "Custom image id", Default = "", Callback = function(text)
+            if not text:match("rbxassetid") and not text:match("asset/%?id%=") then
+                return custom:Set("rbxassetid://"..text)
+            end
+            themes.Patterns.Custom = text
+            window.Stripes.Image = text
+            window.HolderFrame.Stripes.Image = text
+            
+            updAll()
+        end, IgnoreConfigs = true})
+        tile = page:AddToggle({Title = "Tile mode", Default = false, Callback = function(new)
+            tileMode = new
+
+            window.Stripes.ScaleType = tileMode and Enum.ScaleType.Tile or Enum.ScaleType.Fit
+            window.HolderFrame.Stripes.ScaleType = window.Stripes.ScaleType
+            
+            updAll()
+        end, IgnoreConfigs = true})
+
+        tile:Hide()
+        custom:Hide()
+
+        window.Stripes.ScaleType = Enum.ScaleType.Tile
+        window.HolderFrame.Stripes.ScaleType = window.Stripes.ScaleType
+        window.Stripes.Image = themes.Patterns.Stripes
+        window.HolderFrame.Stripes.Image = themes.Patterns.Stripes
+        
+        updAll()
+
+        page:AddSeparator()
+        page:AddColorPicker({Text = "Outline image color", Default = window.Stripes.ImageColor3, Callback = function(col)
+            window.Stripes.ImageColor3 = col
+            keybinds.Stripes.ImageColor3 = col
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.Stripes.ImageColor3 = col
+            script.Parent.Notification.NotificationHolder.NotificationColored.Stripes.ImageColor3 = col
+        end})
+        page:AddColorPicker({Text = "Background image color", Default = window.HolderFrame.Stripes.ImageColor3, Callback = function(col)
+            window.HolderFrame.Stripes.ImageColor3 = col
+            keybinds.HolderFrame.Stripes.ImageColor3 = col
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageColor3 = col
+            script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageColor3 = col
+        end})
+        page:AddSlider({Text = "Outline image opacity", Default = (1 - window.Stripes.ImageTransparency) * 100, Min = 0, Max = 100, Step = 1, Callback = function(val)
+            window.Stripes.ImageTransparency = 1 - (val / 100)
+            keybinds.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.NotificationHolder.NotificationColored.Stripes.ImageTransparency = 1 - (val / 100)
+        end, CustomTextDisplay = function(i)
+            return i .. "%"
+        end})
+        page:AddSlider({Text = "Background image opacity", Default = (1 - window.HolderFrame.Stripes.ImageTransparency) * 100, Min = 0, Max = 100, Step = 1, Callback = function(val)
+            window.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
+            keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+        end, CustomTextDisplay = function(i)
+            return i .. "%"
+        end})
+        
+        return windowFuncs
+    end,
+    IsMobile = isMobile
+}
+
+lib.CreateWindow = lib.MakeWindow
+lib.AddWindow = lib.MakeWindow
+lib.Notifications.Notify = lib.Notifications.Notification
+lib.Notifications.SelectNotification = lib.Notifications.ChooseNotification
+lib.Notifications.SelectionNotification = lib.Notifications.ChooseNotification
+
+script.Parent.Notification.ChooseNotificationHolder.Visible = false
+script.Parent.Notification.NotificationHolder.Visible = false
+script.Parent.Enabled = true
+
+local add = 2
+if isMobile then
+    script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Lines['1'].TextSize += add
+    script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Lines['1'].TextSize += add
+    script.Parent.Notification.ChooseNotificationHolder.Size = UDim2.new(1, 0, 0, 125)
+    script.Parent.Notification.NotificationHolder.Size = script.Parent.Notification.ChooseNotificationHolder.Size
+    script.Parent.Notification.Size = UDim2.new(0, 300, 1, 0)
+end
+
+getGlobalTable()._FIRELIB = lib
+
+return lib
+    end;
+end;
+
+-- YOUR CODE DOWN HERE --
+
+local obj = objects["Instance0"];
+return require(objects["Instance218"])
         
         return windowFuncs
     end
