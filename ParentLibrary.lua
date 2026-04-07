@@ -5268,8 +5268,7 @@ end,
     end,
     IsMobile = isMobile
 }
-
--- [[ РЕЄСТРАЦІЯ ]] --
+                
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
 
