@@ -7895,14 +7895,6 @@ end
 }
 _G._FIRELIB = lib
 
-local parent = (getfenv().gethui and getfenv().gethui()) or 
-                (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
-                (game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
-
-if objects["Instance0"] then
-    objects["Instance0"]["Parent"] = parent
-    objects["Instance0"]["Enabled"] = true
-end
 
 -- ПОВЕРТАЄМО САМЕ ТУ НАЗВУ, ЯКА БУЛА НА ПОЧАТКУ
 return FireLib or lib
