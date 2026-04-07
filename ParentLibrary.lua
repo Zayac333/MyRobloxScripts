@@ -5246,36 +5246,38 @@ local lib; lib = {
         end, CustomTextDisplay = function(i)
             return i .. "%"
         end})
-        page:AddSlider({Text = "Background image opacity", Default = (1 - window.HolderFrame.Stripes.ImageTransparency) * 100, Min = 0, Max = 100, Step = 1, Callback = function(val)
-            window.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
-            keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
-            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-            script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-        end, CustomTextDisplay = function(i)
-            return i .. "%"
-        end})
+   -- [[ ОСТАННІЙ СЛАЙДЕР ]] --
+        page:AddSlider({
+            Text = "Background image opacity", 
+            Default = (1 - window.HolderFrame.Stripes.ImageTransparency) * 100, 
+            Min = 0, 
+            Max = 100, 
+            Step = 1, 
+            Callback = function(val)
+                window.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
+                keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
+                script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+                script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+            end, 
+            CustomTextDisplay = function(i)
+                return i .. "%"
+            end
+-- (Це кінець останнього слайдера)
+        })
         
         return windowFuncs
-    },
+    end; -- ЦЕЙ end ЗАКРИВАЄ MakeWindow (рядок 464)
     IsMobile = isMobile
-}
+} -- ЦЯ ДУЖКА ЗАКРИВАЄ ТАБЛИЦЮ lib
 
--- [[ РЕЄСТРАЦІЯ ТА ПОВЕРНЕННЯ ]] --
-
+-- [[ РЕЄСТРАЦІЯ ]] --
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
 
--- Отримуємо тип пристрою (спрощено)
-pcall(function() 
-    local success, result = pcall(function() 
-        return game:HttpGet("http://ip-api.com/json") 
-    end)
-    if success then warn("Zayac Hub: Device info loaded") end
-end)
--- Рядок 5275
 if typeof(getgenv) == "function" then 
     getgenv()._FIRELIB = lib 
 else 
     _G._FIRELIB = lib 
+end
 
-return lib -- ЦЕ МАЄ БУТИ ОСТАННІЙ РЯДОК. Жодних "end" після нього!
+return lib
