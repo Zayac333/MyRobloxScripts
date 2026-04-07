@@ -7893,7 +7893,7 @@ end
 
     -- Це закриває внутрішні процеси (ті самі end;, що ми бачили на скріншотах)
 }
-    getGlobalTable()._FIRELIB = lib
+_G._FIRELIB = lib
 
 local parent = (getfenv().gethui and getfenv().gethui()) or 
                 (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
