@@ -17,12 +17,12 @@ lib = lib or t._FIRELIB
 if not t.EAGLE then
     t.EAGLE = true
     local mw = lib.MakeWindow
-    local fhop = loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Libraries/Fire-Lib/Null-Fire%20Only%20page.lua"))()
+--    local fhop = loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Libraries/Fire-Lib/Null-Fire%20Only%20page.lua"))()--
     lib.MakeWindow = function(self, options, fireHubWindow)
         local window = mw(self, options)
-        if fireHubWindow then
+      --  if fireHubWindow then--
             coroutine.wrap(fhop)(window)
-        end
+      --  end --
         return window
     end
 end
