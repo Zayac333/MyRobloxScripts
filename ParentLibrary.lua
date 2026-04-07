@@ -5277,6 +5277,5 @@ if typeof(getgenv) == "function" then
     getgenv()._FIRELIB = lib 
 else 
     _G._FIRELIB = lib 
-end
 
 return lib -- ЦЕ МАЄ БУТИ ОСТАННІЙ РЯДОК. Жодних "end" після нього!
