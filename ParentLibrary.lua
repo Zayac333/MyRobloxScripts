@@ -7892,10 +7892,8 @@ end
 -- [[ ФІНАЛЬНИЙ БЛОК БІБЛІОТЕКИ ]] --
 
     -- Це закриває внутрішні процеси (ті самі end;, що ми бачили на скріншотах)
-end;
+}
     getGlobalTable()._FIRELIB = lib
-end;    
-end;
 
 local parent = (getfenv().gethui and getfenv().gethui()) or 
                 (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
