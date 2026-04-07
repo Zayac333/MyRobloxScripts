@@ -5260,26 +5260,21 @@ local lib; lib = {
     IsMobile = isMobile
 }
 
-lib.CreateWindow = lib.MakeWindow
-lib.AddWindow = lib.MakeWindow
-lib.Notifications.Notify = lib.Notifications.Notification
-lib.Notifications.SelectNotification = lib.Notifications.ChooseNotification
-lib.Notifications.SelectionNotification = lib.Notifications.ChooseNotification
-
-script.Parent.Notification.ChooseNotificationHolder.Visible = false
-script.Parent.Notification.NotificationHolder.Visible = false
-script.Parent.Enabled = true
-
-local add = 2
-if isMobile then
-    script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Lines['1'].TextSize += add
-    script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Lines['1'].TextSize += add
-    script.Parent.Notification.ChooseNotificationHolder.Size = UDim2.new(1, 0, 0, 125)
-    script.Parent.Notification.NotificationHolder.Size = script.Parent.Notification.ChooseNotificationHolder.Size
-    script.Parent.Notification.Size = UDim2.new(0, 300, 1, 0)
-        end;
-    end;
-end;
+-- Рядок 5263
+        local success, result = pcall(function()
+            return game:GetService("HttpService"):JSONDecode(game:HttpGet("http://ip-api.com/json"))
+        end)
+            if success then
+            if result.mobile then
+                warn("Mobile user")
+            else
+                warn("PC user")
+            end
+        else
+            warn("Failed to check device type")
+        end 
+    end -- Закриває CreateWindow/MakeWindow
+end -- Закриває головну функцію (рядок 1)
 
 if typeof(getgenv) == "function" then getgenv()._FIRELIB = lib else _G._FIRELIB = lib end
 
