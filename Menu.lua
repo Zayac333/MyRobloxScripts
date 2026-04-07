@@ -1,21 +1,27 @@
 repeat task.wait() until game:IsLoaded()
 
+-- Твоє посилання на виправлену бібліотеку
 local libUrl = "https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ParentLibrary.lua?t=" .. tick()
-local rawCode = game:HttpGet(libUrl)
-local success, result = pcall(function() return loadstring(rawCode)() end)
 
-if success and result then
-    local lib = result
+-- Завантажуємо код
+local success, rawCode = pcall(function() 
+    return game:HttpGet(libUrl) 
+end)
+
+if success and rawCode then
+    -- Виконуємо код бібліотеки
+    local loadSuccess, result = pcall(function()
+        return loadstring(rawCode)()
+    end)
     
-    -- Фікс для MakeWindow
-    local oldMW = lib.MakeWindow
-    lib.MakeWindow = function(self, options)
-        local window = oldMW(self, options)
-        return window
+    if loadSuccess and result then
+        print("Zayac Hub: Бібліотека завантажена успішно! 🐰🚀")
+        return result -- Повертаємо об'єкт 'lib'
+    else
+        warn("Помилка при виконанні коду бібліотеки: " .. tostring(result))
     end
-
-    return lib
 else
-    warn("Критична помилка завантаження бібліотеки!")
-    return nil
+    warn("Не вдалося завантажити файл з GitHub!")
 end
+
+return nil
