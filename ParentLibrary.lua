@@ -1,10 +1,7 @@
 -- [[ ЛОКАЛЬНА КОПІЯ FIRE-LIB БЕЗ ПЕРЕВІРОК ]] --
 
 local lib = {}
-local objects = {}
-
--- ТУТ МАЮТЬ БУТИ ВСІ ТВОЇ Instance (їх там дуже багато)
--- Наприклад:
+local objects = {
     ["Instance0"] = Instance.new("ScreenGui"); -- Fire Library
     ["Instance1"] = Instance.new("Frame"); -- Holder
     ["Instance2"] = Instance.new("TextButton"); -- Window
@@ -245,6 +242,7 @@ local objects = {}
     ["Instance237"] = Instance.new("Sound"); -- MouseHover
     ["Instance238"] = Instance.new("Sound"); -- Click
 };
+
 
 do -- Set properties
     objects["Instance0"]["Enabled"] = false;
