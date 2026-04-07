@@ -5287,6 +5287,8 @@ if typeof(getgenv) == "function" then getgenv()._FIRELIB = lib else _G._FIRELIB 
 
 --local obj = objects["Instance0"];--
 --local success, result = pcall(function() return require(objects["Instance218"]) end)--
+if _G.ZayacLoaded then return lib end
+_G.ZayacLoaded = true       
 local o_require = require; local require;
 local modules do
     modules = {};
