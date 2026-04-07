@@ -5277,8 +5277,9 @@ if isMobile then
     script.Parent.Notification.ChooseNotificationHolder.Size = UDim2.new(1, 0, 0, 125)
     script.Parent.Notification.NotificationHolder.Size = script.Parent.Notification.ChooseNotificationHolder.Size
     script.Parent.Notification.Size = UDim2.new(0, 300, 1, 0)
-end
-end
+    end;
+end;
+end;
 
 getGlobalTable()._FIRELIB = lib
 
@@ -7892,13 +7893,14 @@ end
     -- Це закриває внутрішні процеси (ті самі end;, що ми бачили на скріншотах)
     getGlobalTable()._FIRELIB = lib
     
-    end; 
-end; 
-
+     end;
+end;
+end; -- ДОДАЙ ЦЕЙ ТРЕТІЙ "end" (якого немає на скріншоті)
 -- Налаштування появи меню на екрані
+
 local parent = (getfenv().gethui and getfenv().gethui()) or 
-               (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
-               (game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
+                (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
+                (game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
 
 if objects["Instance0"] then
     objects["Instance0"]["Parent"] = parent
