@@ -1,26 +1,21 @@
--- [[ ZAYAC HUB - CLEAN MENU ]] --
 repeat task.wait() until game:IsLoaded()
 
-local t = (typeof(getgenv) == "function") and getgenv() or _G
-
--- Завантажуємо бібліотеку БЕЗ помилок
 local libUrl = "https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ParentLibrary.lua?t=" .. tick()
-local success, result = pcall(function() 
-    return loadstring(game:HttpGet(libUrl))() 
-end)
+local rawCode = game:HttpGet(libUrl)
+local success, result = pcall(function() return loadstring(rawCode)() end)
 
 if success and result then
     local lib = result
     
-    -- Перезаписуємо MakeWindow, щоб він працював стабільно
+    -- Фікс для MakeWindow
     local oldMW = lib.MakeWindow
-    lib.MakeWindow = function(self, options, isHub)
+    lib.MakeWindow = function(self, options)
         local window = oldMW(self, options)
-        return window -- ТУТ ПОВИНЕН БУТИ RETURN
+        return window
     end
 
-    t._FIRELIB = lib
     return lib
 else
-    warn("Помилка завантаження бібліотеки: " .. tostring(result))
+    warn("Критична помилка завантаження бібліотеки!")
+    return nil
 end
