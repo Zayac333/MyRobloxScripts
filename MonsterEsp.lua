@@ -89,7 +89,7 @@ local function checkMonster(child)
     
     local name = child.Name:lower()
     -- Твій новий блекліст тут:
-    if name:find("orb") or name:find("ambience") or name:find("light") or name:find("proxy") then 
+    if name:find("orb") or name:find("ambience") or name:find("light") or name:find("proxy") or name:find("vent") then 
         return 
     end
     
