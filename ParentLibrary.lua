@@ -5281,12 +5281,12 @@ if isMobile then
 end;
 end;
 
-getGlobalTable()._FIRELIB = lib
+if typeof(getgenv) == "function" then getgenv()._FIRELIB = lib else _G._FIRELIB = lib end
 
 -- YOUR CODE DOWN HERE --
 
-local obj = objects["Instance0"];
-local success, result = pcall(function() return require(objects["Instance218"]) end)
+--local obj = objects["Instance0"];--
+--local success, result = pcall(function() return require(objects["Instance218"]) end)--
 local o_require = require; local require;
 local modules do
     modules = {};
