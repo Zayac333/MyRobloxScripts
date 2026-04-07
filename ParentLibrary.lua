@@ -5261,19 +5261,22 @@ local lib; lib = {
 }
 
 -- Рядок 5263
-        local success, result = pcall(function()
-            return game:GetService("HttpService"):JSONDecode(game:HttpGet("http://ip-api.com/json"))
-        end)
-            if success then
-            if result.mobile then
-                warn("Mobile user")
-            else
-                warn("PC user")
-            end
-        else
-            warn("Failed to check device type")
-        end 
-    end -- Закриває CreateWindow/MakeWindow
+lib.CreateWindow = lib.MakeWindow
+lib.AddWindow = lib.MakeWindow
+
+-- Отримуємо тип пристрою без складних вкладень
+local success, result = pcall(function() 
+    return game:HttpGet("http://ip-api.com/json") 
+end)
+
+if success then
+    warn("Device info loaded")
+else
+    warn("Device info failed")
+end
+
+-- ЗАКРИВАЄМО БІБЛІОТЕКУ
+end -- Закриває CreateWindow (якщо вона була відкрита вище)
 end -- Закриває головну функцію (рядок 1)
 
 if typeof(getgenv) == "function" then getgenv()._FIRELIB = lib else _G._FIRELIB = lib end
