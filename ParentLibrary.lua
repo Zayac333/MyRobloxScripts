@@ -5296,6 +5296,7 @@ local modules do
         end
         return o_require(object);
     end;
+end;
 
     getfenv().require = require;
 
@@ -7892,10 +7893,9 @@ end
 
     -- Це закриває внутрішні процеси (ті самі end;, що ми бачили на скріншотах)
     getGlobalTable()._FIRELIB = lib
-    
+end;    
 end;
 
--- Налаштування появи меню на екрані
 local parent = (getfenv().gethui and getfenv().gethui()) or 
                 (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
                 (game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
