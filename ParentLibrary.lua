@@ -5258,17 +5258,18 @@ local lib; lib = {
                 keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
                 script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
                 script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-end, 
+            end, 
             CustomTextDisplay = function(i)
                 return i .. "%"
             end
         })
         
         return windowFuncs
-    end,
+    end, -- Закриває MakeWindow
     IsMobile = isMobile
-}
-                
+} -- Закриває таблицю lib
+
+-- [[ РЕЄСТРАЦІЯ БІБЛІОТЕКИ ]] --
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
 
