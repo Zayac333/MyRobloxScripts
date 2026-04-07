@@ -21,7 +21,7 @@ if not t.EAGLE then
     lib.MakeWindow = function(self, options, fireHubWindow)
         local window = mw(self, options)
       --  if fireHubWindow then--
-            coroutine.wrap(fhop)(window)
+         --   coroutine.wrap(fhop)(window)--
       --  end --
         return window
     end
