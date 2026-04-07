@@ -5259,7 +5259,7 @@ local lib; lib = {
                 keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
                 script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
                 script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-            end, -- ОЦЕЙ END ЗАКРИВАЄ CALLBACK
+            end -- ОЦЕЙ END ЗАКРИВАЄ CALLBACK
             CustomTextDisplay = function(i)
                 return i .. "%"
             end
