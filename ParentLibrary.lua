@@ -5281,10 +5281,6 @@ end
 
 getGlobalTable()._FIRELIB = lib
 
-return lib
-    end;
-end;
-
 -- YOUR CODE DOWN HERE --
 
 local obj = objects["Instance0"];
@@ -7888,19 +7884,23 @@ if isMobile then
     script.Parent.Notification.Size = UDim2.new(0, 300, 1, 0)
 end
 
-getGlobalTable()._FIRELIB = lib
+-- [[ ФІНАЛЬНИЙ БЛОК БІБЛІОТЕКИ ]] --
 
-return lib
-    end;
-end;
+    -- Це закриває внутрішні процеси (ті самі end;, що ми бачили на скріншотах)
+    getGlobalTable()._FIRELIB = lib
+    
+    end; 
+end; 
 
--- YOUR CODE DOWN HERE --
+-- Налаштування появи меню на екрані
+local parent = (getfenv().gethui and getfenv().gethui()) or 
+               (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
+               (game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
 
-local obj = objects["Instance0"];
-return require(objects["Instance218"])
-        
-        return windowFuncs
-    end
-}
+if objects["Instance0"] then
+    objects["Instance0"]["Parent"] = parent
+    objects["Instance0"]["Enabled"] = true
+end
 
-return FireLib
+-- ПОВЕРТАЄМО САМЕ ТУ НАЗВУ, ЯКА БУЛА НА ПОЧАТКУ
+return FireLib or lib
