@@ -243,9 +243,14 @@ local objects = {
     ["Instance238"] = Instance.new("Sound"); -- Click
 };
 
+-- ДОДАЙ ЦЕЙ БЛОК:
+local parent = (getfenv().gethui and getfenv().gethui()) or 
+               (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
+               (game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
 
 do -- Set properties
-    objects["Instance0"]["Enabled"] = false;
+    objects["Instance0"]["Parent"] = parent;
+    objects["Instance0"]["Enabled"] = true;
     objects["Instance0"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;
     objects["Instance0"]["DisplayOrder"] = 999999999;
     objects["Instance0"]["Parent"] = parent;
