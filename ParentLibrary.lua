@@ -5266,6 +5266,7 @@ local lib; lib = {
         })
         
         return windowFuncs
+    end
     end, -- ЗАКРИВАЄ MakeWindow
     IsMobile = isMobile
 } -- ЗАКРИВАЄ ТАБЛИЦЮ lib
