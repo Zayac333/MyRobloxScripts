@@ -1,30 +1,32 @@
 repeat task.wait() until game:IsLoaded()
 
+-- Функція для видалення чужих вікон
+local function cleanup()
+    for _, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+        if v:IsA("ScreenGui") and (v.Name:find("Fire") or v:FindFirstChild("MainFrame")) then
+            v:Destroy()
+        end
+    end
+end
+cleanup() -- Чистимо перед завантаженням
+
 local function getGlobalTable()
     return typeof(getgenv) == "function" and typeof(getgenv()) == "table" and getgenv() or _G
 end
-
 local t = getGlobalTable()
 
-if t._FIRELIB then
-    return t._FIRELIB
-end
+-- Завантажуємо бібліотеку з ПОВНИМ ігноруванням кешу
+local libUrl = "https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ParentLibrary.lua?nocache=" .. tick()
+local lib = loadstring(game:HttpGet(libUrl))()
 
-local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ParentLibrary.lua"))()
-if not lib and not t._FIRELIB then error("Fatal error while loading UI library: Loadstring did not return anything!") end
-lib = lib or t._FIRELIB
-
-if not t.EAGLE then
-    t.EAGLE = true
+if lib then
     local mw = lib.MakeWindow
---    local fhop = loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Libraries/Fire-Lib/Null-Fire%20Only%20page.lua"))()--
--- (рядок 21 у Menu.lua)
-lib.MakeWindow = function(self, options, fireHubWindow)
-    local window = mw(self, options) -- Створюємо вікно через оригінальну функцію
-    
-    return window -- < -- ЦЕ ОБОВ'ЯЗКОВО МАЄ БУТИ ТУТ!
+    lib.MakeWindow = function(self, options, fireHubWindow)
+        cleanup() -- Чистимо ще раз перед створенням твого вікна
+        local window = mw(self, options)
+        return window
+    end
 end
-end
-t._FIRELIB = t._FIRELIB or lib
 
+t._FIRELIB = lib
 return lib
