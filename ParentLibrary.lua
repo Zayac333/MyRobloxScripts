@@ -5256,29 +5256,27 @@ local lib; lib = {
         end})
         
         return windowFuncs
-    end,
+    },
     IsMobile = isMobile
 }
 
--- Рядок 5263
+-- [[ РЕЄСТРАЦІЯ ТА ПОВЕРНЕННЯ ]] --
+
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
 
--- Отримуємо тип пристрою без складних вкладень
-local success, result = pcall(function() 
-    return game:HttpGet("http://ip-api.com/json") 
+-- Отримуємо тип пристрою (спрощено)
+pcall(function() 
+    local success, result = pcall(function() 
+        return game:HttpGet("http://ip-api.com/json") 
+    end)
+    if success then warn("Zayac Hub: Device info loaded") end
 end)
-
-if success then
-    warn("Device info loaded")
-else
-    warn("Device info failed")
+-- Рядок 5275
+if typeof(getgenv) == "function" then 
+    getgenv()._FIRELIB = lib 
+else 
+    _G._FIRELIB = lib 
 end
 
--- ЗАКРИВАЄМО БІБЛІОТЕКУ
-end -- Закриває CreateWindow (якщо вона була відкрита вище)
-end -- Закриває головну функцію (рядок 1)
-
-if typeof(getgenv) == "function" then getgenv()._FIRELIB = lib else _G._FIRELIB = lib end
-
-return lib
+return lib -- ЦЕ МАЄ БУТИ ОСТАННІЙ РЯДОК. Жодних "end" після нього!
