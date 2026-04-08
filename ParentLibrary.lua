@@ -4875,7 +4875,7 @@ local lib; lib = {
         window.HolderFrame.PageButtons.Visible = true
         window.HolderFrame.PageDisplay.Visible = true
 
-        local page = windowFuncs:AddPage({Title = "Main", Order = 999})
+        local page = windowFuncs:AddPage({Title = "ZayacHub", Order = 999})
         local toggleKey = Enum.KeyCode.LeftAlt
         page:AddButton({Text = "Hide UI", Callback = function()
             if windowFuncs:Minimize() then
