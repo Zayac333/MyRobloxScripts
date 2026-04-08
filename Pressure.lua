@@ -2,7 +2,7 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
    Name = "Zayac Hub | Pressure ULTIMATE",
    LoadingTitle = "Restoring Classic ESP...",
-   LoadingSubtitle = "With Blacklist & Numbers",
+   LoadingSubtitle = "Optimized Performance",
    ConfigurationSaving = { Enabled = false }
 })
 
@@ -11,15 +11,15 @@ _G.DoorESP = false
 _G.TrapESP = false
 _G.AntiShark = false
 
--- [[ СПИСОК ІГНОРУВАННЯ (ДЛЯ ПАСТОК) ]] --
 local TrapBlacklist = {
     "fan", "vent", "motor", "engine", "propeller", "spinner", 
-    "light", "decor", "sign", "button", "lever", "valve", "prop"
+    "light", "decor", "sign", "button", "lever", "valve", "prop", "wall"
 }
 
--- [[ ТА САМА ФУНКЦІЯ ESP (З ТВОГО 1-ГО КОДУ) ]] --
+-- [[ ОПТИМІЗОВАНА ФУНКЦІЯ ESP ]] --
 local function CreateSmartESP(obj, text, color, tag)
-    if obj:FindFirstChild(tag) then obj[tag]:Destroy() end
+    -- Якщо на об'єкті вже є ESP, не створюємо нове (щоб не спамити таймерами)
+    if obj:FindFirstChild(tag) then return end
     
     -- Фільтр фейків для дверей
     if obj.Name == "Door" and not obj:FindFirstChildOfClass("ProximityPrompt", true) then
@@ -49,11 +49,17 @@ local function CreateSmartESP(obj, text, color, tag)
     lbl.Text = text
     lbl.TextScaled = true
     lbl.Font = Enum.Font.RobotoMono
+
+    -- [[ ЛОГІКА ОПТИМІЗАЦІЇ: ВИДАЛЕННЯ ЧЕРЕЗ 30 СЕКУНД ]] --
+    if tag == "ZayacVisual" then -- Тільки для дверей
+        task.delay(30, function()
+            if folder then folder:Destroy() end
+        end)
+    end
 end
 
 local MainTab = Window:CreateTab("Automation", 4483362458)
 
--- [[ 1. INSTANT INTERACT ]] --
 MainTab:CreateToggle({
    Name = "Instant Interact",
    CurrentValue = false,
@@ -77,9 +83,8 @@ MainTab:CreateToggle({
 
 local VisualsTab = Window:CreateTab("Visuals", 4483362458)
 
--- [[ 2. DOOR ESP (ТОЧНО З ТВОГО 1-ГО КОДУ) ]] --
 VisualsTab:CreateToggle({
-   Name = "Door ESP (Smart Number)",
+   Name = "Door ESP (30s Auto-Clear)",
    CurrentValue = false,
    Callback = function(Value)
       _G.DoorESP = Value
@@ -118,7 +123,6 @@ VisualsTab:CreateToggle({
    end,
 })
 
--- [[ 3. TRAP ESP (З 2-ГО КОДУ + BLACKLIST) ]] --
 VisualsTab:CreateToggle({
    Name = "Trap & Monster ESP",
    CurrentValue = false,
@@ -130,18 +134,12 @@ VisualsTab:CreateToggle({
                pcall(function()
                   for _, v in pairs(workspace:GetDescendants()) do
                      local name = v.Name:lower()
-                     
-                     -- ПЕРЕВІРКА BLACK LIST
                      local isBlacklisted = false
                      for _, word in pairs(TrapBlacklist) do
-                        if name:find(word) then
-                           isBlacklisted = true
-                           break
-                        end
+                        if name:find(word) then isBlacklisted = true break end
                      end
 
                      if not isBlacklisted then
-                        -- Твоя логіка детекції (Wall Dweller, Void, Monster)
                         if name:find("wall") or name:find("dwell") or name:find("void") or name == "staredown" then
                            if v:FindFirstChildOfClass("Humanoid") or v:FindFirstChildOfClass("AnimationController") or v:IsA("Model") then
                               CreateSmartESP(v, "⚠️ TRAP!", Color3.fromRGB(255, 0, 0), "ZayacTrap")
@@ -163,7 +161,6 @@ VisualsTab:CreateToggle({
    end,
 })
 
--- [[ 4. ANTI-SHARK (EYEFESTATION) ]] --
 VisualsTab:CreateToggle({
    Name = "Anti-Shark Protection",
    CurrentValue = false,
