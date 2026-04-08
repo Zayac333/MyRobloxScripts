@@ -1,7 +1,16 @@
--- [[ ЛОКАЛЬНА КОПІЯ FIRE-LIB БЕЗ ПЕРЕВІРОК ]] --
+-- [[ ЛОКАЛЬНА КОПІЯ FIRE-LIB БЕЗ ПЕРЕВІРОК (PC VERSION) ]] --
 
-local lib = {}
-local objects = {
+local function getGlobalTable()
+    return (getgenv and getgenv()) or _G
+end
+
+local lib = {
+    MakeWindow = function(options)
+        local windowFuncs = {}
+        local isMobile = false -- Завжди false для ПК
+
+        -- [[ СПИСОК ОБ'ЄКТІВ ]] --
+        local objects = {
     ["Instance0"] = Instance.new("ScreenGui"); -- Fire Library
     ["Instance1"] = Instance.new("Frame"); -- Holder
     ["Instance2"] = Instance.new("TextButton"); -- Window
@@ -5246,8 +5255,7 @@ local lib; lib = {
         end, CustomTextDisplay = function(i)
             return i .. "%"
         end})
-   -- [[ ОСТАННІЙ СЛАЙДЕР ]] --
--- [[ ВИПРАВЛЕНИЙ ОСТАННІЙ СЛАЙДЕР ТА КІНЕЦЬ ]] --
+-- [[ ФІНАЛЬНИЙ СЛАЙДЕР ]] --
         page:AddSlider({
             Text = "Background image opacity", 
             Default = (1 - window.HolderFrame.Stripes.ImageTransparency) * 100, 
@@ -5256,29 +5264,41 @@ local lib; lib = {
             Step = 1, 
             Callback = function(val)
                 window.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
-                keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
-                script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-                script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-            end -- ОЦЕЙ END ЗАКРИВАЄ CALLBACK
+                pcall(function()
+                    script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+                    script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+                end)
+            end, -- КОМА ТУТ БУЛА ПРОПУЩЕНА
             CustomTextDisplay = function(i)
                 return i .. "%"
             end
         })
-        
-        return windowFuncs
-    end
-    end, -- ЗАКРИВАЄ MakeWindow
-    IsMobile = isMobile
-} -- ЗАКРИВАЄ ТАБЛИЦЮ lib
+
+return windowFuncs
+    end, -- Це закриває функцію MakeWindow
+    
+    IsMobile = false,
+    Notifications = {}
+} -- ЦЯ ДУЖКА ЗАКРИВАЄ ТАБЛИЦЮ lib (ту саму з 8-го рядка)
 
 -- [[ РЕЄСТРАЦІЯ БІБЛІОТЕКИ ]] --
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
 
-if typeof(getgenv) == "function" then 
-    getgenv()._FIRELIB = lib 
-else 
-    _G._FIRELIB = lib 
-end
+pcall(function()
+    -- Налаштовуємо повідомлення, якщо вони є
+    if lib.Notifications then
+        lib.Notifications.Notify = lib.Notifications.Notification
+        lib.Notifications.SelectNotification = lib.Notifications.ChooseNotification
+    end
+    
+    -- Вмикаємо інтерфейс
+    script.Parent.Notification.ChooseNotificationHolder.Visible = false
+    script.Parent.Notification.NotificationHolder.Visible = false
+    script.Parent.Enabled = true
+end)
+
+-- РЕЄСТРУЄМО В ПАМ'ЯТІ
+getGlobalTable()._FIRELIB = lib
 
 return lib
