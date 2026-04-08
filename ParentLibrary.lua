@@ -5279,9 +5279,8 @@ return windowFuncs
     
     IsMobile = false,
     Notifications = {}
-} -- ЗАКРИВАЄ ТАБЛИЦЮ lib 
+} -- Закриває lib
 
--- [[ РЕЄСТРАЦІЯ ]] --
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
 
@@ -5297,4 +5296,4 @@ end)
 
 getGlobalTable()._FIRELIB = lib
 
-return lib -- ОСТАННІЙ РЯДОК ФАЙЛУ
+return lib
