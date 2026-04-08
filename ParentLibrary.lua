@@ -2682,15 +2682,12 @@ end;
 -- Вставляєш сюди той великий код, що ми розбирали раніше (MakeWindow, AddPage і т.д.)
 -- Я вирізав з нього посилання на HTTP-запити до GitHub.
 
-local FireLib = {
-    MakeWindow = function(self, options)
-    
-    _G.FireHubLoaded = true
-    local keySystem = false
-        local windowFuncs = {}
- -- Set modules
+_G.FireHubLoaded = true
+local keySystem = false
+    local windowFuncs = {}
+-- Set modules
 local o_require = require; local require;
-local modules do
+local modules; do
     modules = {};
     require = function(object)
         if modules[object] then
@@ -5268,18 +5265,15 @@ local lib; lib = {
                     script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
                     script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
                 end)
-            end, -- КОМА ТУТ БУЛА ПРОПУЩЕНА
+            end,
             CustomTextDisplay = function(i)
                 return i .. "%"
             end
         })
 
-return windowFuncs
-    end, -- Закриває MakeWindow
-    
-    IsMobile = false,
-    Notifications = {}
-} -- Закриває lib
+        return windowFuncs
+    end
+}
 
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
@@ -5296,4 +5290,9 @@ end)
 
 getGlobalTable()._FIRELIB = lib
 
+return lib
+    end
+end
+end
+}
 return lib
