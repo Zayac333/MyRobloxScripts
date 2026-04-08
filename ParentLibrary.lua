@@ -5275,30 +5275,26 @@ local lib; lib = {
         })
 
 return windowFuncs
-    end, -- Це закриває функцію MakeWindow
+    end, -- Закриває MakeWindow
     
     IsMobile = false,
     Notifications = {}
-} -- ЦЯ ДУЖКА ЗАКРИВАЄ ТАБЛИЦЮ lib (ту саму з 8-го рядка)
+} -- ЗАКРИВАЄ ТАБЛИЦЮ lib 
 
--- [[ РЕЄСТРАЦІЯ БІБЛІОТЕКИ ]] --
+-- [[ РЕЄСТРАЦІЯ ]] --
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
 
 pcall(function()
-    -- Налаштовуємо повідомлення, якщо вони є
     if lib.Notifications then
         lib.Notifications.Notify = lib.Notifications.Notification
         lib.Notifications.SelectNotification = lib.Notifications.ChooseNotification
     end
-    
-    -- Вмикаємо інтерфейс
     script.Parent.Notification.ChooseNotificationHolder.Visible = false
     script.Parent.Notification.NotificationHolder.Visible = false
     script.Parent.Enabled = true
 end)
 
--- РЕЄСТРУЄМО В ПАМ'ЯТІ
 getGlobalTable()._FIRELIB = lib
 
-return lib
+return lib -- ОСТАННІЙ РЯДОК ФАЙЛУ
