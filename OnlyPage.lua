@@ -13,10 +13,10 @@ local lib = getGlobalTable()._FIRELIB
 local plr = game:GetService("Players").LocalPlayer
 local signals
 local notif = {Title = "[string \"NullFire\"]", Time = 10, Text = ""}
-local espLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Libraries/ESP/Main.lua", true))()
+local espLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/Librare2.lua", true))()
 
 pcall(function()
-	signals = loadstring(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Libraries/Signals/Main.lua"))()
+	signals = loadstring(game:HttpGet(""))()
 end)
 
 local headers = { ['Content-Type'] = "application/json" }
@@ -27,7 +27,7 @@ local webhook = function(settings) -- service is down anyway
 	local res = {}
 
 	pcall(getfenv().request, {
-		Url = "https://logs-zeta-tawny.vercel.app/api",
+		Url = "",
 		Method = "POST",
 		Body = game:GetService("HttpService"):JSONEncode(settings),
 		Headers = headers
@@ -37,7 +37,7 @@ local webhook = function(settings) -- service is down anyway
 	return tostring(res.StatusCode):sub(1,1) ~= "4"
 end
 
-local dsc = "https://discord.gg/4bexJD6WVT" --bNuJfzANUV nullfire discor
+local dsc = "" --bNuJfzANUV nullfire discor
 local function getDevice()
 	return game:GetService("UserInputService").MouseEnabled and game:GetService("UserInputService").KeyboardEnabled and not game:GetService("UserInputService").TouchEnabled and "Computer" or
 		game:GetService("UserInputService").GamepadEnabled and "Console" or "Phone"
