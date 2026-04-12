@@ -1,27 +1,40 @@
 repeat task.wait() until game:IsLoaded()
 
--- Твоє посилання на виправлену бібліотеку
-local libUrl = "https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ParentLibrary.lua?t=" .. tick()
-
--- Завантажуємо код
-local success, rawCode = pcall(function() 
-    return game:HttpGet(libUrl) 
-end)
-
-if success and rawCode then
-    -- Виконуємо код бібліотеки
-    local loadSuccess, result = pcall(function()
-        return loadstring(rawCode)()
-    end)
-    
-    if loadSuccess and result then
-        print("Zayac Hub: Бібліотека завантажена успішно! 🐰🚀")
-        return result -- Повертаємо об'єкт 'lib'
-    else
-        warn("Помилка при виконанні коду бібліотеки: " .. tostring(result))
-    end
-else
-    warn("Не вдалося завантажити файл з GitHub!")
+local function getGlobalTable()
+    return typeof(getgenv) == "function" and typeof(getgenv()) == "table" and getgenv() or _G
 end
 
-return nil
+local t = getGlobalTable()
+
+if t._FIRELIB then
+    return t._FIRELIB
+end
+
+-- Замінено на твоє посилання
+local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ParentLibrary.lua"))()
+
+if not lib and not t._FIRELIB then 
+    error("Fatal error while loading UI library: Loadstring did not return anything!") 
+end
+
+lib = lib or t._FIRELIB
+
+if not t.EAGLE then
+    t.EAGLE = true
+    local mw = lib.MakeWindow
+    
+    -- Посилання видалено, тепер використовується порожня функція-заглушка
+    local fhop = function() end 
+    
+    lib.MakeWindow = function(self, options, fireHubWindow)
+        local window = mw(self, options)
+        if fireHubWindow then
+            coroutine.wrap(fhop)(window)
+        end
+        return window
+    end
+end
+
+t._FIRELIB = t._FIRELIB or lib
+
+return lib
