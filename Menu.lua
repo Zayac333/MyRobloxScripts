@@ -10,22 +10,14 @@ if t._FIRELIB then
     return t._FIRELIB
 end
 
--- Замінено на твоє посилання
 local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ParentLibrary.lua"))()
-
-if not lib and not t._FIRELIB then 
-    error("Fatal error while loading UI library: Loadstring did not return anything!") 
-end
-
+if not lib and not t._FIRELIB then error("Fatal error while loading UI library: Loadstring did not return anything!") end
 lib = lib or t._FIRELIB
 
 if not t.EAGLE then
     t.EAGLE = true
     local mw = lib.MakeWindow
-    
-    -- Посилання видалено, тепер використовується порожня функція-заглушка
-    local fhop = function() end 
-    
+    local fhop = loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/OnlyPage.lua"))()
     lib.MakeWindow = function(self, options, fireHubWindow)
         local window = mw(self, options)
         if fireHubWindow then
@@ -34,7 +26,6 @@ if not t.EAGLE then
         return window
     end
 end
-
 t._FIRELIB = t._FIRELIB or lib
 
 return lib
