@@ -1,16 +1,11 @@
--- [[ ЛОКАЛЬНА КОПІЯ FIRE-LIB БЕЗ ПЕРЕВІРОК (PC VERSION) ]] --
+-- [[ GENERATED WITH InfernoHub/Scriptify STUDIO PLUGIN ]] --
+-- Scriptify Version: 1.1
 
-local function getGlobalTable()
-    return (getgenv and getgenv()) or _G
-end
+--
 
-local lib = {
-    MakeWindow = function(options)
-        local windowFuncs = {}
-        local isMobile = false -- Завжди false для ПК
-
-        -- [[ СПИСОК ОБ'ЄКТІВ ]] --
-        local objects = {
+-- Create objects
+local parent = nil;
+local objects = {
     ["Instance0"] = Instance.new("ScreenGui"); -- Fire Library
     ["Instance1"] = Instance.new("Frame"); -- Holder
     ["Instance2"] = Instance.new("TextButton"); -- Window
@@ -252,14 +247,8 @@ local lib = {
     ["Instance238"] = Instance.new("Sound"); -- Click
 };
 
--- ДОДАЙ ЦЕЙ БЛОК:
-local parent = (getfenv().gethui and getfenv().gethui()) or 
-               (game:GetService("CoreGui"):FindFirstChild("RobloxGui")) or 
-               (game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
-
 do -- Set properties
-    objects["Instance0"]["Parent"] = parent;
-    objects["Instance0"]["Enabled"] = true;
+    objects["Instance0"]["Enabled"] = false;
     objects["Instance0"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;
     objects["Instance0"]["DisplayOrder"] = 999999999;
     objects["Instance0"]["Parent"] = parent;
@@ -1686,7 +1675,7 @@ do -- Set properties
     objects["Instance139"]["Visible"] = false;
     objects["Instance139"]["BorderColor3"] = Color3.new(0, 0, 0);
     objects["Instance139"]["Name"] = "StarterFade";
-    objects["Instance139"]["Size"] = UDim2.new(0, 0, 0, 0);
+    objects["Instance139"]["Size"] = UDim2.new(1, 0, 1, 0);
     objects["Instance139"]["Parent"] = objects["Instance4"];
     objects["Instance139"]["ZIndex"] = 99999;
     objects["Instance139"]["BorderSizePixel"] = 0;
@@ -1697,8 +1686,8 @@ do -- Set properties
     objects["Instance140"]["BackgroundTransparency"] = 1;
     objects["Instance140"]["BorderColor3"] = Color3.new(0, 0, 0);
     objects["Instance140"]["Name"] = "KeySystem";
-    objects["Instance140"]["Position"] = UDim2.new(0, 0, 0, 0);
-    objects["Instance140"]["Size"] = UDim2.new(0, 0, 0, 0);
+    objects["Instance140"]["Position"] = UDim2.new(0, 0, 0.0780000016, 0);
+    objects["Instance140"]["Size"] = UDim2.new(1, 0, 0.921999991, 0);
     objects["Instance140"]["ZIndex"] = 80000;
     objects["Instance140"]["BorderSizePixel"] = 0;
     objects["Instance140"]["BackgroundColor3"] = Color3.new(0.137255, 0.137255, 0.137255);
@@ -1892,7 +1881,7 @@ do -- Set properties
     objects["Instance158"]["Parent"] = objects["Instance151"];
     objects["Instance158"]["BackgroundTransparency"] = 1;
     objects["Instance158"]["FontFace"] = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-    objects["Instance158"]["Size"] = UDim2.new(0, 0, 0, 0);
+    objects["Instance158"]["Size"] = UDim2.new(1, 0, 1, 0);
     objects["Instance158"]["ZIndex"] = 80002;
     objects["Instance158"]["BorderSizePixel"] = 0;
     objects["Instance158"]["BackgroundColor3"] = Color3.new(1, 1, 1);
@@ -1900,12 +1889,11 @@ do -- Set properties
     objects["Instance159"]["BackgroundTransparency"] = 1;
     objects["Instance159"]["BorderColor3"] = Color3.new(0, 0, 0);
     objects["Instance159"]["Name"] = "Label";
-    objects["Instance159"]["Size"] = UDim2.new(0, 0, 0, 0);
+    objects["Instance159"]["Size"] = UDim2.new(1, 0, 0.150000006, 0);
     objects["Instance159"]["Parent"] = objects["Instance140"];
     objects["Instance159"]["ZIndex"] = 80001;
     objects["Instance159"]["BorderSizePixel"] = 0;
     objects["Instance159"]["BackgroundColor3"] = Color3.new(1, 1, 1);
-    objects["Instance159"]["Visible"] = false;
 
     objects["Instance160"]["FontSize"] = Enum.FontSize.Size14;
     objects["Instance160"]["Active"] = true;
@@ -1913,10 +1901,10 @@ do -- Set properties
     objects["Instance160"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
     objects["Instance160"]["ZIndex"] = 10006;
     objects["Instance160"]["BorderSizePixel"] = 0;
-    objects["Instance160"]["Size"] = UDim2.new(0, 0, 0, 0);
+    objects["Instance160"]["Size"] = UDim2.new(0.899999976, 0, 0.400000006, 0);
     objects["Instance160"]["TextColor3"] = Color3.new(1, 1, 1);
     objects["Instance160"]["BorderColor3"] = Color3.new(0, 0, 0);
-    objects["Instance160"]["Text"] = "";
+    objects["Instance160"]["Text"] = "Please, complete a key system:";
     objects["Instance160"]["TextWrapped"] = true;
     objects["Instance160"]["BackgroundTransparency"] = 1;
     objects["Instance160"]["BackgroundColor3"] = Color3.new(1, 1, 1);
@@ -2678,16 +2666,9 @@ do -- Set properties
     objects["Instance238"]["SoundId"] = "rbxassetid://15675032796";
 end;
 
--- ПІСЛЯ ОБ'ЄКТІВ ІДЕ ОСНОВНА ЛОГІКА (Функції бібліотеки)
--- Вставляєш сюди той великий код, що ми розбирали раніше (MakeWindow, AddPage і т.д.)
--- Я вирізав з нього посилання на HTTP-запити до GitHub.
-
-_G.FireHubLoaded = true
-local keySystem = false
-    local windowFuncs = {}
 -- Set modules
 local o_require = require; local require;
-local modules; do
+local modules do
     modules = {};
     require = function(object)
         if modules[object] then
@@ -4811,7 +4792,7 @@ local lib; lib = {
             window.HolderFrame.PageDisplay.Visible = false
 
             local keysys = window.HolderFrame.KeySystem
-            local redeemed = true
+            local redeemed = false
             local closed = false
             local buzy = false
 
@@ -4875,7 +4856,7 @@ local lib; lib = {
         window.HolderFrame.PageButtons.Visible = true
         window.HolderFrame.PageDisplay.Visible = true
 
-        local page = windowFuncs:AddPage({Title = "ZayacHub", Order = 999})
+        local page = windowFuncs:AddPage({Title = "Main", Order = 999})
         local toggleKey = Enum.KeyCode.LeftAlt
         page:AddButton({Text = "Hide UI", Callback = function()
             if windowFuncs:Minimize() then
@@ -5252,47 +5233,46 @@ local lib; lib = {
         end, CustomTextDisplay = function(i)
             return i .. "%"
         end})
--- [[ ФІНАЛЬНИЙ СЛАЙДЕР ]] --
-        page:AddSlider({
-            Text = "Background image opacity", 
-            Default = (1 - window.HolderFrame.Stripes.ImageTransparency) * 100, 
-            Min = 0, 
-            Max = 100, 
-            Step = 1, 
-            Callback = function(val)
-                window.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
-                pcall(function()
-                    script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-                    script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
-                end)
-            end,
-            CustomTextDisplay = function(i)
-                return i .. "%"
-            end
-        })
-
+        page:AddSlider({Text = "Background image opacity", Default = (1 - window.HolderFrame.Stripes.ImageTransparency) * 100, Min = 0, Max = 100, Step = 1, Callback = function(val)
+            window.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
+            keybinds.HolderFrame.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+            script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Stripes.ImageTransparency = 1 - (val / 100)
+        end, CustomTextDisplay = function(i)
+            return i .. "%"
+        end})
+        
         return windowFuncs
-    end
+    end,
+    IsMobile = isMobile
 }
 
 lib.CreateWindow = lib.MakeWindow
 lib.AddWindow = lib.MakeWindow
+lib.Notifications.Notify = lib.Notifications.Notification
+lib.Notifications.SelectNotification = lib.Notifications.ChooseNotification
+lib.Notifications.SelectionNotification = lib.Notifications.ChooseNotification
 
-pcall(function()
-    if lib.Notifications then
-        lib.Notifications.Notify = lib.Notifications.Notification
-        lib.Notifications.SelectNotification = lib.Notifications.ChooseNotification
-    end
-    script.Parent.Notification.ChooseNotificationHolder.Visible = false
-    script.Parent.Notification.NotificationHolder.Visible = false
-    script.Parent.Enabled = true
-end)
+script.Parent.Notification.ChooseNotificationHolder.Visible = false
+script.Parent.Notification.NotificationHolder.Visible = false
+script.Parent.Enabled = true
+
+local add = 2
+if isMobile then
+    script.Parent.Notification.ChooseNotificationHolder.NotificationColored.NotificationMain.Lines['1'].TextSize += add
+    script.Parent.Notification.NotificationHolder.NotificationColored.NotificationMain.Lines['1'].TextSize += add
+    script.Parent.Notification.ChooseNotificationHolder.Size = UDim2.new(1, 0, 0, 125)
+    script.Parent.Notification.NotificationHolder.Size = script.Parent.Notification.ChooseNotificationHolder.Size
+    script.Parent.Notification.Size = UDim2.new(0, 300, 1, 0)
+end
 
 getGlobalTable()._FIRELIB = lib
 
 return lib
-    end
-end
-end
-}
-return lib
+    end;
+end;
+
+-- YOUR CODE DOWN HERE --
+
+local obj = objects["Instance0"];
+return require(objects["Instance218"])
