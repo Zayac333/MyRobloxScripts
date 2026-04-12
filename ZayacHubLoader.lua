@@ -15,6 +15,11 @@ local TSBGames = {
     [131048399685555] = true -- ТСБ ВС
 }
 
+-- Список ігор для JJS (Jujutsu Shenanigans)
+local JJSGames = {
+    [9391468976] = true -- ЖЖС
+}
+
 if PressureGames[PlaceId] then
     -- Завантаження для Pressure
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/Pressure/main/ZayacHub.lua", true))()
@@ -22,6 +27,10 @@ if PressureGames[PlaceId] then
 elseif TSBGames[PlaceId] then
     -- Завантаження для TSB
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/MyLiteHub.lua", true))()
+
+elseif JJSGames[PlaceId] then
+    -- Завантаження для ЖЖС (нове посилання)
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/MiLiteHub2.lua", true))()
     
 else
     -- Якщо гри немає в списку
