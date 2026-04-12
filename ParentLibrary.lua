@@ -2714,12 +2714,12 @@ local configsEnabled = typeof(writefile) == "function" and typeof(readfile) == "
 local themes
 local versions
 if not pcall(function()
-        local str = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/main/Core/Data/Versions.json"))
+        local str = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/Versions.lua"))
         versions = {
             ["FireLibraryVersion"] = str[2],
             ["FireHubVersion"] = str[1]
         }
-        themes = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/InfernusScripts/Null-Fire/refs/heads/main/Core/Data/Theme.json"))
+        themes = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/Themes.json"))
     end) then
     versions = {
         ["FireLibraryVersion"] = "5.4.2",
@@ -4908,7 +4908,7 @@ local lib; lib = {
         end
 
         if getGlobalTable().FireHubLoaded then
-            page:AddLabel({Text = "NullFire Version: "..versions.FireHubVersion})
+            page:AddLabel({Text = "ZayacHub Version: "..versions.FireHubVersion})
         end
         page:AddLabel({Text = "FireLib Version: "..versions.FireLibraryVersion})
         page:AddLabel({Text = "Executor Name & Version: " .. execName .. "; " .. execVersion})
@@ -4929,7 +4929,7 @@ local lib; lib = {
         end
 
         page:AddLabel({Text = "Emulation detected: ".. (emulator and "Yes" or "No")})
-        page:AddLabel({Text = "Current NullFire version: ".. (isMobile and "Mobile" or "PC")})
+        page:AddLabel({Text = "Current ZayacHub version: ".. (isMobile and "Mobile" or "PC")})
         page:AddLabel({Text = "Current platform: ".. (realPlatform or platform).Name})
 
         page:AddSeparator()
