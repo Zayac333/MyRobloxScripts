@@ -133,6 +133,38 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateButton({
+   Name = "Teleport to Mountian",
+   Callback = function()
+      local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+      if root then root.CFrame = CFrame.new(154.89, 628.74, -446.10) end
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "Teleport to Prison",
+   Callback = function()
+      local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+      if root then root.CFrame = CFrame.new(439.87, 439.51, -374.98) end
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "Teleport to Counter",
+   Callback = function()
+      local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+      if root then root.CFrame = CFrame.new(-71.15, 49.96, 20347.57) end
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "Teleport to Atomic Slash Base",
+   Callback = function()
+      local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+      if root then root.CFrame = CFrame.new(1063.24, 19.93, 23005.99) end
+   end,
+})
+
+MainTab:CreateButton({
    Name = "Teleport to Top (High)",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
