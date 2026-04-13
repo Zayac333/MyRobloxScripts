@@ -26,7 +26,7 @@ if PressureGames[PlaceId] then
     
 elseif TSBGames[PlaceId] then
     -- Завантаження для TSB
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/MyLiteHub.lua", true))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacHubEsp.lua", true))()
 
 elseif JJSGames[PlaceId] then
     -- Завантаження для ЖЖС (нове посилання)
