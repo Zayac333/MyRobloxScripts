@@ -10,7 +10,7 @@ local Window = Rayfield:CreateWindow({
 -- --- ЗМІННІ ---
 getgenv().SpeedEnabled = false
 getgenv().NoclipEnabled = false
-getgenv().SpeedValue = 25 
+getgenv().SpeedValue = 63 
 getgenv().SelectedPlayer = nil
 getgenv().LoopTP = false
 getgenv().DeathCounterESP = false
