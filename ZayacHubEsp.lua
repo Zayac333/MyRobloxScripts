@@ -10,7 +10,7 @@ local Window = Rayfield:CreateWindow({
 -- --- ЗМІННІ ---
 getgenv().SpeedEnabled = false
 getgenv().NoclipEnabled = false
-getgenv().SpeedValue = 63 
+getgenv().SpeedValue = 25 
 getgenv().SelectedPlayer = nil
 getgenv().LoopTP = false
 getgenv().DeathCounterESP = false
@@ -84,6 +84,8 @@ CreateVoidSafeZone()
 local MainTab = Window:CreateTab("Movement", 4483362458)
 local PlayerTab = Window:CreateTab("Players", 4483362458)
 local CombatTab = Window:CreateTab("Combat & ESP", 4483362458)
+local ExploitsTab = Window:CreateTab("Exploits", 4483362458)
+local MovesetTab = Window:CreateTab("Movesets", 4483362458)
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
 
@@ -321,6 +323,226 @@ local function ManageESP(p)
     end
 end
 
+-- Функція для швидкого встановлення атрибутів (як у оригіналі)
+local function SetExploitAttr(name, val)
+    game.Players.LocalPlayer:SetAttribute(name, val)
+end
+-- Функція для швидкого встановлення атрибутів (як у оригіналі)
+local function SetExploitAttr(name, val)
+    game.Players.LocalPlayer:SetAttribute(name, val)
+end
+
+-- 1. No Dash Cooldown
+ExploitsTab:CreateToggle({
+   Name = "No Dash Cooldown",
+   CurrentValue = false,
+   Callback = function(Value)
+       SetExploitAttr('NoDashCooldown', Value)
+   end,
+})
+
+-- 2. No Fatigue (Втома)
+ExploitsTab:CreateToggle({
+   Name = "No Fatigue",
+   CurrentValue = false,
+   Callback = function(Value)
+       SetExploitAttr('NoFatigue', Value)
+   end,
+})
+
+-- 3. No Ragdoll (Примусове вимкнення регдолу)
+ExploitsTab:CreateToggle({
+   Name = "No Ragdoll",
+   CurrentValue = false,
+   Callback = function(Value)
+       getgenv().NoRagdoll = Value
+       if Value then
+           task.spawn(function()
+               while getgenv().NoRagdoll do
+                   local char = game.Players.LocalPlayer.Character
+                   if char and char:FindFirstChild("Ragdoll") then
+                       -- У TSB регдол часто працює через наявність об'єкта Ragdoll
+                       char.Ragdoll:Destroy() 
+                   end
+                   task.wait()
+               end
+           end)
+       end
+   end,
+})
+
+-- 4. No Slow (Захист від уповільнення)
+ExploitsTab:CreateToggle({
+   Name = "No Slowdown",
+   CurrentValue = false,
+   Callback = function(Value)
+       getgenv().NoSlow = Value
+       if Value then
+           task.spawn(function()
+               while getgenv().NoSlow do
+                   local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                   if hum then
+                       -- Якщо гра намагається поставити швидкість менше стандартної (16)
+                       if hum.WalkSpeed < 16 and not getgenv().IsFlinging then
+                           hum.WalkSpeed = 16
+                       end
+                   end
+                   task.wait()
+               end
+           end)
+       end
+   end,
+})
+
+ExploitsTab:CreateDivider()
+ExploitsTab:CreateLabel("Visual / Interface")
+
+-- 5. Extra Emote Slots
+ExploitsTab:CreateToggle({
+   Name = "Extra Emote Slots",
+   CurrentValue = false,
+   Callback = function(Value)
+       SetExploitAttr('ExtraSlots', Value)
+   end,
+})
+
+-- 6. Emote Search Bar
+ExploitsTab:CreateToggle({
+   Name = "Emote Search Bar",
+   CurrentValue = false,
+   Callback = function(Value)
+       SetExploitAttr('EmoteSearchBar', Value)
+   end,
+})
+
+-- 7. No Rotate Bypass (Дозволяє крутити персонажа під час атак)
+ExploitsTab:CreateToggle({
+   Name = "No Rotate Bypass",
+   CurrentValue = false,
+   Callback = function(Value)
+       getgenv().NoRotate = Value
+       if Value then
+           game:GetService("RunService").Heartbeat:Connect(function()
+               if getgenv().NoRotate then
+                   local char = game.Players.LocalPlayer.Character
+                   if char and char:FindFirstChild("Humanoid") then
+                       char.Humanoid.AutoRotate = true
+                   end
+               end
+           end)
+       end
+   end,
+})
+
+-- 8. No Jump Bypass
+ExploitsTab:CreateToggle({
+   Name = "No Jump Bypass",
+   CurrentValue = false,
+   Callback = function(Value)
+       getgenv().NoJumpBypass = Value
+       -- Дозволяє стрибати навіть коли гра блокує Jump
+       game:GetService("UserInputService").JumpRequest:Connect(function()
+           if getgenv().NoJumpBypass then
+               local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+               if hum then
+                   hum:ChangeState(Enum.HumanoidStateType.Jumping)
+               end
+           end
+       end)
+   end,
+})
+
+ExploitsTab:CreateToggle({
+    Name = "No Block SlowDown",
+    CurrentValue = false,
+    Callback = function(Value)
+        getgenv().NoBlockSlow = Value
+        if Value then
+            -- Використовуємо RenderStepped для миттєвої корекції швидкості
+            game:GetService("RunService"):BindToRenderStep("ZayacNoSlow", 1, function()
+                if not getgenv().NoBlockSlow then 
+                    game:GetService("RunService"):UnbindFromRenderStep("ZayacNoSlow")
+                    return 
+                end
+                
+                local char = game.Players.LocalPlayer.Character
+                local hum = char and char:FindFirstChildOfClass("Humanoid")
+                
+                -- Якщо швидкість нижче 16, примусово ставимо 16
+                if hum and hum.WalkSpeed < 16 and not getgenv().IsFlinging then
+                    hum.WalkSpeed = 20
+                end
+            end)
+        else
+            game:GetService("RunService"):UnbindFromRenderStep("ZayacNoSlow")
+        end
+    end,
+})
+
+-- ==========================================
+-- --- ВКЛАДКА MOVESETS (АВТОМАТИЧНА) ---
+-- ==========================================
+local allMovesets = {
+    {"Suiru to Mahito", "Loads Mahito anims and 4 skill is saratov", "https://raw.githubusercontent.com/GreatestLime4K/mahitotsb/refs/heads/main/Protected_6381580361331378.txt"},
+    {"Saitama to Gojo", "Loads Gojo anims and VFX", "https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua"},
+    {"Saitama to Hakari", "Loads Hakari anims and VFX", "https://pastebin.com/raw/eEDYWj8p"},
+    {"Garou to Goku", "Loads Goku anims", "https://raw.githubusercontent.com/JayXSama/ray-makk/main/GOKUTSB"},
+    {"Sonic to Chainsaw Man", "Loads Chainsaw man anims and VFX", "https://gist.githubusercontent.com/GoldenHeads2/0fd8d36993c850f3fac89e5adf793076/raw/ab4f5a42bd0b2e24a32a46301d533ea849ca771c/gistfile1.txt"},
+    {"Saitama to Jun", "Loads Jun anims and VFX", "https://gist.githubusercontent.com/GoldenHeads2/f66279000c58a020e894a6db44914838/raw/62e53e1acacec0b38b43cd0f594292c32e09c39b/gistfile1.txt"},
+    {"Blade master to Sukuna", "Loads Sukuna anims and VFX", "https://raw.githubusercontent.com/zyrask/Nexus-Base/main/atomic-blademaster%20to%20sukuna"},
+    {"Garou to Okarun", "Loads Okarun anims and VFX", "https://paste.ee/r/Pn4oj"},
+    {"Garou to Freddy", "Loads Freddy anims and VFX", "https://pastebin.com/raw/Ft5psDmD"},
+    {"Garou to Kizaru", "Loads Kixaru anims and VFX", "https://paste.ee/r/NPnfk"},
+    {"Garou to Angel", "1 skill teleport to heaven .-.", "https://paste.ee/r/1HxVZ"},
+    {"Garou to Akaza", "Cool script", "https://paste.ee/r/zzvAH"},
+    {"Garou to A-train", "Funny script", "https://paste.ee/r/AnZ5j"},
+    {"Garou to Mastery Deku", "2 skil is a very cool", "https://pastebin.com/raw/xKextYP5"},
+    {"KJ to JK", "Only KJ servers!", "https://raw.githubusercontent.com/NetlessMade/KJ-TO-JK/refs/heads/main/script.lua"},
+    {"Suiru to trashcan man", "VERY troll script. Have teleport gui", "https://pastebin.com/raw/JH7mnC7X"},
+    {"Garou to Diddy", "DIDDY?!🤨", "https://paste.ee/r/gKC8V"},
+    {"Sonic to Toji", "Have 5 and 6 skills", "https://pastebin.com/raw/VQnyWP5D"},
+    {"Saitama to Sans", "Dont have ult, but have gaster blaster", "https://paste.ee/r/rF9d3"},
+    {"Saitama to Heian Sukuna", "In ult have only 3 skill", "https://raw.githubusercontent.com/damir512/sukunasaitamav1/main/thescript"},
+    {"Saitama to JJS Gojo", "Load full JJS Gojo version", "https://raw.githubusercontent.com/damir512/jjsgojov3/main/SaitamaToGojoV3_SOURCE-obfuscated_2.txt"},
+    {"Suiru to Deku v2", "Have ult anim", "https://github.com/aggiealledge/obfuscated-scripts/raw/refs/heads/main/deku%20suiryu%20thingy.txt"},
+    {"Blade master to Yuta", "RIKA!!!!!!!!!", "https://raw.githubusercontent.com/damir512/AtomicToYuta/main/Protected_8122576078506000.txt"},
+    {"Saitama to Kashimo", "THOR!!!", "https://raw.githubusercontent.com/damir512/Kashimo/main/Protected_7491278457865044.txt"},
+    {"Saitama to Gojo sensei", "200% PURPLE!!!", "https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua"},
+    {"Saitama to Shinji", "Have working 5 skill", "https://raw.githubusercontent.com/Kenjihin69/Kenjihin69/refs/heads/main/Shinji%20tp%20exploit"},
+    {"Garou to Sukuna", "Have Kamutoke", "https://rawscripts.net/raw/The-Strongest-Battlegrounds-Garou-to-Sukuna-23069"},
+    {"Saitama to Choi Jong In", "Have custom avatar", "https://raw.githubusercontent.com/nil071n/fireman/refs/heads/main/TSB"},
+    {"Saitama to Yuji x Sukuna", "Dance skill (5 skill)", "https://pastebin.com/raw/xpptBe4C"},
+    {"Saitama to Gojo v2", "Have purple nuke on ult", "https://pastebin.com/raw/jZHTybYw"},
+    {"Saitama to Megumi", "Dont have VFX and ult. Bad", "https://pastefy.app/j8w2DdyG/raw"},
+    {"Star Lighter (Multi)", "4 character modes, VERY good VFX", "https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SG_DEMO.lua"},
+    {"Sonic to 1x1x1x1 hacker", "Sonic hacker script", "https://gist.githubusercontent.com/GoldenHeads2/900e87ffc32f3c740930ccb106dd6abf/raw/358c5bf0f0a6aa25946718288dab006e3ae7e1d4/gistfile1.txt"},
+    {"Garou to Troll Garou", "Phantom blink and Vibral shift", "https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"},
+    {"Saitama to Gojo sensei v2", "Good vfx and banmade 5 skill", "https://raw.githubusercontent.com/Skibiditoilethaterfr2024/Script-protected-blud-/refs/heads/main/Protected_4902678279449732.txt"},
+    {"Sonic to black Goku", "NIGA NIGA NIGA", "https://raw.githubusercontent.com/Nova2ezz/BlackGoku/refs/heads/main/Protected_5687298824595816.lua"},
+    {"Saitama to Luffy", "Dont have VFX. Bad", "https://github.com/aggiealledge/obfuscated-scripts/raw/refs/heads/main/Protected_7732857839120517.txt"},
+    {"Garou to KJ", "KJ is already in the game...", "https://raw.githubusercontent.com/damir512/garoukjv1maybeidk/main/Protected_2460290213750059.txt"},
+    {"Saitama to Chara", "tubap tubap tubap", "https://paste.ee/r/0yYkO"},
+    {"Saitama to True Nokotan", "A life of gambling", "https://raw.githubusercontent.com/JayXSama/ray-makk/refs/heads/main/True%20Nosakatan"}
+}
+
+for _, data in pairs(allMovesets) do
+    MovesetTab:CreateButton({
+        Name = data[1],
+        Info = data[2],
+        Interact = "Load",
+        Callback = function()
+            loadstring(game:HttpGet(data[3]))()
+            
+            Rayfield:Notify({
+                Title = "Success",
+                Content = "Loaded: " .. data[1],
+                Duration = 2,
+                Image = 4483362458,
+            })
+        end,
+    })
+end
+
 -- --- SETTINGS ---
 SettingsTab:CreateKeybind({
    Name = "Rayfield Keybind",
@@ -353,6 +575,20 @@ SettingsTab:CreateButton({
    Name = "Load ZayacTech",
    Callback = function()
       loadstring(game:HttpGet('https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacTech.lua'))()
+   end,
+})
+
+SettingsTab:CreateButton({
+   Name = "Load Gojo",
+   Callback = function()
+      loadstring(game:HttpGet('https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua'))()
+   end,
+})
+
+SettingsTab:CreateButton({
+   Name = "Load CoordsLocate",
+   Callback = function()
+      loadstring(game:HttpGet('https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/Coords.lua'))()
    end,
 })
 
