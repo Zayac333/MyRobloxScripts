@@ -89,11 +89,12 @@ local MovesetTab = Window:CreateTab("Movesets", 4483362458)
 local VisualsTab = Window:CreateTab("Visuals", 4483362458)
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
--- Глобальні кольори
-getgenv().Color1 = Color3.fromRGB(255, 255, 255)
-getgenv().Color2 = Color3.fromRGB(0, 255, 255) -- Другий відтінок (наприклад, блакитний)
-getgenv().Color4 = Color3.fromRGB(0, 255, 255)
+-- Глобальні змінні 
+getgenv().MainEnabled = true 
 getgenv().RainbowMode = false
+getgenv().Color1 = Color3.fromRGB(255, 255, 255)
+getgenv().Color2 = Color3.fromRGB(0, 255, 255)
+getgenv().Color4 = Color3.fromRGB(255, 0, 255)
 
 --Радуга--
 
@@ -106,58 +107,69 @@ task.spawn(function()
     end
 end)
 
--- Функція вибору кольору для мешів
-local function GetTargetColor()
+-- Функція вибору кольору 
+local function GetCurrentFXColor()
     if getgenv().RainbowMode then
-        return currentRainbowColor
+        return Color3.fromHSV(tick() % 5 / 5, 1, 1)
     else
-        local r = math.random(1, 3)
-        if r == 1 then return getgenv().Color1
-        elseif r == 2 then return getgenv().Color2
-        else return getgenv().Color4 end
+        local colors = {getgenv().Color1, getgenv().Color2, getgenv().Color3}
+        return colors[math.random(1, #colors)]
     end
 end
--- ==========================================
--- --- СУПЕР-ЯДРО ФАРБУВАННЯ ---
--- ==========================================
-local function ApplyDuoColor(obj)
-    -- Створюємо градієнт для частинок з двох кольорів
-    local duoSequence = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, getgenv().Color1),
-        ColorSequenceKeypoint.new(0.5, getgenv().Color2),
-        ColorSequenceKeypoint.new(1, getgenv().Color4),
-    })
 
-    if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") then
-        obj.Color = duoSequence
-    end
-    
-    -- Фарбуємо моделі (дракони, меші, удари)
-    if obj:IsA("MeshPart") or obj:IsA("SpecialMesh") or (obj:IsA("BasePart") and obj.Transparency < 1) then
-        if not obj:IsDescendantOf(game.Players.LocalPlayer.Character) then
-            -- ВИДАЛЯЄМО ТЕКСТУРУ (це допоможе, якщо меш не хотів фарбуватися)
-            if obj:IsA("MeshPart") and obj.TextureID ~= "" then
-                obj.TextureID = "" 
-            end
-            
-            -- Вибираємо колір (можна рандомно між Color1 та Color2 для різноманіття)
-            local targetColor = (math.random(1,3) == 1) and getgenv().Color1 or getgenv().Color2 or getgenv().color4
-            
-            if obj:IsA("SpecialMesh") then
-                obj.VertexColor = Vector3.new(targetColor.R, targetColor.G, targetColor.B)
+-- ==========================================
+-- --- ЯДРО ФАРБУВАННЯ ---
+-- ==========================================
+local function ApplyVisuals(obj)
+    -- КРИТИЧНО: Якщо вимкнено, функція одразу зупиняється
+    if not getgenv().MainEnabled then return end
+
+    pcall(function()
+        if not obj or not obj.Parent then return end
+
+        -- Ефекти (Particles, Trails) 
+        if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") then
+            if getgenv().RainbowMode then
+                obj.Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color3.fromHSV(0, 1, 1)),
+                    ColorSequenceKeypoint.new(1, Color3.fromHSV(0.8, 1, 1))
+                })
             else
-                obj.Color = targetColor
+                obj.Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, getgenv().Color1),
+                    ColorSequenceKeypoint.new(0.5, getgenv().Color2),
+                    ColorSequenceKeypoint.new(1, getgenv().Color4)
+                })
             end
-            
-            obj.Material = Enum.Material.Neon -- Ефект світіння
         end
-    end
+
+        -- Моделі та Меші (крім персонажа) 
+        if not obj:IsDescendantOf(game.Players.LocalPlayer.Character) then
+            local targetColor = GetCurrentFXColor()
+
+            if obj:IsA("BasePart") or obj:IsA("MeshPart") then
+                if obj:IsA("MeshPart") then obj.TextureID = "" end
+                local sa = obj:FindFirstChildOfClass("SurfaceAppearance")
+                if sa then sa:Destroy() end
+
+                obj.Color = targetColor
+                obj.Material = Enum.Material.Neon
+            elseif obj:IsA("SpecialMesh") then
+                -- Виправлення помилки: SpecialMesh не має Material 
+                obj.VertexColor = Vector3.new(targetColor.R * 5, targetColor.G * 5, targetColor.B * 5)
+            end
+        end
+    end)
 end
 
--- Моніторинг усього Workspace
+-- Слухач нових об'єктів
 workspace.DescendantAdded:Connect(function(desc)
-    task.wait() 
-    ApplyDuoColor(desc)
+    -- Перевірка стану перед запуском затримки
+    if getgenv().MainEnabled then
+        task.delay(0.05, function() 
+            ApplyVisuals(desc) 
+        end)
+    end
 end)
 
 -- --- MOVEMENT ---
@@ -666,6 +678,19 @@ SettingsTab:CreateButton({
 SettingsTab:CreateButton({
    Name = "Destroy Script",
    Callback = function() Rayfield:Destroy() end,
+})
+
+VisualsTab:CreateToggle({
+    Name = "Enable Visuals", 
+    CurrentValue = getgenv().MainEnabled,
+    Callback = function(Value)
+        getgenv().MainEnabled = Value
+        if Value then
+            Rayfield:Notify({Title = "Zayac Hub", Content = "Colorizer ON", Duration = 2})
+        else
+            Rayfield:Notify({Title = "Zayac Hub", Content = "Colorizer OFF", Duration = 2})
+        end
+    end
 })
 
 VisualsTab:CreateToggle({
