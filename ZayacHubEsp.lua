@@ -86,8 +86,50 @@ local PlayerTab = Window:CreateTab("Players", 4483362458)
 local CombatTab = Window:CreateTab("Combat & ESP", 4483362458)
 local ExploitsTab = Window:CreateTab("Exploits", 4483362458)
 local MovesetTab = Window:CreateTab("Movesets", 4483362458)
+local VisualsTab = Window:CreateTab("Visuals", 4483362458)
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
+-- --- ГЛОБАЛЬНІ НАЛАШТУВАННЯ ---
+getgenv().EffectsColor = Color3.fromRGB(255, 255, 255)
+
+-- ==========================================
+-- --- ЯДРО ФАРБУВАННЯ (НЕ ВМИРАЄ) ---
+-- ==========================================
+local function ApplyColor(obj)
+    if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") then
+        local seq = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, getgenv().EffectsColor),
+            ColorSequenceKeypoint.new(1, getgenv().EffectsColor),
+        })
+        obj.Color = seq
+    end
+end
+
+local function StartColorMonitor(char)
+    if not char then return end
+    
+    -- Фарбуємо все існуюче
+    for _, desc in pairs(char:GetDescendants()) do
+        ApplyColor(desc)
+    end
+    
+    -- Стежимо за новими ефектами
+    char.DescendantAdded:Connect(function(desc)
+        task.wait() 
+        ApplyColor(desc)
+    end)
+end
+
+-- Респавн-менеджер
+game.Players.LocalPlayer.CharacterAdded:Connect(function(char)
+    task.wait(1)
+    StartColorMonitor(char)
+end)
+
+-- Старт для поточного персонажа
+if game.Players.LocalPlayer.Character then
+    task.spawn(function() StartColorMonitor(game.Players.LocalPlayer.Character) end)
+end
 
 -- --- MOVEMENT ---
 local SpeedTgl = MainTab:CreateToggle({
@@ -595,6 +637,20 @@ SettingsTab:CreateButton({
 SettingsTab:CreateButton({
    Name = "Destroy Script",
    Callback = function() Rayfield:Destroy() end,
+})
+
+VisualsTab:CreateColorPicker({
+    Name = "Effect Color",
+    Color = Color3.fromRGB(255, 255, 255),
+    Callback = function(Value)
+        getgenv().EffectsColor = Value
+        -- Миттєве оновлення
+        if game.Players.LocalPlayer.Character then
+            for _, desc in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                ApplyColor(desc)
+            end
+        end
+    end
 })
 
 -- --- ЦИКЛИ ---
