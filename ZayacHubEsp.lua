@@ -63,7 +63,7 @@ local function CreateVoidSafeZone()
 
     local zone = Instance.new("Part")
     zone.Name = "ZayacVoidSafeZone"
-    zone.Size = Vector3.new(1000000, 1, 1000000) -- Велика площа, щоб точно не промахнутися
+    zone.Size = Vector3.new(10000000000, 1, 1000000000) -- Велика площа, щоб точно не промахнутися
     zone.Position = VOID_POS - Vector3.new(0, 50, 0) -- Платформа трохи нижче точки телепорту
     zone.Anchored = true
     zone.CanCollide = true
