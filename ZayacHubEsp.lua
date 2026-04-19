@@ -90,7 +90,7 @@ local VisualsTab = Window:CreateTab("Visuals", 4483362458)
 local SettingsTab = Window:CreateTab("Settings", 4483362458)
 
 -- Глобальні змінні 
-getgenv().MainEnabled = true 
+getgenv().MainEnabled = false
 getgenv().RainbowMode = false
 getgenv().Color1 = Color3.fromRGB(255, 255, 255)
 getgenv().Color2 = Color3.fromRGB(0, 255, 255)
