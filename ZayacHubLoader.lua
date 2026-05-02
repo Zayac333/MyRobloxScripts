@@ -18,7 +18,7 @@ local JJSGames = {
 }
 
 local RakeGames = {
-    [2413927524] = true 
+    [2413927524] = true,
     [8795690372] = true 
 }
 
