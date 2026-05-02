@@ -12,7 +12,7 @@ fenv.tostring = function(_3)
     error('line 2: attempt to call a nil value')
 end
 
-local _call14 = loadstring(game:HttpGet('https://raw.githubusercontent.com/twitch-stremaer/apex-beta-things/refs/heads/main/new%20ui%20%20lib.lua'))().MakeWindow(nil, 'Name Hub - FTAP', Color3.fromRGB(255, 64, 64))
+local _call14 = loadstring(game:HttpGet('https://raw.githubusercontent.com/twitch-stremaer/apex-beta-things/refs/heads/main/new%20ui%20%20lib.lua'))().MakeWindow(nil, 'Zayac Hub - FTAP', Color3.fromRGB(255, 64, 64))
 local _gameReplicatedStorage15 = game.ReplicatedStorage
 local _ = game.UserInputService
 local _LocalPlayer18 = game.Players.LocalPlayer
