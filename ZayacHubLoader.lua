@@ -14,12 +14,12 @@ local TSBGames = {
 }
 
 local JJSGames = {
-    [9391468976] = true -- ЖЖС
+    [9391468976] = true 
 }
 
 local RakeGames = {
-    [2413927524]
-    [8795690372]
+    [2413927524] = true 
+    [8795690372] = true 
 }
 
 if PressureGames[PlaceId] then
