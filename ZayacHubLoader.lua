@@ -49,10 +49,10 @@ elseif JJSGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacJjs.lua", true))()
     
 elseif RakeGames[PlaceId] then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/RunDTM/ZeeroxHub/main/scripts/TheRake.lua"))(), true))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/RunDTM/ZeeroxHub/main/scripts/TheRake.lua", true))()
 
 elseif AtOTGames[PlaceId] then
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/705e7fe7aa288f0fe86900cedb1119b1.lua"))(), true))()
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/705e7fe7aa288f0fe86900cedb1119b1.lua", true))()
     
 else
     warn("ZayacHub: Game not supported. ID: " .. PlaceId)
