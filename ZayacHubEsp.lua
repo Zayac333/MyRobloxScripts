@@ -676,6 +676,13 @@ SettingsTab:CreateButton({
 })
 
 SettingsTab:CreateButton({
+   Name = "Load LockOn",
+   Callback = function()
+      loadstring(game:HttpGet('https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/LockOn.lua'))()
+   end,
+})
+
+SettingsTab:CreateButton({
    Name = "Destroy Script",
    Callback = function() Rayfield:Destroy() end,
 })
