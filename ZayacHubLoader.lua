@@ -39,6 +39,10 @@ local AtOTGames = {
     [15220308770] = true
 }
 
+local FTaPGames = {
+    [6961824067] = true 
+}
+
 if PressureGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/Pressure/main/ZayacHub.lua", true))()
     
@@ -53,6 +57,9 @@ elseif RakeGames[PlaceId] then
 
 elseif AtOTGames[PlaceId] then
     loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/705e7fe7aa288f0fe86900cedb1119b1.lua", true))()
+
+elseif FTaPGames[PlaceId] then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/NameHubScript/_/refs/heads/main/f", true))()
     
 else
     warn("ZayacHub: Game not supported. ID: " .. PlaceId)
