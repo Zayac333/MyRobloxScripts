@@ -50,9 +50,13 @@ elseif TSBGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacHubEsp.lua", true))()
 
 elseif JJSGames[PlaceId] then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacJjs.lua", true))()
+    task.spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacJjs.lua", true))()
+    end)
     
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/LockOn.lua", true))()
+    task.spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/LockOn.lua", true))()
+    end)
     
 elseif RakeGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/RunDTM/ZeeroxHub/main/scripts/TheRake.lua", true))()
