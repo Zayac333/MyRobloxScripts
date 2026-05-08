@@ -51,6 +51,7 @@ elseif TSBGames[PlaceId] then
 
 elseif JJSGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacJjs.lua", true))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/LockOn.lua", true))()
     
 elseif RakeGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/RunDTM/ZeeroxHub/main/scripts/TheRake.lua", true))()
