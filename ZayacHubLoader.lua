@@ -43,6 +43,12 @@ local FTaPGames = {
     [6961824067] = true 
 }
 
+local JLBGames = {
+    [606849621] = true,
+    [108098425719662] = true,
+    [17190408132] = true
+}
+
 if PressureGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/Pressure/main/ZayacHub.lua", true))()
     
@@ -66,6 +72,9 @@ elseif AtOTGames[PlaceId] then
 
 elseif FTaPGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/NameHubScript/_/refs/heads/main/f", true))()
+
+elseif JLBGames[PlaceId] then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/JailBreak.lua", true))()
     
 else
     warn("ZayacHub: Game not supported. ID: " .. PlaceId)
