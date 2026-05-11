@@ -81,13 +81,13 @@ end
 -- Виклик функції для створення платформи при запуску
 CreateVoidSafeZone()
 
-local MainTab = Window:CreateTab("Movement", 4483362458)
-local PlayerTab = Window:CreateTab("Players", 4483362458)
-local CombatTab = Window:CreateTab("Combat & ESP", 4483362458)
-local ExploitsTab = Window:CreateTab("Exploits", 4483362458)
-local MovesetTab = Window:CreateTab("Movesets", 4483362458)
-local VisualsTab = Window:CreateTab("Visuals", 4483362458)
-local SettingsTab = Window:CreateTab("Settings", 4483362458)
+local MainTab = Window:CreateTab("Движение", 4483362458)
+local PlayerTab = Window:CreateTab("Игроки", 4483362458)
+local CombatTab = Window:CreateTab("Флинг и ЕСП", 4483362458)
+local ExploitsTab = Window:CreateTab("Експлоити", 4483362458)
+local MovesetTab = Window:CreateTab("Мувсеты", 4483362458)
+local VisualsTab = Window:CreateTab("Визуалка", 4483362458)
+local SettingsTab = Window:CreateTab("Настройки", 4483362458)
 
 -- Глобальні змінні 
 getgenv().MainEnabled = false
@@ -174,19 +174,19 @@ end)
 
 -- --- MOVEMENT ---
 local SpeedTgl = MainTab:CreateToggle({
-   Name = "Speed Hack (V)",
+   Name = "Спиды (V)",
    CurrentValue = false,
    Callback = function(Value) getgenv().SpeedEnabled = Value end,
 })
 
 local NoclipTgl = MainTab:CreateToggle({
-    Name = "Noclip (N)",
+    Name = "Ноуклип (N)",
     CurrentValue = false,
     Callback = function(Value) getgenv().NoclipEnabled = Value end,
 })
 
 MainTab:CreateSlider({
-   Name = "Speed Value",
+   Name = "Скорость",
    Range = {16, 300},
    Increment = 1,
    CurrentValue = 63,
@@ -194,7 +194,7 @@ MainTab:CreateSlider({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Center",
+   Name = "Телепорт к центру",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then root.CFrame = CFrame.new(180, 450, 180) end
@@ -202,7 +202,7 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Void",
+   Name = "Телепорт в Воид/Пустоту",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then root.CFrame = CFrame.new(-380, -495, -210) end
@@ -211,14 +211,14 @@ MainTab:CreateButton({
 
 -- Додай цю кнопку у зручне місце в UI
 MainTab:CreateButton({
-   Name = "🚨 Fix Lagged Camera",
+   Name = "🚨 Починить Багнутую Камеру",
    Callback = function()
       FixCamera()
    end,
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Mountian",
+   Name = "Телепорт на Гору",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then root.CFrame = CFrame.new(154.89, 628.74, -446.10) end
@@ -226,7 +226,7 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Prison",
+   Name = "Телепорт в Мелкое Пространство",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then root.CFrame = CFrame.new(439.87, 439.51, -374.98) end
@@ -234,7 +234,7 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Counter",
+   Name = "Телепорт к Комнате Каунтера",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then root.CFrame = CFrame.new(-71.15, 49.96, 20347.57) end
@@ -242,7 +242,7 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Atomic Slash Base",
+   Name = "Телепорт к Atomic Slash платформе",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then root.CFrame = CFrame.new(1063.24, 19.93, 23005.99) end
@@ -250,7 +250,7 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateButton({
-   Name = "Teleport to Top (High)",
+   Name = "Телепорт на верх (Високо)",
    Callback = function()
       local root = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if root then 
@@ -261,18 +261,18 @@ MainTab:CreateButton({
 
 -- --- PLAYERS ---
 PlayerTab:CreateInput({
-   Name = "Find Player",
-   PlaceholderText = "Name",
+   Name = "Найти Игрока",
+   PlaceholderText = "ник/юзернейм",
    Callback = function(Text)
       getgenv().SelectedPlayer = getPlayer(Text)
       if getgenv().SelectedPlayer then
-          Rayfield:Notify({Title = "Обрано", Content = getgenv().SelectedPlayer.DisplayName})
+          Rayfield:Notify({Title = "Найдено", Content = getgenv().SelectedPlayer.DisplayName})
       end
    end,
 })
 
 PlayerTab:CreateButton({
-   Name = "Teleport to Player",
+   Name = "Телепорт к Игроку",
    Callback = function()
       local lpRoot = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
       if getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character and lpRoot then
@@ -282,13 +282,13 @@ PlayerTab:CreateButton({
 })
 
 PlayerTab:CreateToggle({
-   Name = "Loop Teleport",
+   Name = "Постоянный Телепорт",
    CurrentValue = false,
    Callback = function(Value) getgenv().LoopTP = Value end,
 })
 
 PlayerTab:CreateButton({
-   Name = "Fling Selected Player",
+   Name = "Флингануть Выбраного Игрока",
    Callback = function()
       if getgenv().SelectedPlayer and getgenv().SelectedPlayer.Character then
           PowerFling(getgenv().SelectedPlayer.Character:FindFirstChild("HumanoidRootPart"))
@@ -298,25 +298,25 @@ PlayerTab:CreateButton({
 
 -- --- COMBAT & ESP ---
 CombatTab:CreateToggle({
-   Name = "Player ESP (Blue)",
+   Name = "Игроки ESP (Синий)",
    CurrentValue = false,
    Callback = function(Value) getgenv().PlayerESP = Value end,
 })
 
 CombatTab:CreateToggle({
-   Name = "ESP Death Counter",
+   Name = "ESP Death Counter(Первый скилл ульты сайтами)",
    CurrentValue = false,
    Callback = function(Value) getgenv().DeathCounterESP = Value end,
 })
 
 CombatTab:CreateToggle({
-   Name = "Anti-Fling (Smart)",
+   Name = "Анти-Флинг (Умный, возможно)",
    CurrentValue = false,
    Callback = function(Value) getgenv().AntiFlingEnabled = Value end,
 })
 
 CombatTab:CreateToggle({
-   Name = "Click Fling (LKM)",
+   Name = "Флинг по клику (Левая кнопка мыши)",
    CurrentValue = false,
    Callback = function(Value) getgenv().ClickFlingEnabled = Value end,
 })
@@ -417,7 +417,7 @@ end
 
 -- 1. No Dash Cooldown
 ExploitsTab:CreateToggle({
-   Name = "No Dash Cooldown",
+   Name = "Нет кд на дэш(не работает)",
    CurrentValue = false,
    Callback = function(Value)
        SetExploitAttr('NoDashCooldown', Value)
@@ -426,7 +426,7 @@ ExploitsTab:CreateToggle({
 
 -- 2. No Fatigue (Втома)
 ExploitsTab:CreateToggle({
-   Name = "No Fatigue",
+   Name = "Без усталости на прыжок(работает 50/50)",
    CurrentValue = false,
    Callback = function(Value)
        SetExploitAttr('NoFatigue', Value)
@@ -435,7 +435,7 @@ ExploitsTab:CreateToggle({
 
 -- 3. No Ragdoll (Примусове вимкнення регдолу)
 ExploitsTab:CreateToggle({
-   Name = "No Ragdoll",
+   Name = "Без рагдола",
    CurrentValue = false,
    Callback = function(Value)
        getgenv().NoRagdoll = Value
@@ -456,7 +456,7 @@ ExploitsTab:CreateToggle({
 
 -- 4. No Slow (Захист від уповільнення)
 ExploitsTab:CreateToggle({
-   Name = "No Slowdown",
+   Name = "Без Замедления",
    CurrentValue = false,
    Callback = function(Value)
        getgenv().NoSlow = Value
@@ -482,7 +482,7 @@ ExploitsTab:CreateLabel("Visual / Interface")
 
 -- 5. Extra Emote Slots
 ExploitsTab:CreateToggle({
-   Name = "Extra Emote Slots",
+   Name = "Дополнительные Слоты Для Эмоций",
    CurrentValue = false,
    Callback = function(Value)
        SetExploitAttr('ExtraSlots', Value)
@@ -491,7 +491,7 @@ ExploitsTab:CreateToggle({
 
 -- 6. Emote Search Bar
 ExploitsTab:CreateToggle({
-   Name = "Emote Search Bar",
+   Name = "Вторая Страница Эмоций",
    CurrentValue = false,
    Callback = function(Value)
        SetExploitAttr('EmoteSearchBar', Value)
@@ -500,7 +500,7 @@ ExploitsTab:CreateToggle({
 
 -- 7. No Rotate Bypass (Дозволяє крутити персонажа під час атак)
 ExploitsTab:CreateToggle({
-   Name = "No Rotate Bypass",
+   Name = "Без поворачивания(не робит) ",
    CurrentValue = false,
    Callback = function(Value)
        getgenv().NoRotate = Value
@@ -519,7 +519,7 @@ ExploitsTab:CreateToggle({
 
 -- 8. No Jump Bypass
 ExploitsTab:CreateToggle({
-   Name = "No Jump Bypass",
+   Name = "Нет КД на прыжок(можно летать)",
    CurrentValue = false,
    Callback = function(Value)
        getgenv().NoJumpBypass = Value
@@ -536,7 +536,7 @@ ExploitsTab:CreateToggle({
 })
 
 ExploitsTab:CreateToggle({
-    Name = "No Block SlowDown",
+    Name = "Нет Замедления от блока(ноу стан)",
     CurrentValue = false,
     Callback = function(Value)
         getgenv().NoBlockSlow = Value
@@ -566,46 +566,46 @@ ExploitsTab:CreateToggle({
 -- --- ВКЛАДКА MOVESETS (АВТОМАТИЧНА) ---
 -- ==========================================
 local allMovesets = {
-    {"Suiru to Mahito", "Loads Mahito anims and 4 skill is saratov", "https://raw.githubusercontent.com/GreatestLime4K/mahitotsb/refs/heads/main/Protected_6381580361331378.txt"},
-    {"Saitama to Gojo", "Loads Gojo anims and VFX", "https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua"},
-    {"Saitama to Hakari", "Loads Hakari anims and VFX", "https://pastebin.com/raw/eEDYWj8p"},
-    {"Garou to Goku", "Loads Goku anims", "https://raw.githubusercontent.com/JayXSama/ray-makk/main/GOKUTSB"},
-    {"Sonic to Chainsaw Man", "Loads Chainsaw man anims and VFX", "https://gist.githubusercontent.com/GoldenHeads2/0fd8d36993c850f3fac89e5adf793076/raw/ab4f5a42bd0b2e24a32a46301d533ea849ca771c/gistfile1.txt"},
-    {"Saitama to Jun", "Loads Jun anims and VFX", "https://gist.githubusercontent.com/GoldenHeads2/f66279000c58a020e894a6db44914838/raw/62e53e1acacec0b38b43cd0f594292c32e09c39b/gistfile1.txt"},
-    {"Blade master to Sukuna", "Loads Sukuna anims and VFX", "https://raw.githubusercontent.com/zyrask/Nexus-Base/main/atomic-blademaster%20to%20sukuna"},
-    {"Garou to Okarun", "Loads Okarun anims and VFX", "https://paste.ee/r/Pn4oj"},
-    {"Garou to Freddy", "Loads Freddy anims and VFX", "https://pastebin.com/raw/Ft5psDmD"},
-    {"Garou to Kizaru", "Loads Kixaru anims and VFX", "https://paste.ee/r/NPnfk"},
-    {"Garou to Angel", "1 skill teleport to heaven .-.", "https://paste.ee/r/1HxVZ"},
-    {"Garou to Akaza", "Cool script", "https://paste.ee/r/zzvAH"},
-    {"Garou to A-train", "Funny script", "https://paste.ee/r/AnZ5j"},
-    {"Garou to Mastery Deku", "2 skil is a very cool", "https://pastebin.com/raw/xKextYP5"},
-    {"KJ to JK", "Only KJ servers!", "https://raw.githubusercontent.com/NetlessMade/KJ-TO-JK/refs/heads/main/script.lua"},
-    {"Suiru to trashcan man", "VERY troll script. Have teleport gui", "https://pastebin.com/raw/JH7mnC7X"},
-    {"Garou to Diddy", "DIDDY?!🤨", "https://paste.ee/r/gKC8V"},
-    {"Sonic to Toji", "Have 5 and 6 skills", "https://pastebin.com/raw/VQnyWP5D"},
-    {"Saitama to Sans", "Dont have ult, but have gaster blaster", "https://paste.ee/r/rF9d3"},
-    {"Saitama to Heian Sukuna", "In ult have only 3 skill", "https://raw.githubusercontent.com/damir512/sukunasaitamav1/main/thescript"},
-    {"Saitama to JJS Gojo", "Load full JJS Gojo version", "https://raw.githubusercontent.com/damir512/jjsgojov3/main/SaitamaToGojoV3_SOURCE-obfuscated_2.txt"},
-    {"Suiru to Deku v2", "Have ult anim", "https://github.com/aggiealledge/obfuscated-scripts/raw/refs/heads/main/deku%20suiryu%20thingy.txt"},
-    {"Blade master to Yuta", "RIKA!!!!!!!!!", "https://raw.githubusercontent.com/damir512/AtomicToYuta/main/Protected_8122576078506000.txt"},
-    {"Saitama to Kashimo", "THOR!!!", "https://raw.githubusercontent.com/damir512/Kashimo/main/Protected_7491278457865044.txt"},
-    {"Saitama to Gojo sensei", "200% PURPLE!!!", "https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua"},
-    {"Saitama to Shinji", "Have working 5 skill", "https://raw.githubusercontent.com/Kenjihin69/Kenjihin69/refs/heads/main/Shinji%20tp%20exploit"},
-    {"Garou to Sukuna", "Have Kamutoke", "https://rawscripts.net/raw/The-Strongest-Battlegrounds-Garou-to-Sukuna-23069"},
-    {"Saitama to Choi Jong In", "Have custom avatar", "https://raw.githubusercontent.com/nil071n/fireman/refs/heads/main/TSB"},
-    {"Saitama to Yuji x Sukuna", "Dance skill (5 skill)", "https://pastebin.com/raw/xpptBe4C"},
-    {"Saitama to Gojo v2", "Have purple nuke on ult", "https://pastebin.com/raw/jZHTybYw"},
-    {"Saitama to Megumi", "Dont have VFX and ult. Bad", "https://pastefy.app/j8w2DdyG/raw"},
+    {"Суирю на Махито", "Loads Mahito anims and 4 skill is saratov", "https://raw.githubusercontent.com/GreatestLime4K/mahitotsb/refs/heads/main/Protected_6381580361331378.txt"},
+    {"Сайтама на Годжо", "Loads Gojo anims and VFX", "https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua"},
+    {"Сайтам на Хакари", "Loads Hakari anims and VFX", "https://pastebin.com/raw/eEDYWj8p"},
+    {"Гароу на Гоку", "Loads Goku anims", "https://raw.githubusercontent.com/JayXSama/ray-makk/main/GOKUTSB"},
+    {"Соник на Бенза Чела", "Loads Chainsaw man anims and VFX", "https://gist.githubusercontent.com/GoldenHeads2/0fd8d36993c850f3fac89e5adf793076/raw/ab4f5a42bd0b2e24a32a46301d533ea849ca771c/gistfile1.txt"},
+    {"Сайтама на Джан", "Loads Jun anims and VFX", "https://gist.githubusercontent.com/GoldenHeads2/f66279000c58a020e894a6db44914838/raw/62e53e1acacec0b38b43cd0f594292c32e09c39b/gistfile1.txt"},
+    {"Самурай на Сукуну", "Loads Sukuna anims and VFX", "https://raw.githubusercontent.com/zyrask/Nexus-Base/main/atomic-blademaster%20to%20sukuna"},
+    {"Гароу на Окаруна", "Loads Okarun anims and VFX", "https://paste.ee/r/Pn4oj"},
+    {"Гароу на Фредди", "Loads Freddy anims and VFX", "https://pastebin.com/raw/Ft5psDmD"},
+    {"Гароу на Каизера", "Loads Kixaru anims and VFX", "https://paste.ee/r/NPnfk"},
+    {"Гароу на Ангела", "1 skill teleport to heaven .-.", "https://paste.ee/r/1HxVZ"},
+    {"Гароу на Аказу", "Cool script", "https://paste.ee/r/zzvAH"},
+    {"Гароу на A-train", "Funny script", "https://paste.ee/r/AnZ5j"},
+    {"Гароу на Mastery Deku", "2 skil is a very cool", "https://pastebin.com/raw/xKextYP5"},
+    {"КДЖ на Джк", "Only KJ servers!", "https://raw.githubusercontent.com/NetlessMade/KJ-TO-JK/refs/heads/main/script.lua"},
+    {"Суирю на монстра мусора", "VERY troll script. Have teleport gui", "https://pastebin.com/raw/JH7mnC7X"},
+    {"Гароу на P. Diddy", "DIDDY?!🤨", "https://paste.ee/r/gKC8V"},
+    {"Соник на Тоджи", "Have 5 and 6 skills", "https://pastebin.com/raw/VQnyWP5D"},
+    {"Сайтама на Санса", "Dont have ult, but have gaster blaster", "https://paste.ee/r/rF9d3"},
+    {"Сайтама на Хейян Сукуну", "In ult have only 3 skill", "https://raw.githubusercontent.com/damir512/sukunasaitamav1/main/thescript"},
+    {"Сайтама на JJS Годжо", "Load full JJS Gojo version", "https://raw.githubusercontent.com/damir512/jjsgojov3/main/SaitamaToGojoV3_SOURCE-obfuscated_2.txt"},
+    {"Суирю на Deku v2", "Have ult anim", "https://github.com/aggiealledge/obfuscated-scripts/raw/refs/heads/main/deku%20suiryu%20thingy.txt"},
+    {"Самурай на Юту", "RIKA!!!!!!!!!", "https://raw.githubusercontent.com/damir512/AtomicToYuta/main/Protected_8122576078506000.txt"},
+    {"Сайтама на Кашимо", "THOR!!!", "https://raw.githubusercontent.com/damir512/Kashimo/main/Protected_7491278457865044.txt"},
+    {"Сайтама на Годжо(в2)", "200% PURPLE!!!", "https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua"},
+    {"Сайтама на Шинджи", "Have working 5 skill", "https://raw.githubusercontent.com/Kenjihin69/Kenjihin69/refs/heads/main/Shinji%20tp%20exploit"},
+    {"Гароу на Сукуну", "Have Kamutoke", "https://rawscripts.net/raw/The-Strongest-Battlegrounds-Garou-to-Sukuna-23069"},
+    {"Сайтам на Choi Jong In", "Have custom avatar", "https://raw.githubusercontent.com/nil071n/fireman/refs/heads/main/TSB"},
+    {"Сайтама на Итадори x Сукуна", "Dance skill (5 skill)", "https://pastebin.com/raw/xpptBe4C"},
+    {"Сайтама на Годжо v3", "Have purple nuke on ult", "https://pastebin.com/raw/jZHTybYw"},
+    {"Сайтама на Мегуми", "Dont have VFX and ult. Bad", "https://pastefy.app/j8w2DdyG/raw"},
     {"Star Lighter (Multi)", "4 character modes, VERY good VFX", "https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SG_DEMO.lua"},
-    {"Sonic to 1x1x1x1 hacker", "Sonic hacker script", "https://gist.githubusercontent.com/GoldenHeads2/900e87ffc32f3c740930ccb106dd6abf/raw/358c5bf0f0a6aa25946718288dab006e3ae7e1d4/gistfile1.txt"},
-    {"Garou to Troll Garou", "Phantom blink and Vibral shift", "https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"},
-    {"Saitama to Gojo sensei v2", "Good vfx and banmade 5 skill", "https://raw.githubusercontent.com/Skibiditoilethaterfr2024/Script-protected-blud-/refs/heads/main/Protected_4902678279449732.txt"},
-    {"Sonic to black Goku", "NIGA NIGA NIGA", "https://raw.githubusercontent.com/Nova2ezz/BlackGoku/refs/heads/main/Protected_5687298824595816.lua"},
-    {"Saitama to Luffy", "Dont have VFX. Bad", "https://github.com/aggiealledge/obfuscated-scripts/raw/refs/heads/main/Protected_7732857839120517.txt"},
-    {"Garou to KJ", "KJ is already in the game...", "https://raw.githubusercontent.com/damir512/garoukjv1maybeidk/main/Protected_2460290213750059.txt"},
-    {"Saitama to Chara", "tubap tubap tubap", "https://paste.ee/r/0yYkO"},
-    {"Saitama to True Nokotan", "A life of gambling", "https://raw.githubusercontent.com/JayXSama/ray-makk/refs/heads/main/True%20Nosakatan"}
+    {"Соник на 1x1x1x1", "Sonic hacker script", "https://gist.githubusercontent.com/GoldenHeads2/900e87ffc32f3c740930ccb106dd6abf/raw/358c5bf0f0a6aa25946718288dab006e3ae7e1d4/gistfile1.txt"},
+    {"Гароу на Троль Гароу", "Phantom blink and Vibral shift", "https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"},
+    {"Сайтама на Годжо Сенсея v2", "Good vfx and banmade 5 skill", "https://raw.githubusercontent.com/Skibiditoilethaterfr2024/Script-protected-blud-/refs/heads/main/Protected_4902678279449732.txt"},
+    {"Соник на Черного Гоку", "NIGA NIGA NIGA", "https://raw.githubusercontent.com/Nova2ezz/BlackGoku/refs/heads/main/Protected_5687298824595816.lua"},
+    {"Сайтама на Луфи", "Dont have VFX. Bad", "https://github.com/aggiealledge/obfuscated-scripts/raw/refs/heads/main/Protected_7732857839120517.txt"},
+    {"Гароу на KJ", "KJ is already in the game...", "https://raw.githubusercontent.com/damir512/garoukjv1maybeidk/main/Protected_2460290213750059.txt"},
+    {"Сайтама на Чару(андертейл)", "tubap tubap tubap", "https://paste.ee/r/0yYkO"},
+    {"Сайтама на True Nokotan", "A life of gambling", "https://raw.githubusercontent.com/JayXSama/ray-makk/refs/heads/main/True%20Nosakatan"}
 }
 
 for _, data in pairs(allMovesets) do
@@ -635,7 +635,7 @@ SettingsTab:CreateKeybind({
 })
 
 SettingsTab:CreateKeybind({
-   Name = "Speed Toggle (V)",
+   Name = "Спид Бинд",
    CurrentKeybind = "V",
    HoldToInteract = false,
    Callback = function()
@@ -645,7 +645,7 @@ SettingsTab:CreateKeybind({
 })
 
 SettingsTab:CreateKeybind({
-    Name = "Noclip Toggle (U)",
+    Name = "Ноуклип Бинд ",
     CurrentKeybind = "U",
     HoldToInteract = false,
     Callback = function()
@@ -655,40 +655,34 @@ SettingsTab:CreateKeybind({
  })
 
 SettingsTab:CreateButton({
-   Name = "Load ZayacTech",
+   Name = "Зарузить ZayacTech",
    Callback = function()
       loadstring(game:HttpGet('https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacTech.lua'))()
    end,
 })
 
-SettingsTab:CreateButton({
-   Name = "Load Gojo",
-   Callback = function()
-      loadstring(game:HttpGet('https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua'))()
-   end,
-})
 
 SettingsTab:CreateButton({
-   Name = "Load CoordsLocate",
+   Name = "Загрузить Показаные Координат",
    Callback = function()
       loadstring(game:HttpGet('https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/Coords.lua'))()
    end,
 })
 
 SettingsTab:CreateButton({
-   Name = "Load LockOn",
+   Name = "Загрузить ЛокОн",
    Callback = function()
       loadstring(game:HttpGet('https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/LockOn.lua'))()
    end,
 })
 
 SettingsTab:CreateButton({
-   Name = "Destroy Script",
+   Name = "Закрыть Скрипт",
    Callback = function() Rayfield:Destroy() end,
 })
 
 VisualsTab:CreateToggle({
-    Name = "Enable Visuals", 
+    Name = "Включить Вищуалы", 
     CurrentValue = getgenv().MainEnabled,
     Callback = function(Value)
         getgenv().MainEnabled = Value
@@ -701,7 +695,7 @@ VisualsTab:CreateToggle({
 })
 
 VisualsTab:CreateToggle({
-    Name = "RAINBOW MODE (RGB)",
+    Name = "Радужный Мод (как под солями)",
     CurrentValue = false,
     Callback = function(Value)
         getgenv().RainbowMode = Value
@@ -709,7 +703,7 @@ VisualsTab:CreateToggle({
 })
 
 VisualsTab:CreateColorPicker({
-    Name = "Primary Color (Main)",
+    Name = "Первый цвет (Основной)",
     Color = Color3.fromRGB(255, 255, 255),
     Callback = function(Value)
         getgenv().Color1 = Value
@@ -717,7 +711,7 @@ VisualsTab:CreateColorPicker({
 })
 
 VisualsTab:CreateColorPicker({
-    Name = "Secondary Color (Accent)",
+    Name = "Второй Цвет",
     Color = Color3.fromRGB(0, 255, 255),
     Callback = function(Value)
         getgenv().Color2 = Value
@@ -725,7 +719,7 @@ VisualsTab:CreateColorPicker({
 })
 
 VisualsTab:CreateColorPicker({
-    Name = "Secondary Color (Accent)",
+    Name = "Третий цвет",
     Color = Color3.fromRGB(0, 255, 255),
     Callback = function(Value)
         getgenv().Color4 = Value
