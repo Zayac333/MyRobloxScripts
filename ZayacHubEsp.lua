@@ -682,7 +682,7 @@ SettingsTab:CreateButton({
 })
 
 VisualsTab:CreateToggle({
-    Name = "Включить Вищуалы", 
+    Name = "Включить Визуалы", 
     CurrentValue = getgenv().MainEnabled,
     Callback = function(Value)
         getgenv().MainEnabled = Value
