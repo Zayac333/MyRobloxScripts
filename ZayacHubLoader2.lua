@@ -53,7 +53,7 @@ if PressureGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/Pressure/main/ZayacPs.lua", true))()
     
 elseif TSBGames[PlaceId] then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacHubEsp.lua", true))()
+    loadstring(game:HttpGet("", true))()
 
 elseif JJSGames[PlaceId] then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Zayac333/MyRobloxScripts/main/ZayacJjs.lua", true))()
